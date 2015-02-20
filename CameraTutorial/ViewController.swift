@@ -9,107 +9,373 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController, UIPageViewControllerDataSource {
+class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    
+    //MARK: - Variables 
     
     var pageViewController: UIPageViewController?
+    var cameraController: CameraController!
     
-    var l8rs = [NSManagedObject]()
+//    var l8rs = [NSManagedObject]()
+    
+    var l8rsBeforeCurrentDate = [NSManagedObject]()
+    var indexOfCurrentPage: Int!
+    var appDelegate: AppDelegate!
+    var managedContext: NSManagedObjectContext!
+        
     var inboxButton: UIButton!
     var inboxNumber: UILabel!
     
+    var dateButton: UIButton!
+    var scheduleButton: UIButton!
+    var deleteButton: UIButton!
+    
+    var nc: UINavigationController?
+    
+    
     //MARK: - Lifecycle
     
-    //1 fetch l8rs from core data
-    //2 create pageController
-    //3 set up first itemController, which is the Camera
-    //misc. generate itemControllers on the fly for l8rs in inbox
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setUpCoreData()
         self.fetchL8rs()
         self.createPageViewController()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        
+    }
+    
+    func setUpCoreData(){
+        appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        managedContext = appDelegate.managedObjectContext!
     }
     
     func fetchL8rs(){
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
+
         let fetchRequest = NSFetchRequest(entityName: "L8R")
         var error: NSError?
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
         
+        let fireDateSort = NSSortDescriptor(key: "fireDate", ascending: true)
+        let fireDateSorts = [fireDateSort]
+        
+        l8rsBeforeCurrentDate = []
+        
+        fetchRequest.sortDescriptors = fireDateSorts
+        
+        
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+
         if let results = fetchedResults {
-            l8rs = results
-            println("Number of l8rs:\(l8rs.count)")
             
+            let currentDate = NSDate()
+            for l8r in results {
+                
+                if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
+                    l8rsBeforeCurrentDate.append(l8r)
+                    
+                }
+            }
         }
         else {
             println("Could not fetch \(error), \(error!.userInfo)")
         }
     }
     
-    func createInboxBadge(){
-
+    
+    //MARK: - Set up overlay view
+    
+    func addInboxBadge(){
+        
+        inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width-100, 60, 40, 40))
+        inboxNumber.font = UIFont(name: "Arial", size: 28)
+        inboxNumber.textColor = UIColor.purpleColor()
+        inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+        pageViewController!.view.addSubview(inboxNumber)
+        
+        
+    }
+    
+    func addActionButtons(){
+        
+        
+        dateButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 116, 42))
+        dateButton.addTarget(self, action: Selector("openDateMenu:"), forControlEvents: UIControlEvents.TouchUpInside)
+        dateButton.center.x = self.view.center.x
+        let dateButtonImage = UIImage(named: "tomorrowButton")
+        dateButton.setImage(dateButtonImage, forState: .Normal)
+        dateButton.tag = 1
+        dateButton.hidden = false
+        pageViewController!.view.addSubview(dateButton)
+        
+        scheduleButton = UIButton(frame: CGRectMake(self.view.frame.width-78, self.view.frame.height-60, 58, 42))
+        scheduleButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
+        let scheduleButtonImage = UIImage(named: "scheduleButton")
+        scheduleButton.setImage(scheduleButtonImage, forState: .Normal)
+        scheduleButton.hidden = false
+        pageViewController!.view.addSubview(scheduleButton)
+        
+        deleteButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 42, 42))
+        deleteButton.addTarget(self, action: Selector("deleteL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
+        let deleteButtonImage = UIImage(named: "deleteButton")
+        deleteButton.setImage(deleteButtonImage, forState: .Normal)
+        deleteButton.hidden = false
+        pageViewController!.view.addSubview(deleteButton)
 
     }
+    
+    func deleteL8r(sender: UIButton){
+        
+        //TODO: Can we just do all this with the delegate method?
+        
 
+        //special case if the L8R being deleted is the photo we just took
+        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            currentPage.previewLayer?.connection.enabled = true
+            hideButtons(true)
+            currentPage.snapButton.hidden = false
+            
+        }
+        
+        else {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            indexOfCurrentPage = currentPage.itemIndex
+
+            
+            //DELETE L8R
+            managedContext.deleteObject(l8rsBeforeCurrentDate[indexOfCurrentPage])
+            
+            var error: NSError?
+
+            if !managedContext.save(&error) {
+                println("Unresolved error \(error), \(error!.userInfo)")
+                abort()
+            }
+            
+            
+        }
+        self.moveOnToNextL8r()
+        
+    }
+    
+    
+    
+    func scheduleL8r(sender: UIButton){
+        
+        
+        //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
+        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            currentPage.previewLayer?.connection.enabled = true
+            hideButtons(true)
+            currentPage.snapButton.hidden = false
+            let imageToSchedule = currentPage.image
+            
+            //SAVE NEW L8R
+            let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
+            let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
+            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
+            l8r.setValue(imageData, forKey: "imageData")
+            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Coulnd't save \(error), \(error?.userInfo)")
+            }
+            
+            //UPDATE L8RS
+            self.fetchL8rs()
+            
+        }
+        
+        else {
+
+            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            indexOfCurrentPage = currentPage.itemIndex
+            
+            //RESCHEDULE L8R
+
+            let imageToSchedule = currentPage.image
+            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
+            let itemIndex = currentPage.itemIndex
+            let l8r = l8rsBeforeCurrentDate[itemIndex]
+            l8r.setValue(imageData, forKey: "imageData")
+            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Coulnd't save \(error), \(error?.userInfo)")
+            }
+            
+            self.moveOnToNextL8r()
+
+        }
+        
+
+    }
+    
+    func moveOnToNextL8r(){
+        //REFRESH LIST
+        self.fetchL8rs()
+        
+        println(indexOfCurrentPage)
+        println(l8rsBeforeCurrentDate.count)
+        
+        //SHOW CAMERA IF NO MORE L8RS TO SHOW
+        if l8rsBeforeCurrentDate.count == 0 {
+            println("show camera")
+            cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+        }
+            
+        //SHOW PREVIOUS L8R IF WE DELETED/SCHEDULED THE LAST ONE
+            
+        else if indexOfCurrentPage > (l8rsBeforeCurrentDate.count-1) {
+            
+            println("show prev l8r")
+            let targetViewController = getItemController(l8rsBeforeCurrentDate.count-1) as PageItemController!
+            let arrayVC : NSArray = [targetViewController]
+            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        }
+            
+        //OTHERWISE SHOW L8R AT CURRENT INDEX
+        else {
+            
+            println("show new l8r at current index")
+            let targetViewController = getItemController(indexOfCurrentPage) as PageItemController!
+            let arrayVC : NSArray = [targetViewController]
+            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+            
+        }
+        
+    }
+    
+    
+    func hideButtons(toggle: Bool){
+        for button in [dateButton?, deleteButton?, scheduleButton?] {
+            if button != nil {
+                button!.hidden = toggle
+            }
+        }
+    }
+    
+    func openDateMenu(sender: UIButton){
+        let vc = UIViewController()
+        vc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
+        vc.modalPresentationStyle = .OverCurrentContext
+        
+        let tmrwButton = UIButton(frame: CGRectMake(20, 40, 116, 42))
+        tmrwButton.setImage(UIImage(named: "tomorrowButton"), forState: .Normal)
+        tmrwButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        tmrwButton.tag = 1
+        vc.view.addSubview(tmrwButton)
+        
+        let nextWeekButton = UIButton(frame: CGRectMake(160, 40, 116, 42))
+        nextWeekButton.setImage(UIImage(named: "nextWeekButton"), forState: .Normal)
+        nextWeekButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        nextWeekButton.tag = 7
+        vc.view.addSubview(nextWeekButton)
+        
+        let rightNowButton = UIButton(frame: CGRectMake(20, 90, 116, 42))
+        rightNowButton.setImage(UIImage(named: "rightNowButton"), forState: .Normal)
+        rightNowButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        rightNowButton.tag = 0
+        vc.view.addSubview(rightNowButton)
+        
+        let pickDateButton = UIButton(frame: CGRectMake(160, 90, 116, 42))
+        pickDateButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
+        pickDateButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        pickDateButton.tag = 999
+        vc.view.addSubview(pickDateButton)
+
+        
+        
+        nc = UINavigationController(rootViewController: vc)
+        nc!.navigationBar.hidden = true
+        nc!.modalPresentationStyle = .OverCurrentContext
+        
+        presentViewController(nc!, animated: false, completion: nil)
+    }
+    
+    func updateDate(sender: UIButton){
+        dateButton.setImage(sender.imageForState(.Normal), forState: .Normal)
+        dateButton.tag = sender.tag
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    func getDateFromDateButton(tag: Int) -> NSDate? {
+        
+        let currentTime = NSDate()
+        var theCalendar = NSCalendar.currentCalendar()
+        let timeComponent = NSDateComponents()
+        
+        if tag == 1 { // tomorrow
+
+            timeComponent.day = 1
+            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+            return scheduledDate
+        }
+        else if tag == 7 {
+            timeComponent.day = 7
+            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+            return scheduledDate
+        }
+        
+        else if tag == 0 {
+            return NSDate()
+        }
+        else {
+            return NSDate()
+
+        }
+    }
+    
+    
+    // MARK: - UIPageViewControllerDataSource
+    
     func createPageViewController() {
         
         //create PageViewController
         let pageController = self.storyboard!.instantiateViewControllerWithIdentifier("PageController") as UIPageViewController
+        pageController.delegate = self
         pageController.dataSource = self
         
         //create cameraController and set as first page
-        let cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+        cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
         let startingViewControllers: NSArray = [cameraController]
-        pageController.setViewControllers(startingViewControllers, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
         
-
+        pageController.addChildViewController(cameraController)
+        
+        
         pageViewController = pageController
         addChildViewController(pageViewController!)
         
-        inboxButton = UIButton(frame: CGRectMake(self.view.frame.width - 60, 60, 40, 40))
-        inboxButton.addTarget(self, action: Selector("openInbox:"), forControlEvents:UIControlEvents.TouchUpInside)
-        let inboxButtonImage = UIImage(named: "inboxButton")
-        inboxButton.setImage(inboxButtonImage, forState: .Normal)
-        pageViewController!.view.addSubview(inboxButton)
-        
-        
-        //stupid. don't initialize in header, and shows 0 because this happens before viewwillappear
-        inboxNumber = UILabel(frame: inboxButton.frame)
-        inboxNumber.center.x = inboxButton.center.x + 15
-        inboxNumber.font = UIFont(name: "Arial", size: 18)
-        inboxNumber.textColor = UIColor.whiteColor()
-        inboxNumber.text = String(l8rs.count)
-        pageViewController!.view.addSubview(inboxNumber)
+        self.addInboxBadge()
+        self.addActionButtons()
         
         self.view.addSubview(pageViewController!.view)
         pageViewController!.didMoveToParentViewController(self)
+        
+        pageController.setViewControllers(startingViewControllers, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        
     }
-    
-    // MARK: - UIPageViewControllerDataSource
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController? {
         
         
-        
         if viewController.restorationIdentifier == "CameraController" {
-            println("nothing before camera")
             return nil // Camera is always first
         }
         
         else { // we got a PageItemController
             var itemController = viewController as PageItemController
-            println(itemController.itemIndex)
-            if itemController.itemIndex == 1 { //If we got the first ItemController, then go back to Camera
-                println("this is the top of the item stack, going back to cam")
+            if itemController.itemIndex == 0 { //If we got the first ItemController, then go back to Camera
                 let cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
                 return cameraController
             }
             else {
-                println("showing previous item")
                 return getItemController(itemController.itemIndex-1) //Otherwise go back to previous ItemController
             }
         
@@ -118,23 +384,18 @@ class ViewController: UIViewController, UIPageViewControllerDataSource {
     }
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
-        
-        println("VC is of Type:\(viewController.restorationIdentifier)")
-        
+
         
         if viewController.restorationIdentifier == "CameraController" {
-            println("going from cam to top of item stack")
-            return getItemController(1) // top of Inbox
+            return getItemController(0) // top of Inbox
         }
         
         else {
             var itemController = viewController as PageItemController
-            println("trying to leave item controller with index\(itemController.itemIndex)")
 
-            if itemController.itemIndex+1 < l8rs.count {
+            if itemController.itemIndex+1 < l8rsBeforeCurrentDate.count {
                 return getItemController(itemController.itemIndex+1)
             }
-            println("bottom of the stack")
             return nil
         }
         
@@ -142,17 +403,24 @@ class ViewController: UIViewController, UIPageViewControllerDataSource {
     
     private func getItemController(itemIndex: Int) -> PageItemController? {
         
-        if itemIndex < l8rs.count {
+        inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+
+        
+
+        if l8rsBeforeCurrentDate.count == 0 {
+            println("no more items to show, so I should never be called")
+            
+            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+        }
+        else {
             let pageItemController = self.storyboard!.instantiateViewControllerWithIdentifier("ItemController") as PageItemController
             pageItemController.itemIndex = itemIndex
-       //     pageItemController.imageName = contentImages[itemIndex]
+            let l8r = l8rsBeforeCurrentDate[itemIndex]
+            pageItemController.imageData = l8r.valueForKey("imageData") as NSData //TODO: sometimes nil, definitely not just when there are no more l8rs
             return pageItemController
         }
         
         return nil
     }
-    
-
-
 }
 
