@@ -29,8 +29,11 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var dateButton: UIButton!
     var scheduleButton: UIButton!
     var deleteButton: UIButton!
+    var datePicker: UIDatePicker!
     
     var nc: UINavigationController?
+    
+    let vc = UIViewController()
     
     
     //MARK: - Lifecycle
@@ -68,6 +71,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             let currentDate = NSDate()
             for l8r in results {
+                
+                println(l8r.valueForKey("fireDate"))
                 
                 if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
@@ -124,8 +129,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     func deleteL8r(sender: UIButton){
         
-        //TODO: Can we just do all this with the delegate method?
-        
 
         //special case if the L8R being deleted is the photo we just took
         if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
@@ -153,9 +156,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
                 abort()
             }
             
-            
+            self.moveOnToNextL8r()    
         }
-        self.moveOnToNextL8r()
+        
         
     }
     
@@ -166,6 +169,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
         if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+            
+            println("current page is camera")
             
             let currentPage = self.pageViewController?.viewControllers[0] as CameraController
             currentPage.previewLayer?.connection.enabled = true
@@ -187,10 +192,19 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             //UPDATE L8RS
             self.fetchL8rs()
+            inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+            
+            //TODO: If inbox is empty and user snaps a photo and schedules it for l8r, then schedules another photo for now, the count increments but it's impossible to paginate to. Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
+            
+            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+            
+
             
         }
         
         else {
+            
+            println("current page is item")
 
             let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
             indexOfCurrentPage = currentPage.itemIndex
@@ -219,14 +233,14 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func moveOnToNextL8r(){
         //REFRESH LIST
         self.fetchL8rs()
-        
-        println(indexOfCurrentPage)
-        println(l8rsBeforeCurrentDate.count)
+        inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+
         
         //SHOW CAMERA IF NO MORE L8RS TO SHOW
         if l8rsBeforeCurrentDate.count == 0 {
             println("show camera")
-            cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+         //   cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+       //     pageViewController?.addChildViewController(cameraController)
             pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
         }
             
@@ -262,7 +276,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func openDateMenu(sender: UIButton){
-        let vc = UIViewController()
+        
         vc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
         vc.modalPresentationStyle = .OverCurrentContext
         
@@ -281,12 +295,12 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         let rightNowButton = UIButton(frame: CGRectMake(20, 90, 116, 42))
         rightNowButton.setImage(UIImage(named: "rightNowButton"), forState: .Normal)
         rightNowButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
-        rightNowButton.tag = 0
+        rightNowButton.tag = 2
         vc.view.addSubview(rightNowButton)
         
         let pickDateButton = UIButton(frame: CGRectMake(160, 90, 116, 42))
         pickDateButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
-        pickDateButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        pickDateButton.addTarget(self, action: Selector("openCalendarMenu:"), forControlEvents: .TouchUpInside)
         pickDateButton.tag = 999
         vc.view.addSubview(pickDateButton)
 
@@ -303,6 +317,31 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         dateButton.setImage(sender.imageForState(.Normal), forState: .Normal)
         dateButton.tag = sender.tag
         self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    func openCalendarMenu(sender: UIButton){
+        
+        for subview in vc.view.subviews {
+            if subview.tag > 0 {
+                subview.removeFromSuperview()
+            }
+        }
+        
+        datePicker = UIDatePicker(frame: self.view.frame)
+        datePicker.center.y = self.view.center.y
+        vc.view.addSubview(datePicker)
+        
+        let confirmButton = UIButton(frame: CGRectMake(0, self.view.frame.height-200, 116, 42))
+        confirmButton.center.x = self.view.center.x
+        confirmButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
+        confirmButton.tag = 666
+        confirmButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        vc.view.addSubview(confirmButton)
+        
+    }
+    
+    func closeCalendarMenu(sender: UIButton){
+        
     }
     
     func getDateFromDateButton(tag: Int) -> NSDate? {
@@ -325,6 +364,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         else if tag == 0 {
             return NSDate()
+        }
+            
+        else if tag == 666 {
+            return datePicker.date
         }
         else {
             return NSDate()
@@ -372,7 +415,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         else { // we got a PageItemController
             var itemController = viewController as PageItemController
             if itemController.itemIndex == 0 { //If we got the first ItemController, then go back to Camera
-                let cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
                 return cameraController
             }
             else {
@@ -384,18 +426,24 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
+        
+        println("looking for next vc")
 
         
         if viewController.restorationIdentifier == "CameraController" {
+            println("a")
             return getItemController(0) // top of Inbox
         }
         
         else {
+            println("b")
             var itemController = viewController as PageItemController
 
             if itemController.itemIndex+1 < l8rsBeforeCurrentDate.count {
+                println("c")
                 return getItemController(itemController.itemIndex+1)
             }
+            println("d")
             return nil
         }
         
@@ -403,24 +451,21 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     private func getItemController(itemIndex: Int) -> PageItemController? {
         
-        inboxNumber.text = String(l8rsBeforeCurrentDate.count)
-
-        
 
         if l8rsBeforeCurrentDate.count == 0 {
             println("no more items to show, so I should never be called")
             
-            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+            return nil
         }
         else {
+            println("getting controller for index \(itemIndex)")
             let pageItemController = self.storyboard!.instantiateViewControllerWithIdentifier("ItemController") as PageItemController
             pageItemController.itemIndex = itemIndex
             let l8r = l8rsBeforeCurrentDate[itemIndex]
-            pageItemController.imageData = l8r.valueForKey("imageData") as NSData //TODO: sometimes nil, definitely not just when there are no more l8rs
+            pageItemController.imageData = l8r.valueForKey("imageData") as NSData
             return pageItemController
         }
         
-        return nil
     }
 }
 

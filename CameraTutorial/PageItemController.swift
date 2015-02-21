@@ -36,9 +36,16 @@ class PageItemController: UIViewController {
     
     func addImageView(){
         
-        let imageView = UIImageView(frame: self.view.frame)
         image = UIImage(data: imageData)
+        
+        let ratio = self.view.frame.height/image.size.height
+        println(ratio)
+        
+        let imageView = UIImageView(frame: CGRectMake(0,0, image.size.width*ratio, image.size.height*ratio))
         imageView.image = image
+        imageView.center = self.view.center
+        imageView.clipsToBounds = true
+        self.view.clipsToBounds = true
         self.view.addSubview(imageView)
     
     }
