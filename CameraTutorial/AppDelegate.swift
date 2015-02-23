@@ -44,6 +44,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.saveContext()
     }
     
+    //MARK: - Notification Center
+    func application(application: UIApplication, handleActionWithIdentifier identifier: String?, forLocalNotification notification: UILocalNotification, completionHandler: () -> Void) {
+        
+        println(identifier)
+        
+        if identifier == "view" {
+            NSNotificationCenter.defaultCenter().postNotificationName("viewNotification", object: nil)
+        }
+
+        completionHandler()
+    }
     
     // MARK: - Core Data stack
     

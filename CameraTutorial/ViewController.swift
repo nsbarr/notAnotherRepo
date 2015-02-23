@@ -16,8 +16,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var pageViewController: UIPageViewController?
     var cameraController: CameraController!
     
-//    var l8rs = [NSManagedObject]()
-    
     var l8rsBeforeCurrentDate = [NSManagedObject]()
     var indexOfCurrentPage: Int!
     var appDelegate: AppDelegate!
@@ -32,7 +30,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var datePicker: UIDatePicker!
     
     var nc: UINavigationController?
-    
     let vc = UIViewController()
     
     
@@ -41,13 +38,58 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupNotificationSettings()
         self.setUpCoreData()
         self.fetchL8rs()
         self.createPageViewController()
+        
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleViewNotification", name: "viewNotification", object: nil)
     }
     
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+    
+    func setupNotificationSettings() {
+        
+        let notificationSettings: UIUserNotificationSettings! = UIApplication.sharedApplication().currentUserNotificationSettings()
+        
+        if (notificationSettings.types == UIUserNotificationType.None){
+            
+            var notificationTypes: UIUserNotificationType = UIUserNotificationType.Alert | UIUserNotificationType.Badge
+            
+            var ignoreAction = UIMutableUserNotificationAction()
+            ignoreAction.identifier = "ignore"
+            ignoreAction.title = "Ignore"
+            ignoreAction.activationMode = UIUserNotificationActivationMode.Background
+            ignoreAction.destructive = false
+            ignoreAction.authenticationRequired = false
+            
+            var viewAction = UIMutableUserNotificationAction()
+            viewAction.identifier = "view"
+            viewAction.title = "View"
+            viewAction.activationMode = UIUserNotificationActivationMode.Foreground
+            viewAction.destructive = false
+            viewAction.authenticationRequired = true
+            
+            let actionsArray = NSArray(objects: ignoreAction, viewAction)
+            
+            var l8rReminderCategory = UIMutableUserNotificationCategory()
+            l8rReminderCategory.identifier = "l8rReminderCategory"
+            l8rReminderCategory.setActions(actionsArray, forContext: UIUserNotificationActionContext.Default)
+            l8rReminderCategory.setActions(actionsArray, forContext: UIUserNotificationActionContext.Minimal)
+            
+            
+            //convenience init(forTypes allowedUserNotificationTypes: UIUserNotificationType, categories actionSettings: NSSet?)
+            
+            
+            let categoriesForSettings = NSSet(objects: l8rReminderCategory)
+            
+            
+            let newNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: categoriesForSettings)
+            
+            UIApplication.sharedApplication().registerUserNotificationSettings(newNotificationSettings)
+        }
     }
     
     func setUpCoreData(){
@@ -153,145 +195,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         deleteButton.hidden = false
         pageViewController!.view.addSubview(deleteButton)
 
-    }
-    
-    func deleteL8r(sender: UIButton){
-        
-
-        //special case if the L8R being deleted is the photo we just took
-        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
-            
-            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
-            currentPage.previewLayer?.connection.enabled = true
-            hideButtons(true)
-            currentPage.snapButton.hidden = false
-            
-        }
-        
-        else {
-            
-            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
-            indexOfCurrentPage = currentPage.itemIndex
-
-            
-            //DELETE L8R
-            managedContext.deleteObject(l8rsBeforeCurrentDate[indexOfCurrentPage])
-            
-            var error: NSError?
-
-            if !managedContext.save(&error) {
-                println("Unresolved error \(error), \(error!.userInfo)")
-                abort()
-            }
-            
-            self.moveOnToNextL8r()    
-        }
-        
-        
-    }
-    
-    
-    
-    func scheduleL8r(sender: UIButton){
-        
-        
-        //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
-        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
-            
-            println("current page is camera")
-            
-            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
-            currentPage.previewLayer?.connection.enabled = true
-            hideButtons(true)
-            currentPage.snapButton.hidden = false
-            let imageToSchedule = currentPage.image
-            
-            //SAVE NEW L8R
-            let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
-            let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
-            l8r.setValue(imageData, forKey: "imageData")
-            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
-            
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Coulnd't save \(error), \(error?.userInfo)")
-            }
-            
-            //UPDATE L8RS
-            self.fetchL8rs()
-            self.updateInboxCount()
-            
-            //TODO: If inbox is empty and user snaps a photo and schedules it for l8r, then schedules another photo for now, the count increments but it's impossible to paginate to. Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
-            
-            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
-            
-
-            
-        }
-        
-        else {
-            
-            println("current page is item")
-
-            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
-            indexOfCurrentPage = currentPage.itemIndex
-            
-            //RESCHEDULE L8R
-
-            let imageToSchedule = currentPage.image
-            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
-            let itemIndex = currentPage.itemIndex
-            let l8r = l8rsBeforeCurrentDate[itemIndex]
-            l8r.setValue(imageData, forKey: "imageData")
-            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
-            
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Coulnd't save \(error), \(error?.userInfo)")
-            }
-            
-            self.moveOnToNextL8r()
-
-        }
-        
-
-    }
-    
-    func moveOnToNextL8r(){
-        //REFRESH LIST
-        self.fetchL8rs()
-        self.updateInboxCount()
-
-        
-        //SHOW CAMERA IF NO MORE L8RS TO SHOW
-        if l8rsBeforeCurrentDate.count == 0 {
-            println("show camera")
-         //   cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
-       //     pageViewController?.addChildViewController(cameraController)
-            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
-        }
-            
-        //SHOW PREVIOUS L8R IF WE DELETED/SCHEDULED THE LAST ONE
-            
-        else if indexOfCurrentPage > (l8rsBeforeCurrentDate.count-1) {
-            
-            println("show prev l8r")
-            let targetViewController = getItemController(l8rsBeforeCurrentDate.count-1) as PageItemController!
-            let arrayVC : NSArray = [targetViewController]
-            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
-        }
-            
-        //OTHERWISE SHOW L8R AT CURRENT INDEX
-        else {
-            
-            println("show new l8r at current index")
-            let targetViewController = getItemController(indexOfCurrentPage) as PageItemController!
-            let arrayVC : NSArray = [targetViewController]
-            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
-            
-        }
-        
     }
     
     
@@ -401,6 +304,163 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             return NSDate()
 
         }
+    }
+    
+    //MARK: - L8R Management
+    
+    func deleteL8r(sender: UIButton){
+        
+        
+        //special case if the L8R being deleted is the photo we just took
+        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            currentPage.previewLayer?.connection.enabled = true
+            hideButtons(true)
+            currentPage.snapButton.hidden = false
+            
+        }
+            
+        else {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            indexOfCurrentPage = currentPage.itemIndex
+            
+            
+            //DELETE L8R
+            managedContext.deleteObject(l8rsBeforeCurrentDate[indexOfCurrentPage])
+            
+            var error: NSError?
+            
+            if !managedContext.save(&error) {
+                println("Unresolved error \(error), \(error!.userInfo)")
+                abort()
+            }
+            
+            self.moveOnToNextL8r()
+        }
+        
+        
+    }
+    
+    
+    
+    func scheduleL8r(sender: UIButton){
+        
+        
+        //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
+        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            currentPage.previewLayer?.connection.enabled = true
+            hideButtons(true)
+            currentPage.snapButton.hidden = false
+            let imageToSchedule = currentPage.image
+            
+            //SAVE NEW L8R
+            let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
+            let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
+            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
+            l8r.setValue(imageData, forKey: "imageData")
+            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Coulnd't save \(error), \(error?.userInfo)")
+            }
+            
+            //UPDATE L8RS
+            self.fetchL8rs()
+            self.updateInboxCount()
+            
+            //Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
+            
+            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+            
+            
+            
+        }
+            
+        else {
+            
+            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            indexOfCurrentPage = currentPage.itemIndex
+            
+            //RESCHEDULE L8R
+            
+            let imageToSchedule = currentPage.image
+            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
+            let itemIndex = currentPage.itemIndex
+            let l8r = l8rsBeforeCurrentDate[itemIndex]
+            l8r.setValue(imageData, forKey: "imageData")
+            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Coulnd't save \(error), \(error?.userInfo)")
+            }
+            
+            self.moveOnToNextL8r()
+            
+        }
+        
+        self.scheduleLocalNotification()
+        
+    }
+    
+    func moveOnToNextL8r(){
+        //REFRESH LIST
+        self.fetchL8rs()
+        self.updateInboxCount()
+        
+        
+        //SHOW CAMERA IF NO MORE L8RS TO SHOW
+        if l8rsBeforeCurrentDate.count == 0 {
+            println("show camera")
+            //   cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+            //     pageViewController?.addChildViewController(cameraController)
+            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+        }
+            
+            //SHOW PREVIOUS L8R IF WE DELETED/SCHEDULED THE LAST ONE
+            
+        else if indexOfCurrentPage > (l8rsBeforeCurrentDate.count-1) {
+            
+            println("show prev l8r")
+            let targetViewController = getItemController(l8rsBeforeCurrentDate.count-1) as PageItemController!
+            let arrayVC : NSArray = [targetViewController]
+            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        }
+            
+            //OTHERWISE SHOW L8R AT CURRENT INDEX
+        else {
+            
+            println("show new l8r at current index")
+            let targetViewController = getItemController(indexOfCurrentPage) as PageItemController!
+            let arrayVC : NSArray = [targetViewController]
+            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+            
+        }
+        
+    }
+
+    
+    func scheduleLocalNotification() {
+        var localNotification = UILocalNotification()
+        localNotification.fireDate = datePicker.date
+        localNotification.alertBody = "A L8R just arrived for you"
+        localNotification.alertAction = "View"
+        localNotification.category = "l8rReminderCategory"
+        UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
+        
+    }
+    
+    func handleViewNotification(){
+        println("foo")
+        self.fetchL8rs()
+        let targetViewController = getItemController(0) as PageItemController!
+        let arrayVC : NSArray = [targetViewController]
+        pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
     }
     
     
