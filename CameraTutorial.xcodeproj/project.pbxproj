@@ -32,7 +32,7 @@
 		01523DCB1A8FC23500FCDC0F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		01BDDE881A912C240015F601 /* PageItemController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageItemController.swift; sourceTree = "<group>"; };
 		01BDDE8A1A912D4A0015F601 /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
-		02F5BDE019CE1C4900EDFD47 /* CameraTutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraTutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		02F5BDE019CE1C4900EDFD47 /* l8r.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = l8r.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F5BDE419CE1C4900EDFD47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02F5BDE519CE1C4900EDFD47 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		02F5BDE719CE1C4900EDFD47 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -74,7 +74,7 @@
 		02F5BDE119CE1C4900EDFD47 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02F5BDE019CE1C4900EDFD47 /* CameraTutorial.app */,
+				02F5BDE019CE1C4900EDFD47 /* l8r.app */,
 				02F5BDF519CE1C4900EDFD47 /* CameraTutorialTests.xctest */,
 			);
 			name = Products;
@@ -138,7 +138,7 @@
 			);
 			name = CameraTutorial;
 			productName = CameraTutorial;
-			productReference = 02F5BDE019CE1C4900EDFD47 /* CameraTutorial.app */;
+			productReference = 02F5BDE019CE1C4900EDFD47 /* l8r.app */;
 			productType = "com.apple.product-type.application";
 		};
 		02F5BDF419CE1C4900EDFD47 /* CameraTutorialTests */ = {
@@ -341,6 +341,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -353,7 +354,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = CameraTutorial/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = l8r;
+				PRODUCT_NAME = l8r;
 			};
 			name = Debug;
 		};
@@ -364,7 +366,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = CameraTutorial/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = l8r;
+				PRODUCT_NAME = l8r;
 			};
 			name = Release;
 		};

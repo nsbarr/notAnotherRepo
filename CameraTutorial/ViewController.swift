@@ -44,7 +44,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         self.setUpCoreData()
         self.fetchL8rs()
         self.createPageViewController()
-        // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
     }
     
     func setUpCoreData(){
@@ -90,13 +93,30 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     func addInboxBadge(){
         
-        inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width-100, 60, 40, 40))
-        inboxNumber.font = UIFont(name: "Arial", size: 28)
-        inboxNumber.textColor = UIColor.purpleColor()
-        inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+       let inboxFrame = UIImageView(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+//        inboxFrame.image = UIImage(named: "inboxFrame")
+//        pageViewController!.view.addSubview(inboxFrame)
+        
+        inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 24)
+        
+        inboxNumber.textAlignment = .Center
+        inboxNumber.textColor = UIColor.whiteColor()
+        inboxNumber.layer.shadowColor = UIColor.blackColor().CGColor
+        inboxNumber.layer.shadowOffset = CGSizeMake(0, 1)
+        inboxNumber.layer.shadowOpacity = 1
+        inboxNumber.layer.shadowRadius = 1
+        self.updateInboxCount()
         pageViewController!.view.addSubview(inboxNumber)
         
         
+    }
+    
+    func updateInboxCount(){
+        if l8rsBeforeCurrentDate.count > 0 {
+            inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+        }
+        else {inboxNumber.text = "💎"}
     }
     
     func addActionButtons(){
@@ -104,24 +124,32 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         dateButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 116, 42))
         dateButton.addTarget(self, action: Selector("openDateMenu:"), forControlEvents: UIControlEvents.TouchUpInside)
-        dateButton.center.x = self.view.center.x
+      //  dateButton.center.x = self.view.center.x
         let dateButtonImage = UIImage(named: "tomorrowButton")
         dateButton.setImage(dateButtonImage, forState: .Normal)
         dateButton.tag = 1
         dateButton.hidden = false
         pageViewController!.view.addSubview(dateButton)
         
-        scheduleButton = UIButton(frame: CGRectMake(self.view.frame.width-78, self.view.frame.height-60, 58, 42))
+        scheduleButton = UIButton(frame: CGRectMake(self.view.frame.width-78, self.view.frame.height-62, 69, 50))
         scheduleButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
         let scheduleButtonImage = UIImage(named: "scheduleButton")
         scheduleButton.setImage(scheduleButtonImage, forState: .Normal)
         scheduleButton.hidden = false
         pageViewController!.view.addSubview(scheduleButton)
         
-        deleteButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 42, 42))
+        deleteButton = UIButton(frame: CGRectMake(20, 20, 40, 40))
         deleteButton.addTarget(self, action: Selector("deleteL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
-        let deleteButtonImage = UIImage(named: "deleteButton")
-        deleteButton.setImage(deleteButtonImage, forState: .Normal)
+     //   let deleteButtonImage = UIImage(named: "deleteButton")
+    //    deleteButton.setImage(deleteButtonImage, forState: .Normal)
+        deleteButton.setTitle("×", forState: .Normal)
+        deleteButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 40)
+        deleteButton.titleLabel?.textAlignment = .Center
+        deleteButton.titleLabel?.textColor = UIColor.whiteColor()
+        deleteButton.layer.shadowColor = UIColor.blackColor().CGColor
+        deleteButton.layer.shadowOffset = CGSizeMake(0, 1)
+        deleteButton.layer.shadowOpacity = 1
+        deleteButton.layer.shadowRadius = 1
         deleteButton.hidden = false
         pageViewController!.view.addSubview(deleteButton)
 
@@ -192,7 +220,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             //UPDATE L8RS
             self.fetchL8rs()
-            inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+            self.updateInboxCount()
             
             //TODO: If inbox is empty and user snaps a photo and schedules it for l8r, then schedules another photo for now, the count increments but it's impossible to paginate to. Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
             
@@ -233,7 +261,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func moveOnToNextL8r(){
         //REFRESH LIST
         self.fetchL8rs()
-        inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+        self.updateInboxCount()
 
         
         //SHOW CAMERA IF NO MORE L8RS TO SHOW
