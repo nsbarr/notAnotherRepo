@@ -1,10 +1,8 @@
 //
 //  AppDelegate.swift
-//  CameraTutorial
+//  L8R
 //
-//  Created by Jameson Quave on 9/20/14.
-//  Copyright (c) 2014 JQ Software. All rights reserved.
-//
+
 
 import UIKit
 import CoreData

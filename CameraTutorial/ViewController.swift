@@ -1,9 +1,6 @@
 //
 //  ViewController.swift
-//  CameraTutorial
-//
-//  Created by Jameson Quave on 9/20/14.
-//  Copyright (c) 2014 JQ Software. All rights reserved.
+//  L8R
 //
 
 import UIKit
@@ -166,7 +163,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         dateButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 116, 42))
         dateButton.addTarget(self, action: Selector("openDateMenu:"), forControlEvents: UIControlEvents.TouchUpInside)
-      //  dateButton.center.x = self.view.center.x
+        dateButton.center.x = self.view.center.x
         let dateButtonImage = UIImage(named: "tomorrowButton")
         dateButton.setImage(dateButtonImage, forState: .Normal)
         dateButton.tag = 1
@@ -211,25 +208,25 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         vc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
         vc.modalPresentationStyle = .OverCurrentContext
         
-        let tmrwButton = UIButton(frame: CGRectMake(20, 40, 116, 42))
-        tmrwButton.setImage(UIImage(named: "tomorrowButton"), forState: .Normal)
-        tmrwButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
-        tmrwButton.tag = 1
-        vc.view.addSubview(tmrwButton)
-        
-        let nextWeekButton = UIButton(frame: CGRectMake(160, 40, 116, 42))
-        nextWeekButton.setImage(UIImage(named: "nextWeekButton"), forState: .Normal)
-        nextWeekButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
-        nextWeekButton.tag = 7
-        vc.view.addSubview(nextWeekButton)
-        
-        let rightNowButton = UIButton(frame: CGRectMake(20, 90, 116, 42))
+        let rightNowButton = UIButton(frame: CGRectMake(20, 40, 116, 42))
         rightNowButton.setImage(UIImage(named: "rightNowButton"), forState: .Normal)
         rightNowButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
         rightNowButton.tag = 2
         vc.view.addSubview(rightNowButton)
         
-        let pickDateButton = UIButton(frame: CGRectMake(160, 90, 116, 42))
+        let tmrwButton = UIButton(frame: CGRectMake(20, 90, 116, 42))
+        tmrwButton.setImage(UIImage(named: "tomorrowButton"), forState: .Normal)
+        tmrwButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        tmrwButton.tag = 1
+        vc.view.addSubview(tmrwButton)
+        
+        let nextWeekButton = UIButton(frame: CGRectMake(20, 140, 116, 42))
+        nextWeekButton.setImage(UIImage(named: "nextWeekButton"), forState: .Normal)
+        nextWeekButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        nextWeekButton.tag = 7
+        vc.view.addSubview(nextWeekButton)
+        
+        let pickDateButton = UIButton(frame: CGRectMake(20, 190, 116, 42))
         pickDateButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
         pickDateButton.addTarget(self, action: Selector("openCalendarMenu:"), forControlEvents: .TouchUpInside)
         pickDateButton.tag = 999
@@ -447,7 +444,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     func scheduleLocalNotification() {
         var localNotification = UILocalNotification()
-        localNotification.fireDate = datePicker.date
+        localNotification.fireDate = self.getDateFromDateButton(dateButton.tag)
         localNotification.alertBody = "A L8R just arrived for you"
         localNotification.alertAction = "View"
         localNotification.category = "l8rReminderCategory"

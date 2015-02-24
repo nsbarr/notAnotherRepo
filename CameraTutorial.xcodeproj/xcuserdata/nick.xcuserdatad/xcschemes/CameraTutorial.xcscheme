@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "02F5BDDF19CE1C4900EDFD47"
-               BuildableName = "CameraTutorial.app"
+               BuildableName = "l8r.app"
                BlueprintName = "CameraTutorial"
                ReferencedContainer = "container:CameraTutorial.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02F5BDDF19CE1C4900EDFD47"
-            BuildableName = "CameraTutorial.app"
+            BuildableName = "l8r.app"
             BlueprintName = "CameraTutorial"
             ReferencedContainer = "container:CameraTutorial.xcodeproj">
          </BuildableReference>
@@ -76,7 +76,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02F5BDDF19CE1C4900EDFD47"
-            BuildableName = "CameraTutorial.app"
+            BuildableName = "l8r.app"
             BlueprintName = "CameraTutorial"
             ReferencedContainer = "container:CameraTutorial.xcodeproj">
          </BuildableReference>
@@ -94,7 +94,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02F5BDDF19CE1C4900EDFD47"
-            BuildableName = "CameraTutorial.app"
+            BuildableName = "l8r.app"
             BlueprintName = "CameraTutorial"
             ReferencedContainer = "container:CameraTutorial.xcodeproj">
          </BuildableReference>

@@ -1,10 +1,8 @@
 //
-//  PageItemController.swift
-//  Paging_Swift
+//  CameraController.swift
+//  L8R
 //
-//  Created by Olga Dalton on 26/10/14.
-//  Copyright (c) 2014 swiftiostutorials.com. All rights reserved.
-//
+
 
 import UIKit
 import AVFoundation

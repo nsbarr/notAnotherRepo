@@ -10,6 +10,7 @@
 		01523DCC1A8FC23500FCDC0F /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01523DCA1A8FC23500FCDC0F /* Model.xcdatamodeld */; };
 		01BDDE891A912C240015F601 /* PageItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE881A912C240015F601 /* PageItemController.swift */; };
 		01BDDE8B1A912D4A0015F601 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE8A1A912D4A0015F601 /* CameraController.swift */; };
+		01BDDE8D1A9BD3E00015F601 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE8C1A9BD3DF0015F601 /* MenuButton.swift */; };
 		02F5BDE619CE1C4900EDFD47 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F5BDE519CE1C4900EDFD47 /* AppDelegate.swift */; };
 		02F5BDE819CE1C4900EDFD47 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F5BDE719CE1C4900EDFD47 /* ViewController.swift */; };
 		02F5BDEB19CE1C4900EDFD47 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02F5BDE919CE1C4900EDFD47 /* Main.storyboard */; };
@@ -32,6 +33,7 @@
 		01523DCB1A8FC23500FCDC0F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		01BDDE881A912C240015F601 /* PageItemController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageItemController.swift; sourceTree = "<group>"; };
 		01BDDE8A1A912D4A0015F601 /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
+		01BDDE8C1A9BD3DF0015F601 /* MenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 		02F5BDE019CE1C4900EDFD47 /* l8r.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = l8r.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F5BDE419CE1C4900EDFD47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02F5BDE519CE1C4900EDFD47 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				01523DCA1A8FC23500FCDC0F /* Model.xcdatamodeld */,
 				02F5BDE719CE1C4900EDFD47 /* ViewController.swift */,
 				01BDDE8A1A912D4A0015F601 /* CameraController.swift */,
+				01BDDE8C1A9BD3DF0015F601 /* MenuButton.swift */,
 				01BDDE881A912C240015F601 /* PageItemController.swift */,
 				02F5BDE919CE1C4900EDFD47 /* Main.storyboard */,
 				02F5BDEC19CE1C4900EDFD47 /* Images.xcassets */,
@@ -225,6 +228,7 @@
 			files = (
 				02F5BDE819CE1C4900EDFD47 /* ViewController.swift in Sources */,
 				02F5BDE619CE1C4900EDFD47 /* AppDelegate.swift in Sources */,
+				01BDDE8D1A9BD3E00015F601 /* MenuButton.swift in Sources */,
 				01523DCC1A8FC23500FCDC0F /* Model.xcdatamodeld in Sources */,
 				01BDDE891A912C240015F601 /* PageItemController.swift in Sources */,
 				01BDDE8B1A912D4A0015F601 /* CameraController.swift in Sources */,
