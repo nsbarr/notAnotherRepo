@@ -21,9 +21,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var inboxButton: UIButton!
     var inboxNumber: UILabel!
     
-    var dateButton: UIButton!
+   // var dateButton: UIButton!
+    var triggerButton: UIButton!
     var scheduleButton: UIButton!
-    var deleteButton: UIButton!
+   // var deleteButton: UIButton!
     var datePicker: UIDatePicker!
     
     var nc: UINavigationController?
@@ -111,15 +112,28 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
         if let results = fetchedResults {
             
+            
             let currentDate = NSDate()
             for l8r in results {
+                
+//                //if you ever need to delete all of them
+//                managedContext.deleteObject(l8r)
+//                
+//                var error: NSError?
+//                
+//                if !managedContext.save(&error) {
+//                    println("Unresolved error \(error), \(error!.userInfo)")
+//                    abort()
+//                }
                 
                 println(l8r.valueForKey("fireDate"))
                 
                 if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
                     
+                    
                 }
+
             }
         }
         else {
@@ -158,47 +172,71 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         else {inboxNumber.text = "💎"}
     }
     
+    func appearTriggerButtons(){
+        let triggerButtons = ["Never Again", "Pick a Date", "Next Year", "Next Month", "Next Week", "Tomorrow", "In an Hour", "Right Now"]
+        let triggerButtonTags = [86, 666, 365, 30, 7, 1, 60, 0]
+        var buttonTag = 0
+        let triggerButtonPadding:CGFloat = 20
+        var triggerButtonYPos:CGFloat = 100
+        
+        for triggerButtonTitle in triggerButtons {
+            triggerButton = MenuButton(frame: CGRectMake(0, triggerButtonYPos, 100, 44))
+            triggerButton.setTitle(triggerButtonTitle, forState: .Normal)
+            triggerButton.tag = triggerButtonTags[buttonTag]
+            triggerButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
+            triggerButton.sizeToFit()
+            pageViewController!.view.addSubview(triggerButton)
+            triggerButtonYPos = triggerButtonYPos + triggerButton.frame.height + triggerButtonPadding
+            buttonTag = buttonTag + 1
+        }
+        
+        
+    }
+    
     func addActionButtons(){
         
         
-        dateButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 116, 42))
-        dateButton.addTarget(self, action: Selector("openDateMenu:"), forControlEvents: UIControlEvents.TouchUpInside)
-        dateButton.center.x = self.view.center.x
-        let dateButtonImage = UIImage(named: "tomorrowButton")
-        dateButton.setImage(dateButtonImage, forState: .Normal)
-        dateButton.tag = 1
-        dateButton.hidden = false
-        pageViewController!.view.addSubview(dateButton)
+//        dateButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 116, 42))
+//        dateButton.addTarget(self, action: Selector("openDateMenu:"), forControlEvents: UIControlEvents.TouchUpInside)
+//        dateButton.center.x = self.view.center.x
+//        let dateButtonImage = UIImage(named: "tomorrowButton")
+//        dateButton.setImage(dateButtonImage, forState: .Normal)
+//        dateButton.tag = 1
+//        dateButton.hidden = false
+//        pageViewController!.view.addSubview(dateButton)
         
-        scheduleButton = UIButton(frame: CGRectMake(self.view.frame.width-78, self.view.frame.height-62, 69, 50))
-        scheduleButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
-        let scheduleButtonImage = UIImage(named: "scheduleButton")
-        scheduleButton.setImage(scheduleButtonImage, forState: .Normal)
-        scheduleButton.hidden = false
-        pageViewController!.view.addSubview(scheduleButton)
         
-        deleteButton = UIButton(frame: CGRectMake(20, 20, 40, 40))
-        deleteButton.addTarget(self, action: Selector("deleteL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
-     //   let deleteButtonImage = UIImage(named: "deleteButton")
-    //    deleteButton.setImage(deleteButtonImage, forState: .Normal)
-        deleteButton.setTitle("×", forState: .Normal)
-        deleteButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 40)
-        deleteButton.titleLabel?.textAlignment = .Center
-        deleteButton.titleLabel?.textColor = UIColor.whiteColor()
-        deleteButton.layer.shadowColor = UIColor.blackColor().CGColor
-        deleteButton.layer.shadowOffset = CGSizeMake(0, 1)
-        deleteButton.layer.shadowOpacity = 1
-        deleteButton.layer.shadowRadius = 1
-        deleteButton.hidden = false
-        pageViewController!.view.addSubview(deleteButton)
+        
+//        scheduleButton = UIButton(frame: CGRectMake(self.view.frame.width-78, self.view.frame.height-62, 69, 50))
+//        scheduleButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
+//        let scheduleButtonImage = UIImage(named: "scheduleButton")
+//        scheduleButton.setImage(scheduleButtonImage, forState: .Normal)
+//        scheduleButton.hidden = false
+//        pageViewController!.view.addSubview(scheduleButton)
+        
+//        deleteButton = UIButton(frame: CGRectMake(20, 20, 40, 40))
+//        deleteButton.addTarget(self, action: Selector("deleteL8r"), forControlEvents: UIControlEvents.TouchUpInside)
+//     //   let deleteButtonImage = UIImage(named: "deleteButton")
+//    //    deleteButton.setImage(deleteButtonImage, forState: .Normal)
+//        deleteButton.setTitle("×", forState: .Normal)
+//        deleteButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 40)
+//        deleteButton.titleLabel?.textAlignment = .Center
+//        deleteButton.titleLabel?.textColor = UIColor.whiteColor()
+//        deleteButton.layer.shadowColor = UIColor.blackColor().CGColor
+//        deleteButton.layer.shadowOffset = CGSizeMake(0, 1)
+//        deleteButton.layer.shadowOpacity = 1
+//        deleteButton.layer.shadowRadius = 1
+//        deleteButton.hidden = false
+//        pageViewController!.view.addSubview(deleteButton)
 
     }
     
     
     func hideButtons(toggle: Bool){
-        for button in [dateButton?, deleteButton?, scheduleButton?] {
-            if button != nil {
-                button!.hidden = toggle
+        println("changing hidden to \(toggle)")
+        for button in pageViewController!.view.subviews as [UIView] {
+            if (button.isKindOfClass(MenuButton)){
+                button.hidden = toggle
             }
         }
     }
@@ -241,19 +279,18 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         presentViewController(nc!, animated: false, completion: nil)
     }
     
-    func updateDate(sender: UIButton){
-        dateButton.setImage(sender.imageForState(.Normal), forState: .Normal)
-        dateButton.tag = sender.tag
-        self.dismissViewControllerAnimated(false, completion: nil)
-    }
+//    func updateDate(sender: UIButton){
+//        dateButton.setImage(sender.imageForState(.Normal), forState: .Normal)
+//        dateButton.tag = sender.tag
+//        self.dismissViewControllerAnimated(false, completion: nil)
+//    }
     
-    func openCalendarMenu(sender: UIButton){
+    func openCalendarMenu(){
         
-        for subview in vc.view.subviews {
-            if subview.tag > 0 {
-                subview.removeFromSuperview()
-            }
-        }
+        vc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
+        vc.modalPresentationStyle = .OverCurrentContext
+        
+
         
         datePicker = UIDatePicker(frame: self.view.frame)
         datePicker.center.y = self.view.center.y
@@ -262,39 +299,60 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         let confirmButton = UIButton(frame: CGRectMake(0, self.view.frame.height-200, 116, 42))
         confirmButton.center.x = self.view.center.x
         confirmButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
-        confirmButton.tag = 666
-        confirmButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
+        confirmButton.tag = 777
+        confirmButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: .TouchUpInside)
         vc.view.addSubview(confirmButton)
+        
+        nc = UINavigationController(rootViewController: vc)
+        nc!.navigationBar.hidden = true
+        nc!.modalPresentationStyle = .OverCurrentContext
+        
+        presentViewController(nc!, animated: false, completion: nil)
         
     }
     
-    func closeCalendarMenu(sender: UIButton){
-        
-    }
     
     func getDateFromDateButton(tag: Int) -> NSDate? {
         
         let currentTime = NSDate()
         var theCalendar = NSCalendar.currentCalendar()
         let timeComponent = NSDateComponents()
-        
+        //let triggerButtonTags = [86, 666, 365, 30, 7, 1, 60, 0]
         if tag == 1 { // tomorrow
 
             timeComponent.day = 1
             var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
             return scheduledDate
         }
-        else if tag == 7 {
+        else if tag == 7 { // next week
             timeComponent.day = 7
             var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
             return scheduledDate
         }
         
-        else if tag == 0 {
+        else if tag == 0 { // right now
             return NSDate()
         }
+        
+        else if tag == 60 { // in an hour
+            timeComponent.hour = 1
+            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+            return scheduledDate
+        }
+        
+        else if tag == 30 { //in a month
+            timeComponent.month = 1
+            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+            return scheduledDate
+        }
             
-        else if tag == 666 {
+        else if tag == 365 { // in a year
+            timeComponent.year = 1
+            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+            return scheduledDate
+        }
+            
+        else if tag == 777 { // calendar
             return datePicker.date
         }
         else {
@@ -305,7 +363,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     //MARK: - L8R Management
     
-    func deleteL8r(sender: UIButton){
+    func deleteL8r(){
         
         
         //special case if the L8R being deleted is the photo we just took
@@ -344,9 +402,21 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     func scheduleL8r(sender: UIButton){
         
+        if sender.tag == 777 {
+            nc?.dismissViewControllerAnimated(false, completion: nil)
+        }
+        
+        if sender.tag == 86 {
+            println("never again")
+            deleteL8r()
+        }
+        
+        else if sender.tag == 666 {
+            self.openCalendarMenu()
+        }
         
         //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
-        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+        else if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
             
             let currentPage = self.pageViewController?.viewControllers[0] as CameraController
             currentPage.previewLayer?.connection.enabled = true
@@ -359,7 +429,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
             let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
             l8r.setValue(imageData, forKey: "imageData")
-            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
+            l8r.setValue(getDateFromDateButton(sender.tag), forKey: "fireDate")
             
             var error: NSError?
             if !managedContext.save(&error) {
@@ -372,6 +442,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             //Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
             
+            self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
+
             pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
             
             
@@ -390,18 +462,19 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             let itemIndex = currentPage.itemIndex
             let l8r = l8rsBeforeCurrentDate[itemIndex]
             l8r.setValue(imageData, forKey: "imageData")
-            l8r.setValue(getDateFromDateButton(dateButton.tag), forKey: "fireDate")
+            l8r.setValue(getDateFromDateButton(sender.tag), forKey: "fireDate")
             
             var error: NSError?
             if !managedContext.save(&error) {
                 println("Coulnd't save \(error), \(error?.userInfo)")
             }
             
+            self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
             self.moveOnToNextL8r()
             
         }
         
-        self.scheduleLocalNotification()
+        
         
     }
     
@@ -442,9 +515,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
 
     
-    func scheduleLocalNotification() {
+    func scheduleLocalNotificationWithFireDate(fireDate: NSDate) {
         var localNotification = UILocalNotification()
-        localNotification.fireDate = self.getDateFromDateButton(dateButton.tag)
+        localNotification.fireDate = fireDate
         localNotification.alertBody = "A L8R just arrived for you"
         localNotification.alertAction = "View"
         localNotification.category = "l8rReminderCategory"
@@ -481,7 +554,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         addChildViewController(pageViewController!)
         
         self.addInboxBadge()
-        self.addActionButtons()
+        self.appearTriggerButtons()
         
         self.view.addSubview(pageViewController!.view)
         pageViewController!.didMoveToParentViewController(self)

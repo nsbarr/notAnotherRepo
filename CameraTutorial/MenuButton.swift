@@ -15,6 +15,7 @@ class MenuButton: UIButton {
         self.titleLabel!.textAlignment = .Center
         self.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         self.titleLabel!.sizeToFit()
+        self.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         self.layer.shadowColor = UIColor.blackColor().CGColor
         self.layer.shadowOffset = CGSizeMake(0, 1)
         self.layer.shadowOpacity = 1
