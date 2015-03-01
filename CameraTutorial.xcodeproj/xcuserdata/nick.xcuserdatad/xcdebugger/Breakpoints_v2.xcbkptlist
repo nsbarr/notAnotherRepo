@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/PageItemController.swift"
-            timestampString = "446411888.053885"
+            timestampString = "446936464.592476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
             landmarkName = "addImageView()"
             landmarkType = "5">
          </BreakpointContent>

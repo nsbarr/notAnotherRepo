@@ -22,7 +22,8 @@ class CameraController: UIViewController {
     var frontCameraDevice:AVCaptureDevice?
     var stillCameraOutput:AVCaptureStillImageOutput!
     
-    var captureDevice : AVCaptureDevice?
+    var currentInput: AVCaptureDeviceInput?
+    var currentDeviceIsBack = true
     
     var image: UIImage!
     
@@ -37,6 +38,7 @@ class CameraController: UIViewController {
         super.viewDidLoad()
         self.setUpCamera()
         self.addSnapButton()
+        self.addFlipButton()
         
     }
     
@@ -66,7 +68,8 @@ class CameraController: UIViewController {
         let possibleCameraInput: AnyObject? = AVCaptureDeviceInput.deviceInputWithDevice(backCameraDevice, error: &error)
         if let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput {
             if self.session.canAddInput(backCameraInput) {
-                self.session.addInput(backCameraInput)
+                currentInput = backCameraInput
+                self.session.addInput(currentInput)
             }
         }
         
@@ -104,8 +107,14 @@ class CameraController: UIViewController {
         snapButton.hidden = false
         
         view.addSubview(snapButton)
-
         
+    }
+    
+    func addFlipButton(){
+        let flipButton = UIButton(frame: CGRectMake(10, 10, 100, 100))
+        flipButton.setTitle("Flip", forState: .Normal)
+        flipButton.addTarget(self, action: Selector("toggleCamera:"), forControlEvents: .TouchUpInside)
+        view.addSubview(flipButton)
     }
     
     func snapButtonPressed(sender: UIButton){
@@ -143,5 +152,43 @@ class CameraController: UIViewController {
                 }
             }
         }
+    }
+    
+    func toggleCamera(sender: UIButton) {
+        
+        if currentDeviceIsBack {
+            var error:NSError?
+            let possibleCameraInput: AnyObject? = AVCaptureDeviceInput.deviceInputWithDevice(frontCameraDevice, error: &error)
+            if let frontCameraInput = possibleCameraInput as? AVCaptureDeviceInput {
+                    self.session.beginConfiguration()
+                    self.session.removeInput(currentInput)
+                    currentInput = frontCameraInput
+                    self.session.addInput(currentInput)
+                    self.session.commitConfiguration()
+                currentDeviceIsBack = false
+                
+            }
+            else {
+                println("front camera not possible i guess?")
+            }
+        }
+        else {
+            var error:NSError?
+            let possibleCameraInput: AnyObject? = AVCaptureDeviceInput.deviceInputWithDevice(backCameraDevice, error: &error)
+            if let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput {
+                self.session.beginConfiguration()
+                self.session.removeInput(currentInput)
+                currentInput = backCameraInput
+                self.session.addInput(currentInput)
+                self.session.commitConfiguration()
+                currentDeviceIsBack = true
+                
+            }
+            else {
+                println("back camera not possible i guess?")
+            }
+
+        }
+
     }
 }

@@ -21,8 +21,9 @@ class PageItemController: UIViewController {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.addImageView()
+        self.addTriggerShelf()
+
        // contentImageView!.image = UIImage(named: imageName)
     }
     
@@ -47,5 +48,26 @@ class PageItemController: UIViewController {
     
     }
     
+    func addTriggerShelf(){
+        let triggerShelf = UIButton(frame: CGRect(x: 10, y: view.frame.height-54, width: 44, height: 44))
+        triggerShelf.addTarget(self, action: Selector("toggleButtonVisibility:"), forControlEvents: UIControlEvents.TouchUpInside)
+        triggerShelf.setImage(UIImage(named: "triggerShelf"), forState: .Normal)
+        self.view.addSubview(triggerShelf)
+    }
+    
+    func toggleButtonVisibility(sender: UIButton){
+        let pageController = self.parentViewController? as UIPageViewController
+        for button in pageController.view.subviews as [UIView] {
+            if (button.isKindOfClass(MenuButton)){
+                println("hiding!")
+                button.hidden = !button.hidden
+            }
+            else {
+                println("not hiding!")
+            }
+        }
+    }
+    
+
 
 }

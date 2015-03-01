@@ -18,7 +18,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
         
-    var inboxButton: UIButton!
     var inboxNumber: UILabel!
     
    // var dateButton: UIButton!
@@ -193,6 +192,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
     }
     
+
+    
     func addActionButtons(){
         
         
@@ -240,6 +241,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             }
         }
     }
+    
+
     
     func openDateMenu(sender: UIButton){
         
