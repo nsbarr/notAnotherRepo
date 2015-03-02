@@ -40,17 +40,16 @@ class CameraController: UIViewController {
         self.setUpCamera()
         self.addSnapButton()
         self.addFlipButton()
+
         
     }
     
-    override func viewWillAppear(animated: Bool) {
-        println("view will appear")
-        super.viewWillAppear(true)
-        let pageController = self.parentViewController?.parentViewController? as ViewController
-        pageController.hideButtons(true)
-        snapButton.hidden = false
-        flipButton.hidden = false
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        let pvc = self.parentViewController?.parentViewController? as ViewController
+        pvc.cameraButtonsAreHidden(false)
         previewLayer?.connection.enabled = true
+
 
     }
     
@@ -133,12 +132,11 @@ class CameraController: UIViewController {
                 (imageDataSampleBuffer, error) -> Void in
                 
                 if error == nil {
-                    
+                    println("should be disabling connection...")
+                    let pvc = self.parentViewController?.parentViewController as ViewController
+                    pvc.cameraButtonsAreHidden(true)
                     self.previewLayer?.connection.enabled = false
-                    let pageController = self.parentViewController?.parentViewController as ViewController
-                    self.snapButton.hidden = true
-                    self.flipButton.hidden = true
-                    pageController.hideButtons(false)
+
                     
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
                     let metadata:NSDictionary = CMCopyDictionaryOfAttachments(nil, imageDataSampleBuffer, CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)).takeUnretainedValue()

@@ -22,6 +22,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 //    var textView: UITextView!
     
     var triggerButton: UIButton!
+    var triggerToggleButton: UIButton!
     var scheduleButton: UIButton!
     var datePicker: UIDatePicker!
     
@@ -45,6 +46,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+
     
     func setupNotificationSettings() {
         
@@ -124,7 +126,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 //                    abort()
 //                }
                 
-                println(l8r.valueForKey("fireDate"))
+              //  println(l8r.valueForKey("fireDate"))
                 
                 if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
@@ -192,9 +194,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     
-    func hideButtons(toggle: Bool){
+    func hideTriggerButtons(toggle: Bool){
         println("changing hidden to \(toggle)")
      //   textView.hidden = toggle
+        
         for button in pageViewController!.view.subviews as [UIView] {
             if (button.isKindOfClass(MenuButton)){
                 button.hidden = toggle
@@ -362,8 +365,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             let currentPage = self.pageViewController?.viewControllers[0] as CameraController
             currentPage.previewLayer?.connection.enabled = true
-            hideButtons(true)
-            currentPage.snapButton.hidden = false
+           // hideTriggerButtons(true)
+            self.cameraButtonsAreHidden(false)
             
         }
             
@@ -409,6 +412,62 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
     }
     
+    func addTriggerShelf(){
+        triggerToggleButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-54, width: 44, height: 44))
+        triggerToggleButton.addTarget(self, action: Selector("toggleTriggerButtonVisibility:"), forControlEvents: UIControlEvents.TouchUpInside)
+        triggerToggleButton.setImage(UIImage(named: "triggerShelf"), forState: .Normal)
+        triggerToggleButton.hidden = true
+        self.pageViewController!.view.addSubview(triggerToggleButton)
+    }
+    
+    func toggleTriggerButtonVisibility(sender: UIButton){
+        for button in pageViewController!.view.subviews as [UIView] {
+            if (button.isKindOfClass(MenuButton)){
+                println("hiding!")
+                button.hidden = !button.hidden
+            }
+            else {
+                println("not hiding!")
+            }
+        }
+    }
+    
+    func cameraButtonsAreHidden(toggle: Bool){
+        
+
+        
+        //trigger toggle button
+        triggerToggleButton.hidden = !toggle
+        
+        //inbox button
+        inboxNumber.hidden = toggle
+        
+        //snap button
+        println(self.pageViewController?.viewControllers)
+        
+        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
+        
+            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            currentPage.previewLayer?.connection.enabled = true
+            currentPage.snapButton.hidden = toggle
+            
+            //flip button
+            currentPage.flipButton.hidden = toggle
+            
+
+            
+            //trigger buttons
+            for button in pageViewController!.view.subviews as [UIView] {
+                if (button.isKindOfClass(MenuButton)){
+                    button.hidden = !toggle
+                }
+            }
+        
+        }
+        
+        
+        
+    }
     
     func scheduleL8r(sender: UIButton){
         
@@ -430,8 +489,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             let currentPage = self.pageViewController?.viewControllers[0] as CameraController
             currentPage.previewLayer?.connection.enabled = true
-            hideButtons(true)
-            currentPage.snapButton.hidden = false
+            //hideTriggerButtons(true)
+            self.cameraButtonsAreHidden(false)
             
             //this is where we do the context thing
             
@@ -574,6 +633,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         self.addInboxBadge()
    //     self.addTextView()
+        self.addTriggerShelf()
         self.appearTriggerButtons()
         
         self.view.addSubview(pageViewController!.view)
