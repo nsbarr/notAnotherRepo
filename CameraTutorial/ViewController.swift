@@ -6,7 +6,7 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UITextViewDelegate {
     
     //MARK: - Variables 
     
@@ -19,11 +19,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var managedContext: NSManagedObjectContext!
         
     var inboxNumber: UILabel!
+//    var textView: UITextView!
     
-   // var dateButton: UIButton!
     var triggerButton: UIButton!
     var scheduleButton: UIButton!
-   // var deleteButton: UIButton!
     var datePicker: UIDatePicker!
     
     var nc: UINavigationController?
@@ -192,49 +191,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
     }
     
-
-    
-    func addActionButtons(){
-        
-        
-//        dateButton = UIButton(frame: CGRectMake(20, self.view.frame.height-60, 116, 42))
-//        dateButton.addTarget(self, action: Selector("openDateMenu:"), forControlEvents: UIControlEvents.TouchUpInside)
-//        dateButton.center.x = self.view.center.x
-//        let dateButtonImage = UIImage(named: "tomorrowButton")
-//        dateButton.setImage(dateButtonImage, forState: .Normal)
-//        dateButton.tag = 1
-//        dateButton.hidden = false
-//        pageViewController!.view.addSubview(dateButton)
-        
-        
-        
-//        scheduleButton = UIButton(frame: CGRectMake(self.view.frame.width-78, self.view.frame.height-62, 69, 50))
-//        scheduleButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
-//        let scheduleButtonImage = UIImage(named: "scheduleButton")
-//        scheduleButton.setImage(scheduleButtonImage, forState: .Normal)
-//        scheduleButton.hidden = false
-//        pageViewController!.view.addSubview(scheduleButton)
-        
-//        deleteButton = UIButton(frame: CGRectMake(20, 20, 40, 40))
-//        deleteButton.addTarget(self, action: Selector("deleteL8r"), forControlEvents: UIControlEvents.TouchUpInside)
-//     //   let deleteButtonImage = UIImage(named: "deleteButton")
-//    //    deleteButton.setImage(deleteButtonImage, forState: .Normal)
-//        deleteButton.setTitle("×", forState: .Normal)
-//        deleteButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 40)
-//        deleteButton.titleLabel?.textAlignment = .Center
-//        deleteButton.titleLabel?.textColor = UIColor.whiteColor()
-//        deleteButton.layer.shadowColor = UIColor.blackColor().CGColor
-//        deleteButton.layer.shadowOffset = CGSizeMake(0, 1)
-//        deleteButton.layer.shadowOpacity = 1
-//        deleteButton.layer.shadowRadius = 1
-//        deleteButton.hidden = false
-//        pageViewController!.view.addSubview(deleteButton)
-
-    }
-    
     
     func hideButtons(toggle: Bool){
         println("changing hidden to \(toggle)")
+     //   textView.hidden = toggle
         for button in pageViewController!.view.subviews as [UIView] {
             if (button.isKindOfClass(MenuButton)){
                 button.hidden = toggle
@@ -242,6 +202,34 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
     }
     
+//    
+//    func addTextView(){
+//        
+//        if textView != nil {
+//            textView.removeFromSuperview()
+//        }
+//        textView = UITextView(frame: CGRectMake(0, 80, self.view.frame.width, self.view.frame.height-200))
+//        textView.backgroundColor = UIColor.clearColor()
+//        textView.returnKeyType = UIReturnKeyType.Done
+//        textView.delegate = self
+//        textView.text = ""
+//        textView.textAlignment = .Center
+//        textView.textContainerInset = UIEdgeInsets(top: self.view.center.y, left: 0, bottom: 0, right: 0)
+//        let offset:CGPoint = self.view.center
+//        textView.contentOffset = offset
+//        textView.font = UIFont(name: "Arial-BoldMT", size: 36)
+//        textView.textColor = UIColor.whiteColor()
+//        pageViewController?.view.addSubview(textView)
+//    }
+//    
+//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+//        if(text == "\n") {
+//            textView.resignFirstResponder()
+//            return false
+//        }
+//        
+//        return true
+//    }
 
     
     func openDateMenu(sender: UIButton){
@@ -402,6 +390,25 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     
+    func updateImageWithTextFrom(textView: UITextView) -> UIImage? {
+        let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+
+        UIGraphicsBeginImageContextWithOptions(currentPage.image.size, false, 0)
+        currentPage.image.drawInRect(CGRectMake(0, 0, currentPage.image.size.width, currentPage.image.size.height))
+        let textToDraw = textView.text as NSString
+        let attributes = [NSFontAttributeName:textView.font]
+      //  textToDraw.drawInRect(CGRectMake(currentPage.image.size.width/2, currentPage.image.size.height/2, currentPage.image.size.width, currentPage.image.size.height), withAttributes: attributes)
+        
+
+   //     textView.layer.renderInContext(UIGraphicsGetCurrentContext())
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+
+        
+    }
+    
     
     func scheduleL8r(sender: UIButton){
         
@@ -425,7 +432,16 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             currentPage.previewLayer?.connection.enabled = true
             hideButtons(true)
             currentPage.snapButton.hidden = false
+            
+            //this is where we do the context thing
+            
+            
+    //        let imageToSchedule = updateImageWithTextFrom(textView)
             let imageToSchedule = currentPage.image
+            
+            
+            
+            
             
             //SAVE NEW L8R
             let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
@@ -557,6 +573,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         addChildViewController(pageViewController!)
         
         self.addInboxBadge()
+   //     self.addTextView()
         self.appearTriggerButtons()
         
         self.view.addSubview(pageViewController!.view)

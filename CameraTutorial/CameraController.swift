@@ -14,6 +14,7 @@ class CameraController: UIViewController {
     // MARK: - Variables
     
     var snapButton: UIButton!
+    var flipButton: UIButton!
     
     let session = AVCaptureSession()
     var previewLayer : AVCaptureVideoPreviewLayer?
@@ -48,6 +49,7 @@ class CameraController: UIViewController {
         let pageController = self.parentViewController?.parentViewController? as ViewController
         pageController.hideButtons(true)
         snapButton.hidden = false
+        flipButton.hidden = false
         previewLayer?.connection.enabled = true
 
     }
@@ -111,7 +113,7 @@ class CameraController: UIViewController {
     }
     
     func addFlipButton(){
-        let flipButton = UIButton(frame: CGRectMake(10, 10, 100, 100))
+        flipButton = UIButton(frame: CGRectMake(10, 10, 100, 100))
         flipButton.setTitle("Flip", forState: .Normal)
         flipButton.addTarget(self, action: Selector("toggleCamera:"), forControlEvents: .TouchUpInside)
         view.addSubview(flipButton)
@@ -135,6 +137,7 @@ class CameraController: UIViewController {
                     self.previewLayer?.connection.enabled = false
                     let pageController = self.parentViewController?.parentViewController as ViewController
                     self.snapButton.hidden = true
+                    self.flipButton.hidden = true
                     pageController.hideButtons(false)
                     
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
