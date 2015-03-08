@@ -392,7 +392,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
         UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
         currentPage.image.drawInRect(CGRectMake(0, 0, imageSize.width, imageSize.height))
-        currentPage.textToSave.drawInRect(CGRectMake(10, imageSize.height/2, imageSize.width, imageSize.height), withAttributes: textFontAttributes)
+        currentPage.textToSave.drawInRect(CGRectMake((imageSize.width-self.view.frame.width)/2, imageSize.height/2, self.view.frame.width, imageSize.height), withAttributes: textFontAttributes)
       //  textToDraw.drawInRect(CGRectMake(currentPage.image.size.width/2, currentPage.image.size.height/2, currentPage.image.size.width, currentPage.image.size.height), withAttributes: attributes)
         
 
