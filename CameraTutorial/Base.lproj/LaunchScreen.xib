@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -11,22 +10,49 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="l8r" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="kId-c2-rCX">
-                    <rect key="frame" x="20" y="140" width="441" height="43"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launchImage" translatesAutoresizingMaskIntoConstraints="NO" id="AUm-Rb-cYv">
+                    <rect key="frame" x="80" y="54" width="320" height="171"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="171" id="irz-0I-FaZ"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Life to the future" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZBV-j3-1Qv">
+                    <rect key="frame" x="102" y="233" width="276" height="46"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="46" id="bcS-fe-ivo"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="GillSans" family="Gill Sans" pointSize="36"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="bottom" multiplier="1/3" constant="1" id="5cJ-9S-tgC"/>
-                <constraint firstAttribute="centerX" secondItem="kId-c2-rCX" secondAttribute="centerX" id="Koa-jz-hwk"/>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="fvb-Df-36g"/>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="CVA-L9-uxm">
+                    <variation key="heightClass=regular-widthClass=compact" constant="5"/>
+                </constraint>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="54" id="EbF-Pb-CQE">
+                    <variation key="heightClass=regular-widthClass=compact" constant="140"/>
+                </constraint>
+                <constraint firstItem="ZBV-j3-1Qv" firstAttribute="centerX" secondItem="AUm-Rb-cYv" secondAttribute="centerX" id="Pne-Uw-hlp">
+                    <variation key="heightClass=regular-widthClass=compact" constant="-4.5"/>
+                </constraint>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="80" id="b0y-4e-zVe">
+                    <variation key="heightClass=regular-widthClass=compact" constant="85"/>
+                </constraint>
+                <constraint firstItem="ZBV-j3-1Qv" firstAttribute="top" secondItem="AUm-Rb-cYv" secondAttribute="bottom" constant="8" symbolic="YES" id="eTo-Uh-iFd">
+                    <variation key="heightClass=regular-widthClass=compact" constant="-18"/>
+                </constraint>
+                <constraint firstItem="ZBV-j3-1Qv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="102" id="wgO-2t-DYn">
+                    <variation key="heightClass=regular-widthClass=compact" constant="37"/>
+                </constraint>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="548" y="455"/>
         </view>
     </objects>
+    <resources>
+        <image name="launchImage" width="1028" height="787"/>
+    </resources>
 </document>

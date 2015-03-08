@@ -8,16 +8,20 @@ import UIKit
 import AVFoundation
 import CoreData
 
-class CameraController: UIViewController {
+class CameraController: UIViewController, UITextViewDelegate {
     
     
     // MARK: - Variables
     
     var snapButton: UIButton!
     var flipButton: UIButton!
+    var textButton: UIButton!
     
+    var attr: NSDictionary!
     let session = AVCaptureSession()
     var previewLayer : AVCaptureVideoPreviewLayer?
+    
+    var textView: UITextView!
     
     var backCameraDevice:AVCaptureDevice?
     var frontCameraDevice:AVCaptureDevice?
@@ -25,6 +29,8 @@ class CameraController: UIViewController {
     
     var currentInput: AVCaptureDeviceInput?
     var currentDeviceIsBack = true
+    
+    var textToSave = NSString()
     
     var image: UIImage!
     
@@ -49,6 +55,7 @@ class CameraController: UIViewController {
         let pvc = self.parentViewController?.parentViewController? as ViewController
         pvc.cameraButtonsAreHidden(false)
         previewLayer?.connection.enabled = true
+        textToSave = ""
 
 
     }
@@ -112,14 +119,45 @@ class CameraController: UIViewController {
     }
     
     func addFlipButton(){
-        flipButton = UIButton(frame: CGRectMake(10, 10, 100, 100))
+        flipButton = UIButton(frame: CGRectMake(10, 20, 40, 40))
         flipButton.setTitle("Flip", forState: .Normal)
+        flipButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
         flipButton.addTarget(self, action: Selector("toggleCamera:"), forControlEvents: .TouchUpInside)
+        flipButton.titleLabel!.layer.shadowColor = UIColor.blackColor().CGColor
+        flipButton.titleLabel!.layer.shadowOffset = CGSizeMake(0, 1)
+        flipButton.titleLabel!.layer.shadowOpacity = 1
+        flipButton.titleLabel!.layer.shadowRadius = 1
+        flipButton.sizeToFit()
+
         view.addSubview(flipButton)
+    }
+    
+    func addTextButton(){
+        
+        if textButton != nil {
+            textButton.removeFromSuperview()
+        }
+        textButton = UIButton(frame: CGRectMake(view.frame.width-50, view.frame.height-54, 40, 40))
+        textButton.setTitle("Aa", forState: .Normal)
+        textButton.tag = 101
+        textButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
+        textButton.addTarget(self, action: Selector("openKeyboard:"), forControlEvents: .TouchUpInside)
+        textButton.titleLabel!.layer.shadowColor = UIColor.blackColor().CGColor
+        textButton.titleLabel!.layer.shadowOffset = CGSizeMake(0, 1)
+        textButton.titleLabel!.layer.shadowOpacity = 1
+        textButton.titleLabel!.layer.shadowRadius = 1
+        textButton.sizeToFit()
+        view.addSubview(textButton)
+    }
+    
+    func openKeyboard(sender: UIButton){
+        textView.becomeFirstResponder()
     }
     
     func snapButtonPressed(sender: UIButton){
         println("snapped")
+      //  let text = self.textToSave as NSString
+
         
         dispatch_async(sessionQueue) { () -> Void in
             
@@ -135,15 +173,22 @@ class CameraController: UIViewController {
                     println("should be disabling connection...")
                     let pvc = self.parentViewController?.parentViewController as ViewController
                     pvc.cameraButtonsAreHidden(true)
+                    self.addTextButton()
+                    self.addTextView()
                     self.previewLayer?.connection.enabled = false
 
                     
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
                     let metadata:NSDictionary = CMCopyDictionaryOfAttachments(nil, imageDataSampleBuffer, CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)).takeUnretainedValue()
                     
+                    //TODO: Reduce image size here maybe? Or at least make them the same size.
+                    
+                    //TODO: Mirror front camera photo
+
+                    
                     if let theImage = UIImage(data: imageData) {
                         
-                        self.image = theImage
+                       self.image = theImage
 
                     }
                 }
@@ -192,4 +237,58 @@ class CameraController: UIViewController {
         }
 
     }
+    
+    func addTextView(){
+        
+        if textView != nil {
+            textView.removeFromSuperview()
+        }
+        
+        textView = UITextView(frame: CGRectMake(0, 80, self.view.frame.width, self.view.frame.height-200))
+        textView.backgroundColor = UIColor.clearColor()
+        textView.returnKeyType = UIReturnKeyType.Done
+        textView.delegate = self
+        
+        let font = UIFont(name: "Helvetica Bold", size: 36.0)!
+        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
+        textStyle.alignment = NSTextAlignment.Center
+        let textColor = UIColor.whiteColor()
+        
+        attr = [
+            NSFontAttributeName: font,
+            NSForegroundColorAttributeName: textColor,
+            NSParagraphStyleAttributeName: textStyle
+        ]
+        let placeholderText = NSMutableAttributedString(string: " ", attributes: attr)
+        textView.attributedText = placeholderText
+        textView.textAlignment = .Center
+        textView.textContainerInset = UIEdgeInsets(top: self.view.center.y-200, left: 0, bottom: 0, right: 0)
+        let offset:CGPoint = self.view.center
+        textView.contentOffset = offset
+        //  textView.font = UIFont(name: "Arial-BoldMT", size: 36)
+        //  textView.textColor = UIColor.whiteColor()
+        self.view.addSubview(textView)
+    }
+    
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        if(text == "\n") {
+            textView.resignFirstResponder()
+            let pvc = self.parentViewController?.parentViewController as ViewController
+            pvc.toggleTriggerButtonVisibility(pvc.triggerToggleButton)
+            return false
+        }
+        return true
+    }
+    
+    func textViewDidBeginEditing(textView: UITextView) {
+        let pvc = self.parentViewController?.parentViewController as ViewController
+        pvc.toggleTriggerButtonVisibility(textButton)
+        
+    }
+    
+    func textViewDidEndEditing(textView: UITextView) {
+        textToSave = textView.text
+        println(textToSave)
+    }
+
 }

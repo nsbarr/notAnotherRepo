@@ -19,7 +19,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var managedContext: NSManagedObjectContext!
         
     var inboxNumber: UILabel!
-//    var textView: UITextView!
     
     var triggerButton: UIButton!
     var triggerToggleButton: UIButton!
@@ -76,10 +75,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             l8rReminderCategory.identifier = "l8rReminderCategory"
             l8rReminderCategory.setActions(actionsArray, forContext: UIUserNotificationActionContext.Default)
             l8rReminderCategory.setActions(actionsArray, forContext: UIUserNotificationActionContext.Minimal)
-            
-            
-            //convenience init(forTypes allowedUserNotificationTypes: UIUserNotificationType, categories actionSettings: NSSet?)
-            
+
             
             let categoriesForSettings = NSSet(objects: l8rReminderCategory)
             
@@ -96,6 +92,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func fetchL8rs(){
+        
+        println("fetching")
 
         let fetchRequest = NSFetchRequest(entityName: "L8R")
         var error: NSError?
@@ -139,6 +137,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         else {
             println("Could not fetch \(error), \(error!.userInfo)")
         }
+        
+        self.updateInboxCount()
+
     }
     
     
@@ -147,8 +148,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func addInboxBadge(){
         
        let inboxFrame = UIImageView(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
-//        inboxFrame.image = UIImage(named: "inboxFrame")
-//        pageViewController!.view.addSubview(inboxFrame)
+
         
         inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
         inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 24)
@@ -166,10 +166,14 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func updateInboxCount(){
-        if l8rsBeforeCurrentDate.count > 0 {
-            inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+        
+        if inboxNumber != nil {
+        
+            if l8rsBeforeCurrentDate.count > 0 {
+                inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+            }
+            else {inboxNumber.text = "💎"}
         }
-        else {inboxNumber.text = "💎"}
     }
     
     func appearTriggerButtons(){
@@ -205,34 +209,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
     }
     
-//    
-//    func addTextView(){
-//        
-//        if textView != nil {
-//            textView.removeFromSuperview()
-//        }
-//        textView = UITextView(frame: CGRectMake(0, 80, self.view.frame.width, self.view.frame.height-200))
-//        textView.backgroundColor = UIColor.clearColor()
-//        textView.returnKeyType = UIReturnKeyType.Done
-//        textView.delegate = self
-//        textView.text = ""
-//        textView.textAlignment = .Center
-//        textView.textContainerInset = UIEdgeInsets(top: self.view.center.y, left: 0, bottom: 0, right: 0)
-//        let offset:CGPoint = self.view.center
-//        textView.contentOffset = offset
-//        textView.font = UIFont(name: "Arial-BoldMT", size: 36)
-//        textView.textColor = UIColor.whiteColor()
-//        pageViewController?.view.addSubview(textView)
-//    }
-//    
-//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-//        if(text == "\n") {
-//            textView.resignFirstResponder()
-//            return false
-//        }
-//        
-//        return true
-//    }
+    
 
     
     func openDateMenu(sender: UIButton){
@@ -272,12 +249,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         presentViewController(nc!, animated: false, completion: nil)
     }
-    
-//    func updateDate(sender: UIButton){
-//        dateButton.setImage(sender.imageForState(.Normal), forState: .Normal)
-//        dateButton.tag = sender.tag
-//        self.dismissViewControllerAnimated(false, completion: nil)
-//    }
+
     
     func openCalendarMenu(){
         
@@ -367,6 +339,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             currentPage.previewLayer?.connection.enabled = true
            // hideTriggerButtons(true)
             self.cameraButtonsAreHidden(false)
+            currentPage.textView.removeFromSuperview()
+            currentPage.textButton.hidden = true
+            currentPage.textToSave = ""
+
             
         }
             
@@ -393,13 +369,30 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     
-    func updateImageWithTextFrom(textView: UITextView) -> UIImage? {
-        let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+    func updateImageWithText() -> UIImage? {
+        
+        let size = self.view.bounds.size
+        
+        let font = UIFont(name: "Helvetica Bold", size: 36.0)!
+        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
+        textStyle.alignment = NSTextAlignment.Center
+        let textColor = UIColor.whiteColor()
+        
+        let textFontAttributes = [
+            NSFontAttributeName: font,
+            NSForegroundColorAttributeName: textColor,
+            NSParagraphStyleAttributeName: textStyle
+        ]
 
-        UIGraphicsBeginImageContextWithOptions(currentPage.image.size, false, 0)
-        currentPage.image.drawInRect(CGRectMake(0, 0, currentPage.image.size.width, currentPage.image.size.height))
-        let textToDraw = textView.text as NSString
-        let attributes = [NSFontAttributeName:textView.font]
+        let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+        
+        let ratio = self.view.frame.height/currentPage.image.size.height
+        let imageSize = CGSizeMake(currentPage.image.size.width*ratio, currentPage.image.size.height*ratio)
+
+
+        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
+        currentPage.image.drawInRect(CGRectMake(0, 0, imageSize.width, imageSize.height))
+        currentPage.textToSave.drawInRect(CGRectMake(10, imageSize.height/2, imageSize.width, imageSize.height), withAttributes: textFontAttributes)
       //  textToDraw.drawInRect(CGRectMake(currentPage.image.size.width/2, currentPage.image.size.height/2, currentPage.image.size.width, currentPage.image.size.height), withAttributes: attributes)
         
 
@@ -421,13 +414,19 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func toggleTriggerButtonVisibility(sender: UIButton){
+        
+        
+        
         for button in pageViewController!.view.subviews as [UIView] {
             if (button.isKindOfClass(MenuButton)){
-                println("hiding!")
-                button.hidden = !button.hidden
+                if (sender.tag == 101){ // it's the textButton, so turn them off
+                    button.hidden = true
+                }
+                else {
+                    button.hidden = !button.hidden
+                }
             }
             else {
-                println("not hiding!")
             }
         }
     }
@@ -439,8 +438,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         //trigger toggle button
         triggerToggleButton.hidden = !toggle
         
-        //inbox button
-        inboxNumber.hidden = toggle
         
         //snap button
         println(self.pageViewController?.viewControllers)
@@ -487,16 +484,20 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
         else if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
             
+            self.cameraButtonsAreHidden(false)
+
+            
             let currentPage = self.pageViewController?.viewControllers[0] as CameraController
             currentPage.previewLayer?.connection.enabled = true
             //hideTriggerButtons(true)
-            self.cameraButtonsAreHidden(false)
+
+
             
             //this is where we do the context thing
             
-            
-    //        let imageToSchedule = updateImageWithTextFrom(textView)
-            let imageToSchedule = currentPage.image
+    //
+            let imageToSchedule = updateImageWithText()
+    //        let imageToSchedule = currentPage.image
             
             
             
@@ -516,15 +517,19 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             //UPDATE L8RS
             self.fetchL8rs()
-            self.updateInboxCount()
             
             //Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
             
             self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
+            
+            //TODO: Animation goes here? Feels janky rn
 
             pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
             
             
+            currentPage.textView.removeFromSuperview()
+            currentPage.textButton.hidden = true
+            currentPage.textToSave = ""
             
         }
             
@@ -559,7 +564,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func moveOnToNextL8r(){
         //REFRESH LIST
         self.fetchL8rs()
-        self.updateInboxCount()
         
         
         //SHOW CAMERA IF NO MORE L8RS TO SHOW
@@ -632,7 +636,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         addChildViewController(pageViewController!)
         
         self.addInboxBadge()
-   //     self.addTextView()
         self.addTriggerShelf()
         self.appearTriggerButtons()
         

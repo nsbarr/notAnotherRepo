@@ -26,8 +26,8 @@ class PageItemController: UIViewController {
        // contentImageView!.image = UIImage(named: imageName)
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(true)
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
         let pvc = self.parentViewController?.parentViewController as ViewController
         pvc.cameraButtonsAreHidden(true)
         
