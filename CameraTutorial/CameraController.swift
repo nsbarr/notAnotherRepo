@@ -41,7 +41,7 @@ class CameraController: UIViewController, UITextViewDelegate {
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
-        println("Camera view did load")
+        println("new branch")
         super.viewDidLoad()
         self.setUpCamera()
         self.addSnapButton()
@@ -111,7 +111,7 @@ class CameraController: UIViewController, UITextViewDelegate {
         snapButton.center.x = view.center.x
         let buttonImage = UIImage(named: "snapButton")
         snapButton.setImage(buttonImage, forState: .Normal)
-        snapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchUpInside)
+        snapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
         snapButton.hidden = false
         
         view.addSubview(snapButton)
