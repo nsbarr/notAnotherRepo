@@ -28,9 +28,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var nc: UINavigationController?
     let vc = UIViewController()
     
-    
     //MARK: - Lifecycle
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,10 +40,12 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
          NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleViewNotification", name: "viewNotification", object: nil)
     }
     
+    
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
 
+    
     
     func setupNotificationSettings() {
         
@@ -123,7 +123,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 //                    println("Unresolved error \(error), \(error!.userInfo)")
 //                    abort()
 //                }
-                
+        
               //  println(l8r.valueForKey("fireDate"))
                 
                 if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
@@ -388,6 +388,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         let ratio = self.view.frame.height/currentPage.image.size.height
         let imageSize = CGSizeMake(currentPage.image.size.width*ratio, currentPage.image.size.height*ratio)
+        
+        //TODO: do this instead. just write the view that contains the text and the image http://stackoverflow.com/questions/4334233/how-to-capture-uiview-to-uiimage-without-loss-of-quality-on-retina-display
 
 
         UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
