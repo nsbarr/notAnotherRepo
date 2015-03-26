@@ -122,7 +122,7 @@
 			path = library;
 			sourceTree = "<group>";
 		};
-		02F5BDD719CE1C4900EDFD47 = {
+		01A974151AC460D3006C1979 /* Parse */ = {
 			isa = PBXGroup;
 			children = (
 				01A974131AC3385E006C1979 /* libsqlite3.dylib */,
@@ -140,6 +140,14 @@
 				01A973F71AC337CE006C1979 /* Bolts.framework */,
 				01A973F81AC337CE006C1979 /* Parse.framework */,
 				01A973F91AC337CE006C1979 /* ParseCrashReporting.framework */,
+			);
+			name = Parse;
+			sourceTree = "<group>";
+		};
+		02F5BDD719CE1C4900EDFD47 = {
+			isa = PBXGroup;
+			children = (
+				01A974151AC460D3006C1979 /* Parse */,
 				02F5BDE219CE1C4900EDFD47 /* CameraTutorial */,
 				02F5BDF819CE1C4900EDFD47 /* CameraTutorialTests */,
 				02F5BDE119CE1C4900EDFD47 /* Products */,
