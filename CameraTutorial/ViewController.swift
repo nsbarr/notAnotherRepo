@@ -449,6 +449,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             let currentPage = self.pageViewController?.viewControllers[0] as CameraController
             currentPage.previewLayer?.connection.enabled = true
             currentPage.snapButton.hidden = toggle
+            currentPage.textButton.hidden = toggle
+            currentPage.textView.hidden = toggle
             
             //flip button
             currentPage.flipButton.hidden = toggle
@@ -498,7 +500,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             //this is where we do the context thing
             
     //
-            let imageToSchedule = updateImageWithText()
+      //      let imageToSchedule = updateImageWithText()
     //        let imageToSchedule = currentPage.image
             
             
@@ -506,9 +508,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             
             //SAVE NEW L8R
+            
             let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
             let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
+            let imageData = UIImageJPEGRepresentation(currentPage.image, 0)
             l8r.setValue(imageData, forKey: "imageData")
             l8r.setValue(getDateFromDateButton(sender.tag), forKey: "fireDate")
             
