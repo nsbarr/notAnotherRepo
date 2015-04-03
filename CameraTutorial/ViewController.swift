@@ -23,6 +23,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     var triggerButton: UIButton!
     var triggerToggleButton: UIButton!
     var scheduleButton: UIButton!
+    var shareIcon: UIButton!
     var datePicker: UIDatePicker!
     
     var nc: UINavigationController?
@@ -73,21 +74,21 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             var l8rReminderCategory = UIMutableUserNotificationCategory()
             l8rReminderCategory.identifier = "l8rReminderCategory"
-            l8rReminderCategory.setActions(actionsArray, forContext: UIUserNotificationActionContext.Default)
-            l8rReminderCategory.setActions(actionsArray, forContext: UIUserNotificationActionContext.Minimal)
+            l8rReminderCategory.setActions(actionsArray as [AnyObject], forContext: UIUserNotificationActionContext.Default)
+            l8rReminderCategory.setActions(actionsArray as [AnyObject], forContext: UIUserNotificationActionContext.Minimal)
 
             
             let categoriesForSettings = NSSet(objects: l8rReminderCategory)
             
             
-            let newNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: categoriesForSettings)
+            let newNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: categoriesForSettings as Set<NSObject>)
             
             UIApplication.sharedApplication().registerUserNotificationSettings(newNotificationSettings)
         }
     }
     
     func setUpCoreData(){
-        appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         managedContext = appDelegate.managedObjectContext!
     }
     
@@ -106,7 +107,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         fetchRequest.sortDescriptors = fireDateSorts
         
         
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
 
         if let results = fetchedResults {
             
@@ -126,7 +127,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
               //  println(l8r.valueForKey("fireDate"))
                 
-                if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
+                if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
                     
                     
@@ -139,6 +140,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
         
         self.updateInboxCount()
+      //  [UIApplication sharedApplication].applicationIconBadgeNumber = [[[userInfo objectForKey:@"aps"] objectForKey: @"badgecount"] intValue];
+        
+
 
     }
     
@@ -147,11 +151,12 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     func addInboxBadge(){
         
-       let inboxFrame = UIImageView(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+       let inboxFrame = UIButton(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+        inboxFrame.addTarget(self, action: Selector("inboxButtonPressed:"), forControlEvents: .TouchUpInside)
 
         
         inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
-        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 24)
+        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 32)
         
         inboxNumber.textAlignment = .Center
         inboxNumber.textColor = UIColor.whiteColor()
@@ -161,8 +166,14 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         inboxNumber.layer.shadowRadius = 1
         self.updateInboxCount()
         pageViewController!.view.addSubview(inboxNumber)
+        pageViewController!.view.addSubview(inboxFrame)
         
         
+    }
+    
+    func inboxButtonPressed(sender:UIButton){
+        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as! InboxViewController
+        self.presentViewController(ivc, animated: true, completion: nil)
     }
     
     func updateInboxCount(){
@@ -171,26 +182,36 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
             if l8rsBeforeCurrentDate.count > 0 {
                 inboxNumber.text = String(l8rsBeforeCurrentDate.count)
+                UIApplication.sharedApplication().applicationIconBadgeNumber = l8rsBeforeCurrentDate.count
             }
-            else {inboxNumber.text = "💎"}
+            else {
+                inboxNumber.text = "👍"
+                UIApplication.sharedApplication().applicationIconBadgeNumber = 0}
         }
     }
     
     func appearTriggerButtons(){
-        let triggerButtons = ["Never Again", "Pick a Date", "Next Year", "Next Month", "Next Week", "Tomorrow", "In an Hour", "Right Now"]
-        let triggerButtonTags = [86, 666, 365, 30, 7, 1, 60, 0]
+        let triggerButtons = ["👋\nSeeya!", "📅\nCal", "🚀\n1 Year", "🚙\n1 Week", "☀️\nTmrw", "⏳\n1 Hour"]
+        let triggerButtonTags = [86, 666, 365, 7, 1, 60]
         var buttonTag = 0
         let triggerButtonPadding:CGFloat = 20
-        var triggerButtonYPos:CGFloat = 100
+        var triggerButtonYPos:CGFloat = self.view.frame.midY
+        var triggerButtonXPos:CGFloat = 20
         
         for triggerButtonTitle in triggerButtons {
-            triggerButton = MenuButton(frame: CGRectMake(0, triggerButtonYPos, 100, 44))
+            triggerButton = MenuButton(frame: CGRectMake(triggerButtonXPos, triggerButtonYPos, 100, 100))
             triggerButton.setTitle(triggerButtonTitle, forState: .Normal)
             triggerButton.tag = triggerButtonTags[buttonTag]
             triggerButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
-            triggerButton.sizeToFit()
+           // triggerButton.sizeToFit()
             pageViewController!.view.addSubview(triggerButton)
-            triggerButtonYPos = triggerButtonYPos + triggerButton.frame.height + triggerButtonPadding
+            if buttonTag < 2 || buttonTag > 2 {
+                triggerButtonXPos = triggerButtonXPos + triggerButton.frame.width + triggerButtonPadding
+            }
+            else if buttonTag == 2 {
+                triggerButtonXPos = 20
+                triggerButtonYPos = triggerButtonYPos + triggerButton.frame.height + triggerButtonPadding
+            }
             buttonTag = buttonTag + 1
         }
         
@@ -202,7 +223,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         println("changing hidden to \(toggle)")
      //   textView.hidden = toggle
         
-        for button in pageViewController!.view.subviews as [UIView] {
+        for button in pageViewController!.view.subviews as! [UIView] {
             if (button.isKindOfClass(MenuButton)){
                 button.hidden = toggle
             }
@@ -335,7 +356,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         //special case if the L8R being deleted is the photo we just took
         if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
             
-            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
             currentPage.previewLayer?.connection.enabled = true
            // hideTriggerButtons(true)
             self.cameraButtonsAreHidden(false)
@@ -348,7 +369,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
         else {
             
-            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            let currentPage = self.pageViewController?.viewControllers[0] as! PageItemController
             indexOfCurrentPage = currentPage.itemIndex
             
             
@@ -369,43 +390,42 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     
-    func updateImageWithText() -> UIImage? {
-        
-        let size = self.view.bounds.size
-        
-        let font = UIFont(name: "Helvetica Bold", size: 36.0)!
-        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
-        textStyle.alignment = NSTextAlignment.Center
-        let textColor = UIColor.whiteColor()
-        
-        let textFontAttributes = [
-            NSFontAttributeName: font,
-            NSForegroundColorAttributeName: textColor,
-            NSParagraphStyleAttributeName: textStyle
-        ]
-
-        let currentPage = self.pageViewController?.viewControllers[0] as CameraController
-        
-        let ratio = self.view.frame.height/currentPage.image.size.height
-        let imageSize = CGSizeMake(currentPage.image.size.width*ratio, currentPage.image.size.height*ratio)
-        
-        //TODO: do this instead. just write the view that contains the text and the image http://stackoverflow.com/questions/4334233/how-to-capture-uiview-to-uiimage-without-loss-of-quality-on-retina-display
-
-
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
-        currentPage.image.drawInRect(CGRectMake(0, 0, imageSize.width, imageSize.height))
-        currentPage.textToSave.drawInRect(CGRectMake((imageSize.width-self.view.frame.width)/2, imageSize.height/2, self.view.frame.width, imageSize.height), withAttributes: textFontAttributes)
-      //  textToDraw.drawInRect(CGRectMake(currentPage.image.size.width/2, currentPage.image.size.height/2, currentPage.image.size.width, currentPage.image.size.height), withAttributes: attributes)
-        
-
-   //     textView.layer.renderInContext(UIGraphicsGetCurrentContext())
-        
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return newImage
-
-        
-    }
+//    func updateImageWithText() -> UIImage? {
+//        
+//        let size = self.view.bounds.size
+//        
+//        let font = UIFont(name: "Helvetica Bold", size: 36.0)!
+//        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
+//        textStyle.alignment = NSTextAlignment.Center
+//        let textColor = UIColor.whiteColor()
+//        
+//        let textFontAttributes = [
+//            NSFontAttributeName: font,
+//            NSForegroundColorAttributeName: textColor,
+//            NSParagraphStyleAttributeName: textStyle
+//        ]
+//
+//        let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+//        
+//        let ratio = self.view.frame.height/currentPage.image.size.height
+//        let imageSize = CGSizeMake(currentPage.image.size.width*ratio, currentPage.image.size.height*ratio)
+//
+//
+//
+//        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
+//        currentPage.image.drawInRect(CGRectMake(0, 0, imageSize.width, imageSize.height))
+//        currentPage.textToSave.drawInRect(CGRectMake((imageSize.width-self.view.frame.width)/2, imageSize.height/2, self.view.frame.width, imageSize.height), withAttributes: textFontAttributes)
+//      //  textToDraw.drawInRect(CGRectMake(currentPage.image.size.width/2, currentPage.image.size.height/2, currentPage.image.size.width, currentPage.image.size.height), withAttributes: attributes)
+//        
+//
+//   //     textView.layer.renderInContext(UIGraphicsGetCurrentContext())
+//        
+//        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+//        return newImage
+//
+//        
+//    }
     
     func addTriggerShelf(){
         triggerToggleButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-54, width: 44, height: 44))
@@ -415,11 +435,55 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         self.pageViewController!.view.addSubview(triggerToggleButton)
     }
     
+    func addShareIcon(){
+        shareIcon = UIButton(frame: CGRect(x: view.frame.width - 54, y: view.frame.height-54, width: 44, height: 44))
+        shareIcon.addTarget(self, action: Selector("shareIconPressed:"), forControlEvents: UIControlEvents.TouchUpInside)
+        shareIcon.setImage(UIImage(named: "shareIcon"), forState: .Normal)
+        shareIcon.hidden = true
+        self.pageViewController!.view.addSubview(shareIcon)
+    }
+    
+    func shareIconPressed(sender: UIButton){
+        var sharingItems = [AnyObject]()
+        
+        let text = "Check out this L8R and create your own!"
+        sharingItems.append(text)
+        
+        let currentPage = self.pageViewController?.viewControllers[0] as! PageItemController
+        let image = currentPage.image
+        sharingItems.append(image)
+        
+        
+        let url = NSURL(string: "http://lthenumbereightr.com")
+        sharingItems.append(url!)
+        
+        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
+        self.presentViewController(activityViewController, animated: true, completion: nil)
+        
+        }
+    
+    func shareTextImageAndURL(sharingText: String?, sharingImage: UIImage?, sharingURL: NSURL?) {
+        var sharingItems = [AnyObject]()
+        
+        if let text = sharingText {
+            sharingItems.append(text)
+        }
+        if let image = sharingImage {
+            sharingItems.append(image)
+        }
+        if let url = sharingURL {
+            sharingItems.append(url)
+        }
+        
+        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
+        self.presentViewController(activityViewController, animated: true, completion: nil)
+    }
+    
     func toggleTriggerButtonVisibility(sender: UIButton){
         
         
         
-        for button in pageViewController!.view.subviews as [UIView] {
+        for button in pageViewController!.view.subviews as! [UIView] {
             if (button.isKindOfClass(MenuButton)){
                 if (sender.tag == 101){ // it's the textButton, so turn them off
                     button.hidden = true
@@ -439,6 +503,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         //trigger toggle button
         triggerToggleButton.hidden = !toggle
+        shareIcon.hidden = !toggle
         
         
         //snap button
@@ -446,7 +511,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
         
-            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
             currentPage.previewLayer?.connection.enabled = true
             currentPage.snapButton.hidden = toggle
             currentPage.textButton.hidden = toggle
@@ -458,7 +523,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
             
             //trigger buttons
-            for button in pageViewController!.view.subviews as [UIView] {
+            for button in pageViewController!.view.subviews as! [UIView] {
                 if (button.isKindOfClass(MenuButton)){
                     button.hidden = !toggle
                 }
@@ -491,7 +556,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             self.cameraButtonsAreHidden(false)
 
             
-            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
             currentPage.previewLayer?.connection.enabled = true
             //hideTriggerButtons(true)
 
@@ -533,14 +598,14 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
             
             currentPage.textView.removeFromSuperview()
-            currentPage.textButton.hidden = true
+         //   currentPage.textButton.hidden = true
             currentPage.textToSave = ""
             
         }
             
         else {
             
-            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            let currentPage = self.pageViewController?.viewControllers[0] as! PageItemController
             indexOfCurrentPage = currentPage.itemIndex
             
             //RESCHEDULE L8R
@@ -586,7 +651,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             println("show prev l8r")
             let targetViewController = getItemController(l8rsBeforeCurrentDate.count-1) as PageItemController!
             let arrayVC : NSArray = [targetViewController]
-            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+            pageViewController?.setViewControllers(arrayVC as [AnyObject], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
         }
             
             //OTHERWISE SHOW L8R AT CURRENT INDEX
@@ -595,7 +660,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             println("show new l8r at current index")
             let targetViewController = getItemController(indexOfCurrentPage) as PageItemController!
             let arrayVC : NSArray = [targetViewController]
-            pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
+            pageViewController?.setViewControllers(arrayVC as [AnyObject], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
             
         }
         
@@ -617,7 +682,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         self.fetchL8rs()
         let targetViewController = getItemController(0) as PageItemController!
         let arrayVC : NSArray = [targetViewController]
-        pageViewController?.setViewControllers(arrayVC, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        pageViewController?.setViewControllers(arrayVC as [AnyObject], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
     }
     
     
@@ -626,12 +691,12 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func createPageViewController() {
         
         //create PageViewController
-        let pageController = self.storyboard!.instantiateViewControllerWithIdentifier("PageController") as UIPageViewController
+        let pageController = self.storyboard!.instantiateViewControllerWithIdentifier("PageController") as! UIPageViewController
         pageController.delegate = self
         pageController.dataSource = self
         
         //create cameraController and set as first page
-        cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+        cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as! CameraController
         let startingViewControllers: NSArray = [cameraController]
         
         pageController.addChildViewController(cameraController)
@@ -642,12 +707,13 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         self.addInboxBadge()
         self.addTriggerShelf()
+        self.addShareIcon()
         self.appearTriggerButtons()
         
         self.view.addSubview(pageViewController!.view)
         pageViewController!.didMoveToParentViewController(self)
         
-        pageController.setViewControllers(startingViewControllers, direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        pageController.setViewControllers(startingViewControllers as [AnyObject], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
         
     }
     
@@ -659,7 +725,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
         
         else { // we got a PageItemController
-            var itemController = viewController as PageItemController
+            var itemController = viewController as! PageItemController
             if itemController.itemIndex == 0 { //If we got the first ItemController, then go back to Camera
                 return cameraController
             }
@@ -683,7 +749,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         else {
             println("b")
-            var itemController = viewController as PageItemController
+            var itemController = viewController as! PageItemController
 
             if itemController.itemIndex+1 < l8rsBeforeCurrentDate.count {
                 println("c")
@@ -705,10 +771,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
         else {
             println("getting controller for index \(itemIndex)")
-            let pageItemController = self.storyboard!.instantiateViewControllerWithIdentifier("ItemController") as PageItemController
+            let pageItemController = self.storyboard!.instantiateViewControllerWithIdentifier("ItemController") as! PageItemController
             pageItemController.itemIndex = itemIndex
             let l8r = l8rsBeforeCurrentDate[itemIndex]
-            pageItemController.imageData = l8r.valueForKey("imageData") as NSData
+            pageItemController.imageData = l8r.valueForKey("imageData") as! NSData
             return pageItemController
         }
         

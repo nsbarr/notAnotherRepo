@@ -28,7 +28,7 @@ class PageItemController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
-        let pvc = self.parentViewController?.parentViewController as ViewController
+        let pvc = self.parentViewController?.parentViewController as! ViewController
         pvc.cameraButtonsAreHidden(true)
         
     }
@@ -38,7 +38,7 @@ class PageItemController: UIViewController {
         
         image = UIImage(data: imageData)
         
-        let ratio = self.view.frame.height/image.size.height
+        let ratio = (self.view.frame.height/image.size.height)
         
         let imageView = UIImageView(frame: CGRectMake(0,0, image.size.width*ratio, image.size.height*ratio))
         imageView.image = image

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7518.3"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -29,6 +30,67 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N6p-CW-Y4F" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1251" y="-42"/>
+        </scene>
+        <!--Inbox View Controller-->
+        <scene sceneID="ag3-jN-EVn">
+            <objects>
+                <viewController storyboardIdentifier="InboxViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="MRP-Ho-cYA" customClass="InboxViewController" customModule="l8r" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="VV0-t9-kAb"/>
+                        <viewControllerLayoutGuide type="bottom" id="Do9-uR-MCM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="h96-5P-9Mv">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iiq-4M-XQs" customClass="CardStack" customModule="l8r" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="iiq-4M-XQs" secondAttribute="bottom" constant="20" symbolic="YES" id="6Uu-Xc-kKm">
+                                <variation key="heightClass=regular-widthClass=compact" constant="12"/>
+                            </constraint>
+                            <constraint firstItem="iiq-4M-XQs" firstAttribute="top" secondItem="h96-5P-9Mv" secondAttribute="topMargin" constant="-8" id="AIK-Iy-JxF">
+                                <variation key="heightClass=regular-widthClass=compact" constant="0.0"/>
+                            </constraint>
+                            <constraint firstItem="iiq-4M-XQs" firstAttribute="leading" secondItem="h96-5P-9Mv" secondAttribute="leadingMargin" constant="-5" id="OaF-eO-hgT">
+                                <variation key="heightClass=regular-widthClass=compact" constant="-16"/>
+                            </constraint>
+                            <constraint firstItem="iiq-4M-XQs" firstAttribute="centerX" secondItem="h96-5P-9Mv" secondAttribute="centerX" id="oHt-OV-Qtd"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="iiq-4M-XQs"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="6Uu-Xc-kKm"/>
+                                <exclude reference="AIK-Iy-JxF"/>
+                                <exclude reference="OaF-eO-hgT"/>
+                                <exclude reference="oHt-OV-Qtd"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="iiq-4M-XQs"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="6Uu-Xc-kKm"/>
+                                <include reference="AIK-Iy-JxF"/>
+                                <include reference="OaF-eO-hgT"/>
+                                <include reference="oHt-OV-Qtd"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="cardStackView" destination="iiq-4M-XQs" id="uSL-sj-Qu8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RzS-WL-IoC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2769" y="-40.5"/>
         </scene>
         <!--Camera Controller-->
         <scene sceneID="XLo-ZG-T6Z">
