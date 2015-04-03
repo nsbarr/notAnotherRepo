@@ -17,11 +17,12 @@ class CameraController: UIViewController, UITextViewDelegate {
     var flipButton: UIButton!
     var textButton: UIButton!
     
-    var attr: NSDictionary!
+    var attr = [String:NSObject]()
     let session = AVCaptureSession()
     var previewLayer : AVCaptureVideoPreviewLayer?
     
     var textView: UITextView!
+    var tempView: UIView!
     
     var backCameraDevice:AVCaptureDevice?
     var frontCameraDevice:AVCaptureDevice?
@@ -41,18 +42,20 @@ class CameraController: UIViewController, UITextViewDelegate {
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
-        println("Camera view did load")
+        println("new branch")
         super.viewDidLoad()
         self.setUpCamera()
+        self.addTextView()
         self.addSnapButton()
         self.addFlipButton()
+        self.addTextButton()
 
         
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
-        let pvc = self.parentViewController?.parentViewController? as ViewController
+        let pvc = self.parentViewController?.parentViewController as! ViewController
         pvc.cameraButtonsAreHidden(false)
         previewLayer?.connection.enabled = true
         textToSave = ""
@@ -63,7 +66,7 @@ class CameraController: UIViewController, UITextViewDelegate {
     // MARK: - Set up the Camera
     func setUpCamera(){
         let availableCameraDevices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-        for device in availableCameraDevices as [AVCaptureDevice] {
+        for device in availableCameraDevices as! [AVCaptureDevice] {
             if device.position == .Back {
                 backCameraDevice = device
             }
@@ -106,12 +109,54 @@ class CameraController: UIViewController, UITextViewDelegate {
     
     //MARK: - Add and configure capture button
     
+    func addTextView(){
+        
+        if textView != nil {
+            textView.removeFromSuperview()
+        }
+        
+        textView = UITextView(frame: CGRectMake(0, 80, self.view.frame.width, self.view.frame.height-200))
+        textView.backgroundColor = UIColor.clearColor()
+        textView.returnKeyType = UIReturnKeyType.Done
+        textView.delegate = self
+        
+        let font = UIFont(name: "Arial-BoldMT", size: 42.0)!
+        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+        textStyle.alignment = NSTextAlignment.Center
+        let textColor = UIColor.whiteColor()
+        
+        var shadow = NSShadow()
+        shadow.shadowColor = UIColor.blackColor()
+        shadow.shadowOffset = CGSizeMake(2.0,2.0)
+        
+        attr = [
+            NSFontAttributeName: font,
+            NSForegroundColorAttributeName: textColor,
+            NSParagraphStyleAttributeName: textStyle,
+            NSShadowAttributeName: shadow
+        ]
+  //      let placeholderText = NSMutableAttributedString(string:"", attributes: attr as [NSObject: AnyObject]?)
+        let placeholderText = NSAttributedString(string: " ", attributes: attr)
+        textView.attributedText = placeholderText
+        textView.textAlignment = .Center
+        textView.text = ""
+        textView.textContainerInset = UIEdgeInsets(top: self.view.center.y-200, left: 0, bottom: 0, right: 0)
+        let offset:CGPoint = self.view.center
+        textView.contentOffset = offset
+        //  textView.font = UIFont(name: "Arial-BoldMT", size: 36)
+        //  textView.textColor = UIColor.whiteColor()
+      //  tempView = UIView(frame: self.view.frame)
+      //  tempView.addSubview(textView)
+        self.view.addSubview(textView)
+    }
+    
     func addSnapButton(){
         snapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-100, width: 80, height: 80))
         snapButton.center.x = view.center.x
+        snapButton.tag = 0
         let buttonImage = UIImage(named: "snapButton")
         snapButton.setImage(buttonImage, forState: .Normal)
-        snapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchUpInside)
+        snapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
         snapButton.hidden = false
         
         view.addSubview(snapButton)
@@ -119,15 +164,16 @@ class CameraController: UIViewController, UITextViewDelegate {
     }
     
     func addFlipButton(){
-        flipButton = UIButton(frame: CGRectMake(10, 20, 40, 40))
-        flipButton.setTitle("Flip", forState: .Normal)
+        flipButton = UIButton(frame: CGRectMake(10, 20, 50, 50))
+      //  flipButton.setTitle("Flip", forState: .Normal)
+        flipButton.setImage(UIImage(named: "flipButton"), forState: .Normal)
         flipButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
         flipButton.addTarget(self, action: Selector("toggleCamera:"), forControlEvents: .TouchUpInside)
         flipButton.titleLabel!.layer.shadowColor = UIColor.blackColor().CGColor
         flipButton.titleLabel!.layer.shadowOffset = CGSizeMake(0, 1)
         flipButton.titleLabel!.layer.shadowOpacity = 1
         flipButton.titleLabel!.layer.shadowRadius = 1
-        flipButton.sizeToFit()
+     //   flipButton.sizeToFit()
 
         view.addSubview(flipButton)
     }
@@ -140,7 +186,7 @@ class CameraController: UIViewController, UITextViewDelegate {
         textButton = UIButton(frame: CGRectMake(view.frame.width-50, view.frame.height-54, 40, 40))
         textButton.setTitle("Aa", forState: .Normal)
         textButton.tag = 101
-        textButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
+        textButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 32)
         textButton.addTarget(self, action: Selector("openKeyboard:"), forControlEvents: .TouchUpInside)
         textButton.titleLabel!.layer.shadowColor = UIColor.blackColor().CGColor
         textButton.titleLabel!.layer.shadowOffset = CGSizeMake(0, 1)
@@ -156,7 +202,8 @@ class CameraController: UIViewController, UITextViewDelegate {
     
     func snapButtonPressed(sender: UIButton){
         println("snapped")
-      //  let text = self.textToSave as NSString
+        
+        self.flashConfirm()
 
         
         dispatch_async(sessionQueue) { () -> Void in
@@ -166,16 +213,15 @@ class CameraController: UIViewController, UITextViewDelegate {
             // update the video orientation to the device one
             connection.videoOrientation = AVCaptureVideoOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)!
             
+            let pvc = self.parentViewController?.parentViewController as! ViewController
+
             self.stillCameraOutput.captureStillImageAsynchronouslyFromConnection(connection) {
                 (imageDataSampleBuffer, error) -> Void in
                 
                 if error == nil {
                     println("should be disabling connection...")
-                    let pvc = self.parentViewController?.parentViewController as ViewController
                     pvc.cameraButtonsAreHidden(true)
-                    self.addTextButton()
-                    self.addTextView()
-                    self.previewLayer?.connection.enabled = false
+                    
 
                     
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
@@ -188,7 +234,48 @@ class CameraController: UIViewController, UITextViewDelegate {
                     
                     if let theImage = UIImage(data: imageData) {
                         
-                       self.image = theImage
+                        
+
+                        //TODO: figure out low image quality
+                        
+                        let imageView = UIImageView(frame: CGRectMake(0, 0, theImage.size.width*self.view.frame.height/theImage.size.height, self.view.frame.height))
+                        if !self.currentDeviceIsBack {
+                            imageView.image = UIImage(CGImage: theImage.CGImage, scale: theImage.scale, orientation: UIImageOrientation.LeftMirrored)
+                        }
+                        else {
+                            imageView.image = theImage
+                        }
+                        self.textView.frame.origin.x = self.textView.frame.origin.x + (imageView.frame.width-self.view.frame.width)/2
+                        imageView.contentMode = UIViewContentMode.ScaleToFill
+                        self.textView.removeFromSuperview()
+                        self.textView.hidden = false
+                        imageView.addSubview(self.textView)
+
+
+
+                        println(self.textView)
+//                        self.tempView = UIView(frame: self.view.frame)
+//                        self.tempView.addSubview(imageView)
+                   //     self.textView.removeFromSuperview()
+                   //     self.tempView.addSubview(self.textView)
+//                        UIGraphicsBeginImageContextWithOptions(tempView.bounds.size, tempView.opaque, 0)
+//                        tempView.drawViewHierarchyInRect(tempView.bounds, afterScreenUpdates: false)
+//                        let snapShotImage = UIGraphicsGetImageFromCurrentImageContext()
+//                        UIGraphicsEndImageContext()
+                        
+                        
+                        
+                        UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, imageView.opaque, 0.0)
+                        imageView.layer.renderInContext(UIGraphicsGetCurrentContext())
+                        let snapshotImage = UIGraphicsGetImageFromCurrentImageContext()
+                        UIGraphicsEndImageContext()
+                        self.image = snapshotImage
+                        
+                        pvc.scheduleL8r(self.snapButton)
+                        
+                        self.addTextView()
+                        
+                    
 
                     }
                 }
@@ -238,51 +325,36 @@ class CameraController: UIViewController, UITextViewDelegate {
 
     }
     
-    func addTextView(){
+    func flashConfirm(){
+        let flashConfirm = UIImageView(frame: CGRect(x:0, y: 0, width: self.view.frame.width-200, height: self.view.frame.width-200))
+        flashConfirm.center = self.view.center
+        flashConfirm.image = UIImage(named: "flashConfirm")
+        flashConfirm.contentMode = UIViewContentMode.ScaleAspectFit
+        flashConfirm.alpha = 1
+        self.view.addSubview(flashConfirm)
+        self.previewLayer?.connection.enabled = false
         
-        if textView != nil {
-            textView.removeFromSuperview()
-        }
         
-        textView = UITextView(frame: CGRectMake(0, 80, self.view.frame.width, self.view.frame.height-200))
-        textView.backgroundColor = UIColor.clearColor()
-        textView.returnKeyType = UIReturnKeyType.Done
-        textView.delegate = self
+        UIView.animateKeyframesWithDuration(0.5, delay: 0.2, options: nil, animations: { () -> Void in
+            flashConfirm.alpha = 0
+            }, completion: nil)
         
-        let font = UIFont(name: "Helvetica Bold", size: 36.0)!
-        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
-        textStyle.alignment = NSTextAlignment.Center
-        let textColor = UIColor.whiteColor()
-        
-        attr = [
-            NSFontAttributeName: font,
-            NSForegroundColorAttributeName: textColor,
-            NSParagraphStyleAttributeName: textStyle
-        ]
-        let placeholderText = NSMutableAttributedString(string: " ", attributes: attr)
-        textView.attributedText = placeholderText
-        textView.textAlignment = .Center
-        textView.textContainerInset = UIEdgeInsets(top: self.view.center.y-200, left: 0, bottom: 0, right: 0)
-        let offset:CGPoint = self.view.center
-        textView.contentOffset = offset
-        //  textView.font = UIFont(name: "Arial-BoldMT", size: 36)
-        //  textView.textColor = UIColor.whiteColor()
-        self.view.addSubview(textView)
     }
+
     
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if(text == "\n") {
             textView.resignFirstResponder()
-            let pvc = self.parentViewController?.parentViewController as ViewController
-            pvc.toggleTriggerButtonVisibility(pvc.triggerToggleButton)
+            let pvc = self.parentViewController?.parentViewController as! ViewController
+         //   pvc.toggleTriggerButtonVisibility(pvc.triggerToggleButton)
             return false
         }
         return true
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
-        let pvc = self.parentViewController?.parentViewController as ViewController
-        pvc.toggleTriggerButtonVisibility(textButton)
+        let pvc = self.parentViewController?.parentViewController as! ViewController
+    //    pvc.toggleTriggerButtonVisibility(textButton)
         
     }
     
