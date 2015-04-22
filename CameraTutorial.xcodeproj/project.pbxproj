@@ -29,6 +29,8 @@
 		01A974101AC33850006C1979 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A9740F1AC33850006C1979 /* libstdc++.6.dylib */; };
 		01A974121AC33856006C1979 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A974111AC33856006C1979 /* libz.dylib */; };
 		01A974141AC3385E006C1979 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A974131AC3385E006C1979 /* libsqlite3.dylib */; };
+		01BAC3AA1AE5D9EA006ADA0F /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BAC3A91AE5D9EA006ADA0F /* AlbumViewController.swift */; };
+		01BAC3AC1AE80E0B006ADA0F /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */; };
 		01BDDE891A912C240015F601 /* PageItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE881A912C240015F601 /* PageItemController.swift */; };
 		01BDDE8B1A912D4A0015F601 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE8A1A912D4A0015F601 /* CameraController.swift */; };
 		02F5BDE619CE1C4900EDFD47 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F5BDE519CE1C4900EDFD47 /* AppDelegate.swift */; };
@@ -70,6 +72,8 @@
 		01A9740F1AC33850006C1979 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "usr/lib/libstdc++.6.dylib"; sourceTree = SDKROOT; };
 		01A974111AC33856006C1979 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		01A974131AC3385E006C1979 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		01BAC3A91AE5D9EA006ADA0F /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
+		01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
 		01BDDE881A912C240015F601 /* PageItemController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageItemController.swift; sourceTree = "<group>"; };
 		01BDDE8A1A912D4A0015F601 /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		02F5BDE019CE1C4900EDFD47 /* l8r.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = l8r.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -176,8 +180,10 @@
 				01523DCA1A8FC23500FCDC0F /* Model.xcdatamodeld */,
 				02F5BDE719CE1C4900EDFD47 /* ViewController.swift */,
 				01BDDE8A1A912D4A0015F601 /* CameraController.swift */,
+				01BAC3A91AE5D9EA006ADA0F /* AlbumViewController.swift */,
 				01BDDE881A912C240015F601 /* PageItemController.swift */,
 				02F5BDE919CE1C4900EDFD47 /* Main.storyboard */,
+				01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */,
 				0180E6861AC9C0E400470487 /* InboxViewController.swift */,
 				02F5BDEC19CE1C4900EDFD47 /* Images.xcassets */,
 				02F5BDEE19CE1C4900EDFD47 /* LaunchScreen.xib */,
@@ -316,9 +322,11 @@
 				0104DE8D1AB7704200E4F220 /* AboutDialogue.swift in Sources */,
 				02F5BDE819CE1C4900EDFD47 /* ViewController.swift in Sources */,
 				0180E6851AC9C08D00470487 /* CardStack.swift in Sources */,
+				01BAC3AC1AE80E0B006ADA0F /* ModalViewController.swift in Sources */,
 				02F5BDE619CE1C4900EDFD47 /* AppDelegate.swift in Sources */,
 				0180E6871AC9C0E400470487 /* InboxViewController.swift in Sources */,
 				0104DE8A1AB76F8F00E4F220 /* MenuButton.swift in Sources */,
+				01BAC3AA1AE5D9EA006ADA0F /* AlbumViewController.swift in Sources */,
 				01523DCC1A8FC23500FCDC0F /* Model.xcdatamodeld in Sources */,
 				01BDDE891A912C240015F601 /* PageItemController.swift in Sources */,
 				01BDDE8B1A912D4A0015F601 /* CameraController.swift in Sources */,
