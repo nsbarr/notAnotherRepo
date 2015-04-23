@@ -365,7 +365,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             currentPage.previewLayer?.connection.enabled = true
            // hideTriggerButtons(true)
             self.cameraButtonsAreHidden(false)
-            currentPage.textView.removeFromSuperview()
+        //    currentPage.textView.removeFromSuperview()
             currentPage.textButton.hidden = true
             currentPage.textToSave = ""
 
@@ -562,20 +562,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
             
             let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
-      //      currentPage.previewLayer?.connection.enabled = true
-            //hideTriggerButtons(true)
 
-
-            
-            //this is where we do the context thing
-            
-    //
-      //      let imageToSchedule = updateImageWithText()
-    //        let imageToSchedule = currentPage.image
-            
-            
-            
-            
             
             //SAVE NEW L8R
             
@@ -601,9 +588,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
             pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
             
-            
-            currentPage.textView.removeFromSuperview()
-         //   currentPage.textButton.hidden = true
+
             currentPage.textToSave = ""
             
         }
@@ -628,9 +613,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             }
             
             self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
-            self.moveOnToNextL8r()
             
         }
+        
         
         
         
@@ -673,6 +658,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
     
     func scheduleLocalNotificationWithFireDate(fireDate: NSDate) {
+        println("scheduling notification with date \(fireDate)")
         var localNotification = UILocalNotification()
         localNotification.fireDate = fireDate
         localNotification.alertBody = "A L8R just arrived for you"

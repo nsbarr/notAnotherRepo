@@ -12,6 +12,8 @@ import CoreData
 
 class InboxViewController: UIViewController, CardStackDelegate {
     
+    //MARK: - Variables
+    
     @IBOutlet weak var cardStackView:CardStack!
     
     var currentImage: UIImage?
@@ -80,6 +82,8 @@ class InboxViewController: UIViewController, CardStackDelegate {
     var managedContext: NSManagedObjectContext!
 
     
+    //MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setUpCoreData()
@@ -97,6 +101,123 @@ class InboxViewController: UIViewController, CardStackDelegate {
         return true
     }
     
+    func addInboxBadge(){
+        
+        let inboxFrame = UIButton(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+        inboxFrame.addTarget(self, action: Selector("inboxButtonPressed:"), forControlEvents: .TouchUpInside)
+        
+        
+        inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 32)
+        
+        inboxNumber.textAlignment = .Center
+        inboxNumber.textColor = UIColor.blackColor()
+        inboxNumber.layer.shadowColor = UIColor.blackColor().CGColor
+        inboxNumber.layer.shadowOffset = CGSizeMake(0, 1)
+        inboxNumber.layer.shadowOpacity = 1
+        inboxNumber.layer.shadowRadius = 1
+        inboxNumber.text = "📷"
+        cardStackView.addSubview(inboxNumber)
+        cardStackView.addSubview(inboxFrame)
+    }
+    
+    func addLaterSnapButton(){
+        var snapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
+        snapButton.center.x = view.center.x+(snapButton.frame.width/2+5)
+        snapButton.tag = 0
+        let buttonImage = UIImage(named: "laterSnapButton")
+        snapButton.setImage(buttonImage, forState: .Normal)
+        snapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
+        snapButton.hidden = false
+        
+        cardStackView.addSubview(snapButton)
+        
+    }
+    
+    func addListSnapButton(){
+        var listSnapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
+        listSnapButton.center.x = view.center.x-(listSnapButton.frame.width/2+5)
+        listSnapButton.tag = 1234
+        let buttonImage = UIImage(named: "listSnapButton")
+        listSnapButton.setImage(buttonImage, forState: .Normal)
+        listSnapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
+        listSnapButton.hidden = false
+        
+        cardStackView.addSubview(listSnapButton)
+    }
+    
+    
+    func addDismissButton(){
+        var dismissButton = UIButton(frame: CGRect(x: 28, y: view.frame.height-130, width: 52, height: 52))
+        let buttonImage = UIImage(named: "dismissButton")
+        dismissButton.setImage(buttonImage, forState: .Normal)
+        dismissButton.addTarget(self, action: Selector("dismissTopCard"), forControlEvents: .TouchUpInside)
+        cardStackView.addSubview(dismissButton)
+    }
+    
+    func addShareButton(){
+        var shareButton = UIButton(frame: CGRect(x: view.frame.width-80, y: view.frame.height-130, width: 52, height: 52))
+        let buttonImage = UIImage(named: "shareButton")
+        shareButton.setImage(buttonImage, forState: .Normal)
+        shareButton.addTarget(self, action: Selector("openShareSheet:"), forControlEvents: .TouchUpInside)
+        cardStackView.addSubview(shareButton)
+    }
+
+    
+    //MARK: - Actions
+    
+    func dismissTopCard(){
+        self.cardStackView.swipeOutTopCardWithSpeed(1.0)
+    }
+
+    func inboxButtonPressed(sender:UIButton){
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    
+    func openShareSheet(sender: UIButton){
+        var sharingItems = [AnyObject]()
+        
+        let text = "Check out this L8R and create your own!"
+        sharingItems.append(text)
+        
+        if let image = currentImage {
+            sharingItems.append(image)
+        }
+        
+        let url = NSURL(string: "http://lthenumbereightr.com")
+        sharingItems.append(url!)
+        
+        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
+        self.presentViewController(activityViewController, animated: true, completion: nil)
+        
+    }
+    
+    
+    
+    
+    func snapButtonPressed(sender: UIButton){
+        
+        let mvc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+        mvc.modalPresentationStyle = .OverCurrentContext
+        
+        
+        if sender.tag == 1234{
+            mvc.viewToShow = "album"
+        }
+        else if sender.tag == 0{
+            
+            mvc.viewToShow = "snooze"
+        }
+        else {
+            println("don't recognize \(sender)")
+        }
+        
+        self.presentViewController(mvc, animated: true, completion: nil)
+        
+    }
+    
+    //MARK: - Card delegate Methods
     
     func cardRemoved(card: Card) {
         println("The card \(card.cardId!) was removed!")
@@ -156,157 +277,8 @@ class InboxViewController: UIViewController, CardStackDelegate {
 
             return card
         }
-        
-        
-        
-        
-//        let label: UILabel = UILabel(frame: card.frame)
-//      //  label.text = "\(cardId)"
-//        label.textColor = textColor
-//        label.textAlignment = NSTextAlignment.Center
-//        println(l8rsBeforeCurrentDate.count)
-//        println(l8rsBeforeCurrentDate[0])
-    
-        
     }
     
-    func addInboxBadge(){
-        
-        let inboxFrame = UIButton(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
-        inboxFrame.addTarget(self, action: Selector("inboxButtonPressed:"), forControlEvents: .TouchUpInside)
-        
-        
-        inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
-        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 32)
-        
-        inboxNumber.textAlignment = .Center
-        inboxNumber.textColor = UIColor.blackColor()
-        inboxNumber.layer.shadowColor = UIColor.blackColor().CGColor
-        inboxNumber.layer.shadowOffset = CGSizeMake(0, 1)
-        inboxNumber.layer.shadowOpacity = 1
-        inboxNumber.layer.shadowRadius = 1
-        inboxNumber.text = "📷"
-        cardStackView.addSubview(inboxNumber)
-        cardStackView.addSubview(inboxFrame)
-    }
-    
-    func inboxButtonPressed(sender:UIButton){
-        let vc = self.storyboard!.instantiateViewControllerWithIdentifier("ViewController") as! ViewController
-        self.presentViewController(vc, animated: true, completion: nil)
-    }
-    
-    func addLaterSnapButton(){
-        var snapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
-        snapButton.center.x = view.center.x+(snapButton.frame.width/2+5)
-        snapButton.tag = 0
-        let buttonImage = UIImage(named: "laterSnapButton")
-        snapButton.setImage(buttonImage, forState: .Normal)
-        snapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
-        snapButton.hidden = false
-        
-        cardStackView.addSubview(snapButton)
-        
-    }
-    
-    func addDismissButton(){
-        var dismissButton = UIButton(frame: CGRect(x: 28, y: view.frame.height-130, width: 52, height: 52))
-        let buttonImage = UIImage(named: "dismissButton")
-        dismissButton.setImage(buttonImage, forState: .Normal)
-        dismissButton.addTarget(self, action: Selector("dismissTopCard"), forControlEvents: .TouchUpInside)
-        cardStackView.addSubview(dismissButton)
-    }
-    
-    func addShareButton(){
-        var shareButton = UIButton(frame: CGRect(x: view.frame.width-80, y: view.frame.height-130, width: 52, height: 52))
-        let buttonImage = UIImage(named: "shareButton")
-        shareButton.setImage(buttonImage, forState: .Normal)
-        shareButton.addTarget(self, action: Selector("openShareSheet:"), forControlEvents: .TouchUpInside)
-        cardStackView.addSubview(shareButton)
-    }
-    
-    func openShareSheet(sender: UIButton){
-        var sharingItems = [AnyObject]()
-        
-        let text = "Check out this L8R and create your own!"
-        sharingItems.append(text)
-        
-        if let image = currentImage {
-            sharingItems.append(image)
-        }
-        
-        let url = NSURL(string: "http://lthenumbereightr.com")
-        sharingItems.append(url!)
-        
-        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
-        self.presentViewController(activityViewController, animated: true, completion: nil)
-        
-    }
-    
-    func dismissTopCard(){
-        self.cardStackView.swipeOutTopCardWithSpeed(1.0)
-    }
-    
-    func addListSnapButton(){
-        var listSnapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
-        listSnapButton.center.x = view.center.x-(listSnapButton.frame.width/2+5)
-        listSnapButton.tag = 1234
-        let buttonImage = UIImage(named: "listSnapButton")
-        listSnapButton.setImage(buttonImage, forState: .Normal)
-        listSnapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
-        listSnapButton.hidden = false
-        
-        cardStackView.addSubview(listSnapButton)
-    }
-    
-    //MARK: Open Menu -> Dismiss Menu -> Flash Ani -> Swipe up Card
-    
-    func snapButtonPressed(sender: UIButton){
-        
-        let mvc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
-        mvc.modalPresentationStyle = .OverCurrentContext
-
-        
-        if sender.tag == 1234{
-            //self.showAlbumList(sender)
-            mvc.viewToShow = "album"
-        }
-        else if sender.tag == 0{
-            
-            mvc.viewToShow = "snooze"
-            //self.showSnoozeList()
-            self.scheduleL8r()
-        }
-        else {println("wtf?")}
-        
-        self.presentViewController(mvc, animated: true, completion: nil)
-
-    }
-    
-    func scheduleL8r(){
-        //maybe just delete current later and schedule a new later based on currentImage?
-        //right now a card gets deleted any time it gets slid up, so...
-        
-        let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
-        let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-        let imageData = UIImageJPEGRepresentation(currentImage, 0)
-        l8r.setValue(imageData, forKey: "imageData")
-        l8r.setValue(NSDate(), forKey: "fireDate")
-        
-        var error: NSError?
-        if !managedContext.save(&error) {
-            println("Coulnd't save \(error), \(error?.userInfo)")
-        }
-        
-        let vc = self.presentingViewController as! ViewController
-        //UPDATE L8RS
-        vc.fetchL8rs()
-        
-        //Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
-        
-        vc.scheduleLocalNotificationWithFireDate(NSDate())
-        self.dismissTopCard()
-
-    }
     
     func showAlbumList(sender:UIButton){
         

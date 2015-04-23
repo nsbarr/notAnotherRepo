@@ -73,7 +73,7 @@
 		01A974111AC33856006C1979 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		01A974131AC3385E006C1979 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		01BAC3A91AE5D9EA006ADA0F /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
-		01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
+		01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModalViewController.swift; path = ../ModalViewController.swift; sourceTree = "<group>"; };
 		01BDDE881A912C240015F601 /* PageItemController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageItemController.swift; sourceTree = "<group>"; };
 		01BDDE8A1A912D4A0015F601 /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		02F5BDE019CE1C4900EDFD47 /* l8r.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = l8r.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +124,7 @@
 		0104DE881AB76F8F00E4F220 /* library */ = {
 			isa = PBXGroup;
 			children = (
+				01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */,
 				0180E6841AC9C08D00470487 /* CardStack.swift */,
 				0104DE891AB76F8F00E4F220 /* MenuButton.swift */,
 				0104DE8C1AB7704200E4F220 /* AboutDialogue.swift */,
@@ -183,7 +184,6 @@
 				01BAC3A91AE5D9EA006ADA0F /* AlbumViewController.swift */,
 				01BDDE881A912C240015F601 /* PageItemController.swift */,
 				02F5BDE919CE1C4900EDFD47 /* Main.storyboard */,
-				01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */,
 				0180E6861AC9C0E400470487 /* InboxViewController.swift */,
 				02F5BDEC19CE1C4900EDFD47 /* Images.xcassets */,
 				02F5BDEE19CE1C4900EDFD47 /* LaunchScreen.xib */,

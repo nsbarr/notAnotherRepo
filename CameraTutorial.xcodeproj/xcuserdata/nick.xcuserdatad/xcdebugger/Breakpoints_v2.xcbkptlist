@@ -22,7 +22,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/ViewController.swift"
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/CameraController.swift"
-            timestampString = "451421250.555156"
+            timestampString = "451436483.738409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "501"
-            endingLineNumber = "501"
+            startingLineNumber = "480"
+            endingLineNumber = "480"
             landmarkName = "textViewDidEndEditing(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -89,13 +89,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CameraTutorial/ViewController.swift"
-            timestampString = "449430588.591784"
+            filePath = "CameraTutorial/CameraController.swift"
+            timestampString = "451438570.743815"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
-            landmarkName = "addInboxBadge()"
+            startingLineNumber = "449"
+            endingLineNumber = "449"
+            landmarkName = "flashConfirm()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

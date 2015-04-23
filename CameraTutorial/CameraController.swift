@@ -28,7 +28,6 @@ class CameraController: UIViewController, UITextViewDelegate {
     var backCameraDevice:AVCaptureDevice?
     var frontCameraDevice:AVCaptureDevice?
     var stillCameraOutput:AVCaptureStillImageOutput!
-
     
     var currentInput: AVCaptureDeviceInput?
     var currentDeviceIsBack = true
@@ -187,10 +186,11 @@ class CameraController: UIViewController, UITextViewDelegate {
     
     
     func addFlipButton(){
-        flipButton = UIButton(frame: CGRectMake(10, 20, 50, 50))
-      //  flipButton.setTitle("Flip", forState: .Normal)
-        flipButton.setImage(UIImage(named: "flipButton"), forState: .Normal)
-        flipButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
+        flipButton = UIButton(frame: CGRectMake(10, 20, 40, 40))
+        flipButton.setTitle("😎", forState: .Normal)
+        flipButton.setTitle("🌎", forState: .Selected)
+        //flipButton.setImage(UIImage(named: "flipButton"), forState: .Normal)
+        flipButton.titleLabel?.font = UIFont(name: "Arial-BoldMT", size: 32)
         flipButton.addTarget(self, action: Selector("toggleCamera:"), forControlEvents: .TouchUpInside)
         flipButton.titleLabel!.layer.shadowColor = UIColor.blackColor().CGColor
         flipButton.titleLabel!.layer.shadowOffset = CGSizeMake(0, 1)
@@ -199,6 +199,27 @@ class CameraController: UIViewController, UITextViewDelegate {
      //   flipButton.sizeToFit()
 
         view.addSubview(flipButton)
+    }
+    
+    
+    func addInboxBadge(){
+        
+        let inboxFrame = UIButton(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+        inboxFrame.addTarget(self, action: Selector("inboxButtonPressed:"), forControlEvents: .TouchUpInside)
+        //   inboxFrame.setImage(UIImage(named: "inboxFrame"), forState: .Normal)
+        
+        
+        let inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
+        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 32)
+        inboxNumber.text = "🌴"
+        inboxNumber.textAlignment = .Center
+        inboxNumber.textColor = UIColor.whiteColor()
+        inboxNumber.layer.shadowColor = UIColor.blackColor().CGColor
+        inboxNumber.layer.shadowOffset = CGSizeMake(0, 1)
+        inboxNumber.layer.shadowOpacity = 1
+        inboxNumber.layer.shadowRadius = 1
+        self.view.addSubview(inboxFrame)
+        self.view.addSubview(inboxNumber)
     }
     
     func addImagePickerButton(){
@@ -294,39 +315,28 @@ class CameraController: UIViewController, UITextViewDelegate {
         //capture still image async
         //bring up relevant modal
         
-        //(modal is responsible for scheduling or filing the image, unfreezing the connection, and flashing the ani)
-        
-        
         self.previewLayer?.connection.enabled = false
-        
+        self.takeScreenSnapshotFromButton(sender)
+    
+
+    }
+    
+    func takeScreenSnapshotFromButton(sender: UIButton){
         dispatch_async(sessionQueue) { () -> Void in
             
             let connection = self.stillCameraOutput.connectionWithMediaType(AVMediaTypeVideo)
-            
-            // update the video orientation to the device one
             connection.videoOrientation = AVCaptureVideoOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)!
-            
-            let pvc = self.parentViewController?.parentViewController as! ViewController
-
             self.stillCameraOutput.captureStillImageAsynchronouslyFromConnection(connection) {
                 (imageDataSampleBuffer, error) -> Void in
                 
                 if error == nil {
                     println("should be disabling connection...")
-                   // pvc.cameraButtonsAreHidden(true)
-                    
-
                     
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
                     let metadata:NSDictionary = CMCopyDictionaryOfAttachments(nil, imageDataSampleBuffer, CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)).takeUnretainedValue()
-                    
                     //TODO: Reduce image size here maybe? Or at least make them the same size.
-                    
-                    
                     if let theImage = UIImage(data: imageData) {
                         
-                        
-
                         //TODO: figure out low image quality
                         
                         let imageView = UIImageView(frame: CGRectMake(0, 0, theImage.size.width*self.view.frame.height/theImage.size.height, self.view.frame.height))
@@ -338,54 +348,17 @@ class CameraController: UIViewController, UITextViewDelegate {
                         }
                         self.textView.frame.origin.x = self.textView.frame.origin.x + (imageView.frame.width-self.view.frame.width)/2
                         imageView.contentMode = UIViewContentMode.ScaleToFill
-                        self.textView.removeFromSuperview()
-                        self.textView.hidden = false
                         imageView.addSubview(self.textView)
-
-
-
-                        println(self.textView)
-//                        self.tempView = UIView(frame: self.view.frame)
-//                        self.tempView.addSubview(imageView)
-                   //     self.textView.removeFromSuperview()
-                   //     self.tempView.addSubview(self.textView)
-//                        UIGraphicsBeginImageContextWithOptions(tempView.bounds.size, tempView.opaque, 0)
-//                        tempView.drawViewHierarchyInRect(tempView.bounds, afterScreenUpdates: false)
-//                        let snapShotImage = UIGraphicsGetImageFromCurrentImageContext()
-//                        UIGraphicsEndImageContext()
-                        
-                        
                         
                         UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, imageView.opaque, 0.0)
                         imageView.layer.renderInContext(UIGraphicsGetCurrentContext())
                         let snapshotImage = UIGraphicsGetImageFromCurrentImageContext()
                         UIGraphicsEndImageContext()
                         self.image = snapshotImage
-                        
-                        
-                        
-                        if sender.tag == 1234 {
-                            
-                            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
-                            //    avc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
-                            avc.image = self.image
-                            avc.viewToShow = "album"
-                            
-                            avc.modalPresentationStyle = .OverCurrentContext
-                            self.presentViewController(avc, animated: true, completion: nil)
-                        }
-                        
-                        else if sender.tag == 0 {
-                            
-                            pvc.scheduleL8r(self.snapButton)
-                            self.flashConfirm()
-                            self.previewLayer?.connection.enabled = true
-                        }
-                        
-                        self.addTextView()
-                        
-                    
+                        //TODO: we shouldn't have to wait for the snapshot to bring up the modal
+                        self.bringUpSnapModalFromButton(sender)
 
+                        
                     }
                 }
                     
@@ -395,6 +368,34 @@ class CameraController: UIViewController, UITextViewDelegate {
             }
         }
     }
+    
+    func bringUpSnapModalFromButton(sender: UIButton){
+        let pvc = self.parentViewController?.parentViewController as! ViewController
+        
+        
+        if sender.tag == 1234 {
+            
+            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            avc.image = self.image
+            avc.viewToShow = "album"
+            
+            avc.modalPresentationStyle = .OverCurrentContext
+            self.presentViewController(avc, animated: true, completion: nil)
+        }
+            
+        else if sender.tag == 0 {
+            
+            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            avc.image = self.image
+            avc.viewToShow = "snooze"
+            
+            avc.modalPresentationStyle = .OverCurrentContext
+            self.presentViewController(avc, animated: true, completion: nil)
+            
+            
+        }
+    }
+    
     
     func toggleCamera(sender: UIButton) {
         
@@ -408,7 +409,7 @@ class CameraController: UIViewController, UITextViewDelegate {
                     self.session.addInput(currentInput)
                     self.session.commitConfiguration()
                 currentDeviceIsBack = false
-                
+                sender.selected = !sender.selected
             }
             else {
                 println("front camera not possible i guess?")
@@ -424,7 +425,7 @@ class CameraController: UIViewController, UITextViewDelegate {
                 self.session.addInput(currentInput)
                 self.session.commitConfiguration()
                 currentDeviceIsBack = true
-                
+                sender.selected = !sender.selected
             }
             else {
                 println("back camera not possible i guess?")
@@ -448,33 +449,11 @@ class CameraController: UIViewController, UITextViewDelegate {
             }, completion: nil)
         
     }
-    
-    func addInboxBadge(){
-        
-        let inboxFrame = UIButton(frame:CGRectMake(self.view.frame.width - 44, 20, 40, 40))
-        inboxFrame.addTarget(self, action: Selector("inboxButtonPressed:"), forControlEvents: .TouchUpInside)
-     //   inboxFrame.setImage(UIImage(named: "inboxFrame"), forState: .Normal)
-        
-        
-        let inboxNumber = UILabel(frame: CGRectMake(self.view.frame.width - 44, 20, 40, 40))
-        inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 32)
-        inboxNumber.text = "🌴"
-        inboxNumber.textAlignment = .Center
-        inboxNumber.textColor = UIColor.whiteColor()
-        inboxNumber.layer.shadowColor = UIColor.blackColor().CGColor
-        inboxNumber.layer.shadowOffset = CGSizeMake(0, 1)
-        inboxNumber.layer.shadowOpacity = 1
-        inboxNumber.layer.shadowRadius = 1
-        self.view.addSubview(inboxFrame)
-        self.view.addSubview(inboxNumber)
 
-        
-        
-    }
     
     func inboxButtonPressed(sender:UIButton){
         let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as! InboxViewController
-        self.presentViewController(ivc, animated: true, completion: nil)
+        self.presentViewController(ivc, animated: false, completion: nil)
     }
     
 
