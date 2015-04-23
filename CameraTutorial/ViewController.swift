@@ -159,7 +159,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         inboxNumber.font = UIFont(name: "Arial-BoldMT", size: 32)
         
         inboxNumber.textAlignment = .Center
-        inboxNumber.textColor = UIColor.whiteColor()
+        inboxNumber.textColor = UIColor.clearColor()
         inboxNumber.layer.shadowColor = UIColor.blackColor().CGColor
         inboxNumber.layer.shadowOffset = CGSizeMake(0, 1)
         inboxNumber.layer.shadowOpacity = 1
@@ -350,6 +350,11 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     
     //MARK: - L8R Management
     
+    func removeL8rAtIndex(index: Int){
+        
+    }
+    
+    
     func deleteL8r(){
         
         
@@ -360,7 +365,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             currentPage.previewLayer?.connection.enabled = true
            // hideTriggerButtons(true)
             self.cameraButtonsAreHidden(false)
-            currentPage.textView.removeFromSuperview()
+        //    currentPage.textView.removeFromSuperview()
             currentPage.textButton.hidden = true
             currentPage.textToSave = ""
 
@@ -460,7 +465,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
         self.presentViewController(activityViewController, animated: true, completion: nil)
         
-        }
+    }
     
     func shareTextImageAndURL(sharingText: String?, sharingImage: UIImage?, sharingURL: NSURL?) {
         var sharingItems = [AnyObject]()
@@ -512,7 +517,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
         
             let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
-            currentPage.previewLayer?.connection.enabled = true
+     //       currentPage.previewLayer?.connection.enabled = true
             currentPage.snapButton.hidden = toggle
             currentPage.textButton.hidden = toggle
             currentPage.textView.hidden = toggle
@@ -557,20 +562,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
             
             let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
-            currentPage.previewLayer?.connection.enabled = true
-            //hideTriggerButtons(true)
 
-
-            
-            //this is where we do the context thing
-            
-    //
-      //      let imageToSchedule = updateImageWithText()
-    //        let imageToSchedule = currentPage.image
-            
-            
-            
-            
             
             //SAVE NEW L8R
             
@@ -596,9 +588,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
             pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
             
-            
-            currentPage.textView.removeFromSuperview()
-         //   currentPage.textButton.hidden = true
+
             currentPage.textToSave = ""
             
         }
@@ -623,9 +613,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             }
             
             self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
-            self.moveOnToNextL8r()
             
         }
+        
         
         
         
@@ -668,6 +658,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
 
     
     func scheduleLocalNotificationWithFireDate(fireDate: NSDate) {
+        println("scheduling notification with date \(fireDate)")
         var localNotification = UILocalNotification()
         localNotification.fireDate = fireDate
         localNotification.alertBody = "A L8R just arrived for you"
@@ -718,46 +709,48 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController? {
+        return nil
         
-        
-        if viewController.restorationIdentifier == "CameraController" {
-            return nil // Camera is always first
-        }
-        
-        else { // we got a PageItemController
-            var itemController = viewController as! PageItemController
-            if itemController.itemIndex == 0 { //If we got the first ItemController, then go back to Camera
-                return cameraController
-            }
-            else {
-                return getItemController(itemController.itemIndex-1) //Otherwise go back to previous ItemController
-            }
-        
-            
-        }
+//        if viewController.restorationIdentifier == "CameraController" {
+//            return nil // Camera is always first
+//        }
+//        
+//        else { // we got a PageItemController
+//            var itemController = viewController as! PageItemController
+//            if itemController.itemIndex == 0 { //If we got the first ItemController, then go back to Camera
+//                return cameraController
+//            }
+//            else {
+//                return getItemController(itemController.itemIndex-1) //Otherwise go back to previous ItemController
+//            }
+//        
+//            
+//        }
     }
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
         
-        println("looking for next vc")
-
+        return nil
         
-        if viewController.restorationIdentifier == "CameraController" {
-            println("a")
-            return getItemController(0) // top of Inbox
-        }
-        
-        else {
-            println("b")
-            var itemController = viewController as! PageItemController
-
-            if itemController.itemIndex+1 < l8rsBeforeCurrentDate.count {
-                println("c")
-                return getItemController(itemController.itemIndex+1)
-            }
-            println("d")
-            return nil
-        }
+//        println("looking for next vc")
+//
+//        
+//        if viewController.restorationIdentifier == "CameraController" {
+//            println("a")
+//            return getItemController(0) // top of Inbox
+//        }
+//        
+//        else {
+//            println("b")
+//            var itemController = viewController as! PageItemController
+//
+//            if itemController.itemIndex+1 < l8rsBeforeCurrentDate.count {
+//                println("c")
+//                return getItemController(itemController.itemIndex+1)
+//            }
+//            println("d")
+//            return nil
+//        }
         
     }
     

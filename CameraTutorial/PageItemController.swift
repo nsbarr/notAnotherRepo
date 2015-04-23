@@ -29,7 +29,7 @@ class PageItemController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
         let pvc = self.parentViewController?.parentViewController as! ViewController
-        pvc.cameraButtonsAreHidden(true)
+     //   pvc.cameraButtonsAreHidden(true)
         
     }
     

@@ -22,15 +22,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/ViewController.swift"
-            timestampString = "449431996.779198"
+            timestampString = "451332638.098476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "511"
-            endingLineNumber = "511"
+            startingLineNumber = "516"
+            endingLineNumber = "516"
             landmarkName = "cameraButtonsAreHidden(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/CameraController.swift"
-            timestampString = "449786443.311545"
+            timestampString = "451436483.738409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "364"
-            endingLineNumber = "364"
+            startingLineNumber = "480"
+            endingLineNumber = "480"
             landmarkName = "textViewDidEndEditing(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/ViewController.swift"
-            timestampString = "449431996.779198"
+            timestampString = "451332638.098476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "458"
-            endingLineNumber = "458"
+            startingLineNumber = "463"
+            endingLineNumber = "463"
             landmarkName = "shareIconPressed(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/ViewController.swift"
-            timestampString = "449431996.779198"
+            timestampString = "451332638.098476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "517"
-            endingLineNumber = "517"
+            startingLineNumber = "522"
+            endingLineNumber = "522"
             landmarkName = "cameraButtonsAreHidden(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -89,13 +89,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CameraTutorial/ViewController.swift"
-            timestampString = "449430588.591784"
+            filePath = "CameraTutorial/CameraController.swift"
+            timestampString = "451438570.743815"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
-            landmarkName = "addInboxBadge()"
+            startingLineNumber = "449"
+            endingLineNumber = "449"
+            landmarkName = "flashConfirm()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

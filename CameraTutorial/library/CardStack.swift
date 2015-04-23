@@ -295,7 +295,7 @@ public class CardStack : UIView {
             if (velocity.y < swipeUpThreshold) {
                 println("swipe up")
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.swipeOutTopCard()
+                    self.swipeOutTopCardWithSpeed(0.4)
                 })
             }
             else if (velocity.y > swipeDownThreshold) {
@@ -304,7 +304,7 @@ public class CardStack : UIView {
             else {
                 if (verticalDistanceTraveled > swipeOutThreshold) {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.swipeOutTopCard()
+                        self.swipeOutTopCardWithSpeed(0.4)
                     })
                 }
                 else {
@@ -399,11 +399,11 @@ public class CardStack : UIView {
         }
     }
     
-    func swipeOutTopCard() {
+    func swipeOutTopCardWithSpeed(speed: NSTimeInterval) {
         let actionView = self.topView
         let newTopView = self.hiddenView
         
-        UIView.animateWithDuration(0.4, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: UIViewAnimationOptions.CurveEaseIn,
+        UIView.animateWithDuration(speed, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: UIViewAnimationOptions.CurveEaseIn,
             animations: { () -> Void in
                 
                 actionView.center = CGPoint(x: actionView.center.x, y: -(actionView.frame.height))
