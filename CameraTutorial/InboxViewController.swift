@@ -19,55 +19,60 @@ class InboxViewController: UIViewController, CardStackDelegate {
     var currentImage: UIImage?
     var currentL8r: NSManagedObject?
     
-    
+    var l8rsBeforeCurrentDate = [NSManagedObject]()
+
     let colors:[UIColor] = [UIColor.redColor(), UIColor.blueColor(), UIColor.greenColor(), UIColor.yellowColor(), UIColor.magentaColor(), UIColor.purpleColor(), UIColor.blackColor()]
     
     var cardCount: Int {
-        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        managedContext = appDelegate.managedObjectContext!
         
-        let fetchRequest = NSFetchRequest(entityName: "L8R")
-        var error: NSError?
+        if l8rsBeforeCurrentDate.isEmpty {
         
-        let fireDateSort = NSSortDescriptor(key: "fireDate", ascending: true)
-        let fireDateSorts = [fireDateSort]
-        
-        l8rsBeforeCurrentDate = []
-        
-        fetchRequest.sortDescriptors = fireDateSorts
-        
-        
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
-        
-        if let results = fetchedResults {
+            appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            managedContext = appDelegate.managedObjectContext!
+            
+            let fetchRequest = NSFetchRequest(entityName: "L8R")
+            var error: NSError?
+            
+            let fireDateSort = NSSortDescriptor(key: "fireDate", ascending: true)
+            let fireDateSorts = [fireDateSort]
             
             
-            let currentDate = NSDate()
-            for l8r in results {
+            
+            fetchRequest.sortDescriptors = fireDateSorts
+            
+            
+            let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
+            
+            if let results = fetchedResults {
                 
-                //                //if you ever need to delete all of them, uncomment this and comment the if statement below
-                //                managedContext.deleteObject(l8r)
-                //
-                //                var error: NSError?
-                //
-                //                if !managedContext.save(&error) {
-                //                    println("Unresolved error \(error), \(error!.userInfo)")
-                //                    abort()
-                //                }
                 
-                //  println(l8r.valueForKey("fireDate"))
-                
-                if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
-                    l8rsBeforeCurrentDate.append(l8r)
-                    println("appended!")
+                let currentDate = NSDate()
+                for l8r in results {
                     
+                    //                //if you ever need to delete all of them, uncomment this and comment the if statement below
+                    //                managedContext.deleteObject(l8r)
+                    //
+                    //                var error: NSError?
+                    //
+                    //                if !managedContext.save(&error) {
+                    //                    println("Unresolved error \(error), \(error!.userInfo)")
+                    //                    abort()
+                    //                }
+                    
+                    //  println(l8r.valueForKey("fireDate"))
+                    
+                    if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
+                        l8rsBeforeCurrentDate.append(l8r)
+                        println("appended!")
+                        
+                        
+                    }
                     
                 }
-                
             }
-        }
-        else {
-            println("Could not fetch \(error), \(error!.userInfo)")
+            else {
+                println("Could not fetch \(error), \(error!.userInfo)")
+            }
         }
         
         //  [UIApplication sharedApplication].applicationIconBadgeNumber = [[[userInfo objectForKey:@"aps"] objectForKey: @"badgecount"] intValue];
@@ -77,7 +82,6 @@ class InboxViewController: UIViewController, CardStackDelegate {
     }
     
     var inboxNumber: UILabel!
-    var l8rsBeforeCurrentDate = [NSManagedObject]()
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
 
@@ -203,10 +207,11 @@ class InboxViewController: UIViewController, CardStackDelegate {
         
         
         if sender.tag == 1234{
+            mvc.image = self.currentImage!
             mvc.viewToShow = "album"
         }
         else if sender.tag == 0{
-            
+            mvc.image = self.currentImage!
             mvc.viewToShow = "snooze"
         }
         else {
@@ -221,10 +226,10 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func cardRemoved(card: Card) {
         println("The card \(card.cardId!) was removed!")
-//        let vc = self.presentingViewController as! ViewController
-//        vc.deleteL8r()
         
-        if card.cardId > -1 { //whyyy
+        //TODO: This is fucked
+
+        if card.cardId > -1 { //why?🔥
         
             managedContext.deleteObject(l8rsBeforeCurrentDate[card.cardId!]) //just guessin
             
@@ -274,6 +279,14 @@ class InboxViewController: UIViewController, CardStackDelegate {
         else {
             let card: Card = Card(frame: CGRect(x: 0, y: 0, width: 0, height:0))
             card.cardId = cardId
+        
+            
+            let label: UILabel = UILabel(frame: card.frame)
+            label.text = "Oops! I goofed 😔"
+            label.textColor = UIColor.redColor()
+            label.textAlignment = NSTextAlignment.Center
+            
+            card.addSubview(label)
 
             return card
         }
@@ -282,15 +295,12 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func showAlbumList(sender:UIButton){
         
-        
-        
         let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
         
         if currentImage != nil {
             avc.image = currentImage!
             avc.modalPresentationStyle = .OverCurrentContext
             self.presentViewController(avc, animated: true, completion: {() -> Void in
-                
                 
             })
         }

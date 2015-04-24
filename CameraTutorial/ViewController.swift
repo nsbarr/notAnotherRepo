@@ -578,9 +578,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             }
             
             //UPDATE L8RS
-            self.fetchL8rs()
+          //  self.fetchL8rs()
             
-            //Current thinking is that the app caches the page left and right (nil) on the first schedule, and doesn't refresh. Workaround below is to setViewController
             
             self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
             
@@ -671,9 +670,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func handleViewNotification(){
         println("foo")
         self.fetchL8rs()
-        let targetViewController = getItemController(0) as PageItemController!
-        let arrayVC : NSArray = [targetViewController]
-        pageViewController?.setViewControllers(arrayVC as [AnyObject], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as! InboxViewController
+        self.presentViewController(ivc, animated: false, completion: nil)
     }
     
     

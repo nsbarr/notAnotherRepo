@@ -226,6 +226,8 @@ class CameraController: UIViewController, UITextViewDelegate {
         var imagePickerButton = UIButton(frame: CGRect(x: 38, y: view.frame.height-150, width: 52, height: 52))
         imagePickerButton.setImage(UIImage(named: "imagePickerButton"), forState: .Normal)
         imagePickerButton.addTarget(self, action: Selector("openKeyboard:"), forControlEvents: .TouchUpInside)
+        imagePickerButton.enabled = false // doesn't work yet
+        imagePickerButton.alpha = 0.4
         imagePickerButton.tag = 101
         view.addSubview(imagePickerButton)
     }

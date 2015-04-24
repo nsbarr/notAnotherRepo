@@ -80,7 +80,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func getListOfSnoozeOptions(){
         
-        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "Now", "When I get home"]
+        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "In a Minute", "When I get home"]
         
     }
     
@@ -114,6 +114,15 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.tableView.backgroundColor = UIColor.clearColor()
         cell.backgroundView = nil
         cell.backgroundColor = UIColor.clearColor()
+        
+        //Gray out when I get home
+        if indexPath.row == 7 && viewToShow == "snooze"{
+            cell.textLabel?.textColor = UIColor.grayColor()
+            println("disabled")
+        }
+        else {
+            println("index:\(indexPath), text:\(cell.textLabel)")
+        }
     }
     
 
@@ -199,9 +208,9 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
         }
         
-        else if viewToShow == "snooze" {
+        else if (viewToShow == "snooze") && (indexPath.row != 7) {
             
-            //        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "Now", "When I get home"]
+            //        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "In a Minute", "When I get home"]
             
             let snoozeOptionPicked = self.albumNames[indexPath.row]
             println(snoozeOptionPicked)
@@ -213,12 +222,14 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             if snoozeOptionPicked == "Pick Date" { // calendar
                 //open calendar
                 tableView.hidden = true
+                self.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
                 datePicker = UIDatePicker(frame: self.view.frame)
                 datePicker.center.y = self.view.center.y
                 self.view.addSubview(datePicker)
                 
-                let confirmButton = UIButton(frame: CGRectMake(0, 200, 116, 42))
+                let confirmButton = UIButton(frame: CGRectMake(0, 200, 100, 100))
                 confirmButton.center.x = self.view.center.x
+                confirmButton.center.y = datePicker.frame.maxY+60
                 confirmButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
                 confirmButton.tag = 777
                 confirmButton.addTarget(self, action: Selector("getDatePickerDate:"), forControlEvents: .TouchUpInside)
@@ -238,8 +249,10 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
                 }
                     
-                else if snoozeOptionPicked == "Now" { // right now
-                    scheduledDate = NSDate()
+                else if snoozeOptionPicked == "In a Minute" { // In a Minute
+                   // scheduledDate = NSDate()
+                    timeComponent.minute = 1
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
                 }
                     
                 else if snoozeOptionPicked == "1 Hour" { // in an hour
@@ -283,14 +296,13 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         let vc = appDelegate.window!.rootViewController as! ViewController
         vc.scheduleLocalNotificationWithFireDate(scheduledDate)
-        vc.fetchL8rs()
-
         
     }
     
     
     func getDatePickerDate(sender: UIButton){
         var scheduledDate = datePicker.date
+        self.scheduleL8rWithDate(scheduledDate)
         //Schedule L8R
         self.prepareToDismissVc()
     }
@@ -327,9 +339,6 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         })
 
     }
-    
-
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

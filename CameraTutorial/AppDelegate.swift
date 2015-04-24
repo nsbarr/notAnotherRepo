@@ -44,6 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rvc = window?.rootViewController as! ViewController
         println(rvc)
         rvc.fetchL8rs()
+        let cc = rvc.childViewControllers[0].childViewControllers[0] as! CameraController
+        cc.previewLayer?.connection.enabled = true
         
         
     }
@@ -57,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //MARK: - Notification Center
     func application(application: UIApplication, handleActionWithIdentifier identifier: String?, forLocalNotification notification: UILocalNotification, completionHandler: () -> Void) {
         
-        println(identifier)
+        println("identifier: \(identifier)")
         
         if identifier == "view" {
             NSNotificationCenter.defaultCenter().postNotificationName("viewNotification", object: nil)
