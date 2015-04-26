@@ -92,7 +92,10 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 (group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                 if group != nil {
                     let albumName = group.valueForProperty(ALAssetsGroupPropertyName) as! String
-                    self.albumNames.append(albumName)
+                    if !((albumName == "Snapchat") || (albumName == "Instagram") || (albumName == "Adobe Shape CC") || (albumName == "Seene") || (albumName == "💡 Inspiration") || (albumName == "🎥 To Watch") || albumName == "📖 To Read"){
+                        self.albumNames.append(albumName)
+                    }
+                    
                     group.enumerateAssetsUsingBlock({
                         (asset: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                         //  println(asset)
@@ -103,6 +106,32 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 (myerror: NSError!) -> Void in
                 println("error occurred: \(myerror.localizedDescription)")
         })
+        for item in ["💡 Inspiration", "🎥 To Watch", "📖 To Read"]{
+            albumNames.insert(item, atIndex: 0)
+        }
+      //  self.curateAlbumListFrom(albumNames)
+    }
+    
+    
+    func curateAlbumListFrom(listOfAlbums: [String]){
+        var newListOfAlbums = [String]()
+        for (index, element) in enumerate(listOfAlbums) {
+            
+            
+            if !((element == "Snapchat") || (element == "Instagram") || (element == "Adobe Shape CC") || (element == "Seene")){
+                println("didn't add element: \(element)")
+            }
+            else {
+                newListOfAlbums.append(element)
+                println("added element: \(element)")
+            }
+        }
+        
+        for item in ["💡 Inspiration", "🎥 To Watch", "📖 To Read"]{
+            newListOfAlbums.insert(item, atIndex: 0)
+        }
+        albumNames = newListOfAlbums
+        
     }
     
     func prepareToDismissVc(){
@@ -207,7 +236,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             cell.textLabel?.layer.shadowOffset = CGSizeMake(0.0, 0.0)
             
             cell.textLabel!.layer.shadowRadius = 3.0
-            cell.textLabel!.layer.shadowOpacity = 0.5
+            cell.textLabel!.layer.shadowOpacity = 1
         }
         
         else if viewToShow == "snooze" {
@@ -219,7 +248,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             cell.textLabel?.layer.shadowOffset = CGSizeMake(0.0, 0.0)
             
             cell.textLabel!.layer.shadowRadius = 3.0
-            cell.textLabel!.layer.shadowOpacity = 0.5
+            cell.textLabel!.layer.shadowOpacity = 1
         }
         
         return cell
@@ -233,23 +262,42 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         if viewToShow == "album" {
         
+            //TODO: Create Album if one doesn't exist already
+            
             let photoLibrary = ALAssetsLibrary()
             var groupToAddTo: ALAssetsGroup = ALAssetsGroup()
             
             photoLibrary.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
                 usingBlock: {
                     (group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                    println(group)
                     
                     if group != nil {
                         if group.valueForProperty(ALAssetsGroupPropertyName).isEqualToString(self.albumNames[indexPath.row]){
                             groupToAddTo = group
                         }
                     }
+                    else {
+                        println("group is nil")
+                        println(groupToAddTo.valueForProperty(ALAssetsGroupPropertyName))
+                    }
                 },
                 failureBlock: {
                     (myerror: NSError!) -> Void in
                     println("error occurred: \(myerror.localizedDescription)")
             })
+            
+            if groupToAddTo.valueForProperty(ALAssetsGroupPropertyName) == nil {
+                println("album doesn't exist yet")
+                photoLibrary.addAssetsGroupAlbumWithName(self.albumNames[indexPath.row], resultBlock: {(group: ALAssetsGroup?) -> Void in
+                    if group != nil {
+                        groupToAddTo = group!
+                    }
+                    
+                    }, failureBlock: {(theError: NSError?) -> Void in
+                        println(theError)
+                })
+            }
             
             photoLibrary.writeImageToSavedPhotosAlbum(self.image.CGImage, metadata: nil, completionBlock: {
                 (assetUrl: NSURL!, error: NSError!) -> Void in
