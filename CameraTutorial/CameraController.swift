@@ -63,8 +63,7 @@ class CameraController: UIViewController, UITextViewDelegate {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
-        let pvc = self.parentViewController?.parentViewController as! ViewController
-        pvc.cameraButtonsAreHidden(false)
+
         previewLayer?.connection.enabled = true
         textToSave = ""
 
@@ -341,7 +340,10 @@ class CameraController: UIViewController, UITextViewDelegate {
                         
                         //TODO: figure out low image quality
                         
+                        //let imageView = UIImageView(frame: CGRectMake(0, 0, theImage.size.width*self.view.frame.height/theImage.size.height, self.view.frame.height))
+                        
                         let imageView = UIImageView(frame: CGRectMake(0, 0, theImage.size.width*self.view.frame.height/theImage.size.height, self.view.frame.height))
+                        
                         if !self.currentDeviceIsBack {
                             imageView.image = UIImage(CGImage: theImage.CGImage, scale: theImage.scale, orientation: UIImageOrientation.LeftMirrored)
                         }
@@ -359,8 +361,6 @@ class CameraController: UIViewController, UITextViewDelegate {
                         self.image = snapshotImage
                         //TODO: we shouldn't have to wait for the snapshot to bring up the modal
                         self.bringUpSnapModalFromButton(sender)
-
-                        
                     }
                 }
                     

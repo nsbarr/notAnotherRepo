@@ -55,7 +55,6 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             tableView.separatorColor = UIColor.clearColor()
             
             self.view.addSubview(tableView)
-            //TODO: Actually set the frame of the vc to fit inside properly
             tableView.reloadData()
         
         }
@@ -106,7 +105,71 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         })
     }
     
+    func prepareToDismissVc(){
+        println("preparing to dismiss!")
+        let pvc = self.presentingViewController
+        self.dismissViewControllerAnimated(false, completion: {() -> Void in
+            
+            if pvc?.restorationIdentifier == "InboxViewController" {
+                println("avc")
+                let ivc = pvc as! InboxViewController
+                ivc.flashConfirm()
+                ivc.dismissTopCard()
+            }
+            else if pvc?.restorationIdentifier == "ViewController" {
+                println("camera presented")
+                let vc = pvc as! ViewController
+                let pageVc = vc.childViewControllers[0] as! UIPageViewController
+                let cc = pageVc.childViewControllers[0] as! CameraController
+                cc.flashConfirm()
+                cc.previewLayer?.connection.enabled = true
+                //TODO: Put this inside flashConfirm
+                //TODO: Decide what to do with textView
+                cc.addTextView()
+                
+                
+            }
+            else {
+                println(pvc?.restorationIdentifier)
+                
+            }
+            
+        })
+        
+    }
     
+    //MARK: - L8R Management
+    
+    func scheduleL8rWithDate(scheduledDate: NSDate){
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        managedContext = appDelegate.managedObjectContext!
+        let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
+        let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
+        let imageData = UIImageJPEGRepresentation(self.image, 0)
+        l8r.setValue(imageData, forKey: "imageData")
+        l8r.setValue(scheduledDate, forKey: "fireDate")
+        
+        var error: NSError?
+        if !managedContext.save(&error) {
+            println("Coulnd't save \(error), \(error?.userInfo)")
+        }
+        
+        let vc = appDelegate.window!.rootViewController as! ViewController
+        vc.scheduleLocalNotificationWithFireDate(scheduledDate)
+        vc.updateInboxCount()
+        
+    }
+    
+    
+    func getDatePickerDate(sender: UIButton){
+        var scheduledDate = datePicker.date
+        self.scheduleL8rWithDate(scheduledDate)
+        //Schedule L8R
+        self.prepareToDismissVc()
+    }
+    
+
     //MARK: - Delegate Methods
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -269,7 +332,6 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     timeComponent.year = 1
                     scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
                 }
-                //TODO: Handle when i get home
 
                 //Schedule L8R
                 self.scheduleL8rWithDate(scheduledDate)
@@ -277,68 +339,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
         }
     }
-    
-    
-    func scheduleL8rWithDate(scheduledDate: NSDate){
-        
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        managedContext = appDelegate.managedObjectContext!
-        let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
-        let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-        let imageData = UIImageJPEGRepresentation(self.image, 0)
-        l8r.setValue(imageData, forKey: "imageData")
-        l8r.setValue(scheduledDate, forKey: "fireDate")
-        
-        var error: NSError?
-        if !managedContext.save(&error) {
-            println("Coulnd't save \(error), \(error?.userInfo)")
-        }
-        
-        let vc = appDelegate.window!.rootViewController as! ViewController
-        vc.scheduleLocalNotificationWithFireDate(scheduledDate)
-        
-    }
-    
-    
-    func getDatePickerDate(sender: UIButton){
-        var scheduledDate = datePicker.date
-        self.scheduleL8rWithDate(scheduledDate)
-        //Schedule L8R
-        self.prepareToDismissVc()
-    }
-    
-    func prepareToDismissVc(){
-        println("preparing to dismiss!")
-        let pvc = self.presentingViewController
-        self.dismissViewControllerAnimated(false, completion: {() -> Void in
-            
-            if pvc?.restorationIdentifier == "InboxViewController" {
-                println("avc")
-                let ivc = pvc as! InboxViewController
-                ivc.flashConfirm()
-                ivc.dismissTopCard()
-            }
-            else if pvc?.restorationIdentifier == "ViewController" {
-                println("camera presented")
-                let vc = pvc as! ViewController
-                let pageVc = vc.childViewControllers[0] as! UIPageViewController
-                let cc = pageVc.childViewControllers[0] as! CameraController
-                cc.flashConfirm()
-                cc.previewLayer?.connection.enabled = true
-                //TODO: Put this inside flashConfirm
-                //TODO: Decide what to do with textView
-                cc.addTextView()
-                
-                
-            }
-            else {
-                println(pvc?.restorationIdentifier)
-                
-            }
-            
-        })
 
-    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

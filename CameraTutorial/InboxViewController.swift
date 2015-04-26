@@ -239,6 +239,8 @@ class InboxViewController: UIViewController, CardStackDelegate {
                 println("Unresolved error \(error), \(error!.userInfo)")
                 abort()
             }
+            let vc = appDelegate.window!.rootViewController as! ViewController
+            vc.updateInboxCount()
         }
 
         

@@ -20,14 +20,8 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
     var inboxNumber: UILabel!
     
-    var triggerButton: UIButton!
-    var triggerToggleButton: UIButton!
     var scheduleButton: UIButton!
-    var shareIcon: UIButton!
-    var datePicker: UIDatePicker!
     
-    var nc: UINavigationController?
-    let vc = UIViewController()
     
     //MARK: - Lifecycle
     
@@ -190,169 +184,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
     }
     
-    func appearTriggerButtons(){
-        let triggerButtons = ["👋\nSeeya!", "📅\nCal", "🚀\n1 Year", "🚙\n1 Week", "☀️\nTmrw", "⏳\n1 Hour"]
-        let triggerButtonTags = [86, 666, 365, 7, 1, 60]
-        var buttonTag = 0
-        let triggerButtonPadding:CGFloat = 20
-        var triggerButtonYPos:CGFloat = self.view.frame.midY
-        var triggerButtonXPos:CGFloat = 20
-        
-        for triggerButtonTitle in triggerButtons {
-            triggerButton = MenuButton(frame: CGRectMake(triggerButtonXPos, triggerButtonYPos, 100, 100))
-            triggerButton.setTitle(triggerButtonTitle, forState: .Normal)
-            triggerButton.tag = triggerButtonTags[buttonTag]
-            triggerButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: UIControlEvents.TouchUpInside)
-           // triggerButton.sizeToFit()
-            pageViewController!.view.addSubview(triggerButton)
-            if buttonTag < 2 || buttonTag > 2 {
-                triggerButtonXPos = triggerButtonXPos + triggerButton.frame.width + triggerButtonPadding
-            }
-            else if buttonTag == 2 {
-                triggerButtonXPos = 20
-                triggerButtonYPos = triggerButtonYPos + triggerButton.frame.height + triggerButtonPadding
-            }
-            buttonTag = buttonTag + 1
-        }
-        
-        
-    }
     
     
-    func hideTriggerButtons(toggle: Bool){
-        println("changing hidden to \(toggle)")
-     //   textView.hidden = toggle
-        
-        for button in pageViewController!.view.subviews as! [UIView] {
-            if (button.isKindOfClass(MenuButton)){
-                button.hidden = toggle
-            }
-        }
-    }
-    
-    
-
-    
-    func openDateMenu(sender: UIButton){
-        
-        vc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
-        vc.modalPresentationStyle = .OverCurrentContext
-        
-        let rightNowButton = UIButton(frame: CGRectMake(20, 40, 116, 42))
-        rightNowButton.setImage(UIImage(named: "rightNowButton"), forState: .Normal)
-        rightNowButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
-        rightNowButton.tag = 2
-        vc.view.addSubview(rightNowButton)
-        
-        let tmrwButton = UIButton(frame: CGRectMake(20, 90, 116, 42))
-        tmrwButton.setImage(UIImage(named: "tomorrowButton"), forState: .Normal)
-        tmrwButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
-        tmrwButton.tag = 1
-        vc.view.addSubview(tmrwButton)
-        
-        let nextWeekButton = UIButton(frame: CGRectMake(20, 140, 116, 42))
-        nextWeekButton.setImage(UIImage(named: "nextWeekButton"), forState: .Normal)
-        nextWeekButton.addTarget(self, action: Selector("updateDate:"), forControlEvents: .TouchUpInside)
-        nextWeekButton.tag = 7
-        vc.view.addSubview(nextWeekButton)
-        
-        let pickDateButton = UIButton(frame: CGRectMake(20, 190, 116, 42))
-        pickDateButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
-        pickDateButton.addTarget(self, action: Selector("openCalendarMenu:"), forControlEvents: .TouchUpInside)
-        pickDateButton.tag = 999
-        vc.view.addSubview(pickDateButton)
-
-        
-        
-        nc = UINavigationController(rootViewController: vc)
-        nc!.navigationBar.hidden = true
-        nc!.modalPresentationStyle = .OverCurrentContext
-        
-        presentViewController(nc!, animated: false, completion: nil)
-    }
-
-    
-    func openCalendarMenu(){
-        
-        vc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
-        vc.modalPresentationStyle = .OverCurrentContext
-        
-
-        
-        datePicker = UIDatePicker(frame: self.view.frame)
-        datePicker.center.y = self.view.center.y
-        vc.view.addSubview(datePicker)
-        
-        let confirmButton = UIButton(frame: CGRectMake(0, self.view.frame.height-200, 116, 42))
-        confirmButton.center.x = self.view.center.x
-        confirmButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
-        confirmButton.tag = 777
-        confirmButton.addTarget(self, action: Selector("scheduleL8r:"), forControlEvents: .TouchUpInside)
-        vc.view.addSubview(confirmButton)
-        
-        nc = UINavigationController(rootViewController: vc)
-        nc!.navigationBar.hidden = true
-        nc!.modalPresentationStyle = .OverCurrentContext
-        
-        presentViewController(nc!, animated: false, completion: nil)
-        
-    }
-    
-    
-    func getDateFromDateButton(tag: Int) -> NSDate? {
-        
-        let currentTime = NSDate()
-        var theCalendar = NSCalendar.currentCalendar()
-        let timeComponent = NSDateComponents()
-        //let triggerButtonTags = [86, 666, 365, 30, 7, 1, 60, 0]
-        if tag == 1 { // tomorrow
-
-            timeComponent.day = 1
-            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-            return scheduledDate
-        }
-        else if tag == 7 { // next week
-            timeComponent.day = 7
-            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-            return scheduledDate
-        }
-        
-        else if tag == 0 { // right now
-            return NSDate()
-        }
-        
-        else if tag == 60 { // in an hour
-            timeComponent.hour = 1
-            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-            return scheduledDate
-        }
-        
-        else if tag == 30 { //in a month
-            timeComponent.month = 1
-            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-            return scheduledDate
-        }
-            
-        else if tag == 365 { // in a year
-            timeComponent.year = 1
-            var scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-            return scheduledDate
-        }
-            
-        else if tag == 777 { // calendar
-            return datePicker.date
-        }
-        else {
-            return NSDate()
-
-        }
-    }
     
     //MARK: - L8R Management
-    
-    func removeL8rAtIndex(index: Int){
-        
-    }
     
     
     func deleteL8r(){
@@ -364,7 +199,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
             currentPage.previewLayer?.connection.enabled = true
            // hideTriggerButtons(true)
-            self.cameraButtonsAreHidden(false)
         //    currentPage.textView.removeFromSuperview()
             currentPage.textButton.hidden = true
             currentPage.textToSave = ""
@@ -388,101 +222,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
                 abort()
             }
             
-            self.moveOnToNextL8r()
         }
         
-        
     }
-    
-    
-//    func updateImageWithText() -> UIImage? {
-//        
-//        let size = self.view.bounds.size
-//        
-//        let font = UIFont(name: "Helvetica Bold", size: 36.0)!
-//        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
-//        textStyle.alignment = NSTextAlignment.Center
-//        let textColor = UIColor.whiteColor()
-//        
-//        let textFontAttributes = [
-//            NSFontAttributeName: font,
-//            NSForegroundColorAttributeName: textColor,
-//            NSParagraphStyleAttributeName: textStyle
-//        ]
-//
-//        let currentPage = self.pageViewController?.viewControllers[0] as CameraController
-//        
-//        let ratio = self.view.frame.height/currentPage.image.size.height
-//        let imageSize = CGSizeMake(currentPage.image.size.width*ratio, currentPage.image.size.height*ratio)
-//
-//
-//
-//        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
-//        currentPage.image.drawInRect(CGRectMake(0, 0, imageSize.width, imageSize.height))
-//        currentPage.textToSave.drawInRect(CGRectMake((imageSize.width-self.view.frame.width)/2, imageSize.height/2, self.view.frame.width, imageSize.height), withAttributes: textFontAttributes)
-//      //  textToDraw.drawInRect(CGRectMake(currentPage.image.size.width/2, currentPage.image.size.height/2, currentPage.image.size.width, currentPage.image.size.height), withAttributes: attributes)
-//        
-//
-//   //     textView.layer.renderInContext(UIGraphicsGetCurrentContext())
-//        
-//        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-//        UIGraphicsEndImageContext()
-//        return newImage
-//
-//        
-//    }
-    
-    func addTriggerShelf(){
-        triggerToggleButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-54, width: 44, height: 44))
-        triggerToggleButton.addTarget(self, action: Selector("toggleTriggerButtonVisibility:"), forControlEvents: UIControlEvents.TouchUpInside)
-        triggerToggleButton.setImage(UIImage(named: "triggerShelf"), forState: .Normal)
-        triggerToggleButton.hidden = true
-        self.pageViewController!.view.addSubview(triggerToggleButton)
-    }
-    
-    func addShareIcon(){
-        shareIcon = UIButton(frame: CGRect(x: view.frame.width - 54, y: view.frame.height-54, width: 44, height: 44))
-        shareIcon.addTarget(self, action: Selector("shareIconPressed:"), forControlEvents: UIControlEvents.TouchUpInside)
-        shareIcon.setImage(UIImage(named: "shareIcon"), forState: .Normal)
-        shareIcon.hidden = true
-        self.pageViewController!.view.addSubview(shareIcon)
-    }
-    
-    func shareIconPressed(sender: UIButton){
-        var sharingItems = [AnyObject]()
-        
-        let text = "Check out this L8R and create your own!"
-        sharingItems.append(text)
-        
-        let currentPage = self.pageViewController?.viewControllers[0] as! PageItemController
-        let image = currentPage.image
-        sharingItems.append(image)
-        
-        
-        let url = NSURL(string: "http://lthenumbereightr.com")
-        sharingItems.append(url!)
-        
-        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
-        self.presentViewController(activityViewController, animated: true, completion: nil)
-        
-    }
-    
-    func shareTextImageAndURL(sharingText: String?, sharingImage: UIImage?, sharingURL: NSURL?) {
-        var sharingItems = [AnyObject]()
-        
-        if let text = sharingText {
-            sharingItems.append(text)
-        }
-        if let image = sharingImage {
-            sharingItems.append(image)
-        }
-        if let url = sharingURL {
-            sharingItems.append(url)
-        }
-        
-        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
-        self.presentViewController(activityViewController, animated: true, completion: nil)
-    }
+
     
     func toggleTriggerButtonVisibility(sender: UIButton){
         
@@ -500,159 +243,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             else {
             }
         }
-    }
-    
-    func cameraButtonsAreHidden(toggle: Bool){
-        
-
-        
-        //trigger toggle button
-        triggerToggleButton.hidden = !toggle
-        shareIcon.hidden = !toggle
-        
-        
-        //snap button
-        println(self.pageViewController?.viewControllers)
-        
-        if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
-        
-            let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
-     //       currentPage.previewLayer?.connection.enabled = true
-            currentPage.snapButton.hidden = toggle
-            currentPage.textButton.hidden = toggle
-            currentPage.textView.hidden = toggle
-            
-            //flip button
-            currentPage.flipButton.hidden = toggle
-            
-
-            
-            //trigger buttons
-            for button in pageViewController!.view.subviews as! [UIView] {
-                if (button.isKindOfClass(MenuButton)){
-                    button.hidden = !toggle
-                }
-            }
-        
-        }
-        
-        
-        
-    }
-    
-    func scheduleL8r(sender: UIButton){
-        
-        if sender.tag == 777 {
-            nc?.dismissViewControllerAnimated(false, completion: nil)
-        }
-        
-        if sender.tag == 86 {
-            println("never again")
-            deleteL8r()
-        }
-        
-        else if sender.tag == 666 {
-            self.openCalendarMenu()
-        }
-        
-        //SPECIAL CASE IF L8R BEING SCHEDULED IS THE ONE WE JUST TOOK
-        else if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
-            
-            self.cameraButtonsAreHidden(false)
-
-            
-            let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
-
-            
-            //SAVE NEW L8R
-            
-            let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
-            let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-            let imageData = UIImageJPEGRepresentation(currentPage.image, 0)
-            l8r.setValue(imageData, forKey: "imageData")
-            l8r.setValue(getDateFromDateButton(sender.tag), forKey: "fireDate")
-            
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Coulnd't save \(error), \(error?.userInfo)")
-            }
-            
-            //UPDATE L8RS
-          //  self.fetchL8rs()
-            
-            
-            self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
-            
-            //TODO: Animation goes here? Feels janky rn
-
-            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
-            
-
-            currentPage.textToSave = ""
-            
-        }
-            
-        else {
-            
-            let currentPage = self.pageViewController?.viewControllers[0] as! PageItemController
-            indexOfCurrentPage = currentPage.itemIndex
-            
-            //RESCHEDULE L8R
-            
-            let imageToSchedule = currentPage.image
-            let imageData = UIImageJPEGRepresentation(imageToSchedule, 0)
-            let itemIndex = currentPage.itemIndex
-            let l8r = l8rsBeforeCurrentDate[itemIndex]
-            l8r.setValue(imageData, forKey: "imageData")
-            l8r.setValue(getDateFromDateButton(sender.tag), forKey: "fireDate")
-            
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Coulnd't save \(error), \(error?.userInfo)")
-            }
-            
-            self.scheduleLocalNotificationWithFireDate(getDateFromDateButton(sender.tag)!)
-            
-        }
-        
-        
-        
-        
-    }
-    
-    func moveOnToNextL8r(){
-        //REFRESH LIST
-        self.fetchL8rs()
-        
-        
-        //SHOW CAMERA IF NO MORE L8RS TO SHOW
-        if l8rsBeforeCurrentDate.count == 0 {
-            println("show camera")
-            //   cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
-            //     pageViewController?.addChildViewController(cameraController)
-            pageViewController?.setViewControllers([cameraController], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
-        }
-            
-            //SHOW PREVIOUS L8R IF WE DELETED/SCHEDULED THE LAST ONE
-            
-        else if indexOfCurrentPage > (l8rsBeforeCurrentDate.count-1) {
-            
-            println("show prev l8r")
-            let targetViewController = getItemController(l8rsBeforeCurrentDate.count-1) as PageItemController!
-            let arrayVC : NSArray = [targetViewController]
-            pageViewController?.setViewControllers(arrayVC as [AnyObject], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
-        }
-            
-            //OTHERWISE SHOW L8R AT CURRENT INDEX
-        else {
-            
-            println("show new l8r at current index")
-            let targetViewController = getItemController(indexOfCurrentPage) as PageItemController!
-            let arrayVC : NSArray = [targetViewController]
-            pageViewController?.setViewControllers(arrayVC as [AnyObject], direction: UIPageViewControllerNavigationDirection.Reverse, animated: false, completion: nil)
-            
-        }
-        
     }
 
     
@@ -695,9 +285,6 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         addChildViewController(pageViewController!)
         
         self.addInboxBadge()
-        self.addTriggerShelf()
-        self.addShareIcon()
-        self.appearTriggerButtons()
         
         self.view.addSubview(pageViewController!.view)
         pageViewController!.didMoveToParentViewController(self)
