@@ -3,11 +3,11 @@
 //  L8R
 //
 
-
+import Foundation
 import UIKit
 import CoreData
-import Parse
-import ParseCrashReporting
+//import Parse
+//import ParseCrashReporting
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        ParseCrashReporting.enable()
-        Parse.setApplicationId("4b6lf3Pi0niPdz2NZTrHn7SPld8zbfghwhvzxHvE", clientKey: "PjQfUJBWh8gh67zAjjrq52pYAqnuNi4KFg4nnxB5")
+    //    ParseCrashReporting.enable()
+    //    Parse.setApplicationId("4b6lf3Pi0niPdz2NZTrHn7SPld8zbfghwhvzxHvE", clientKey: "PjQfUJBWh8gh67zAjjrq52pYAqnuNi4KFg4nnxB5")
         return true
     }
 
@@ -41,10 +41,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //TODO: Fetch L8Rs
         
-        let rvc = window?.rootViewController as! ViewController
+        let rvc = window?.rootViewController as ViewController
         println(rvc)
         rvc.fetchL8rs()
-        let cc = rvc.childViewControllers[0].childViewControllers[0] as! CameraController
+        let cc = rvc.childViewControllers[0].childViewControllers[0] as CameraController
         cc.previewLayer?.connection.enabled = true
         
         
@@ -73,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "com.xxxx.ProjectName" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as! NSURL
+        return urls[urls.count-1] as NSURL
         }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {

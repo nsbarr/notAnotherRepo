@@ -23,6 +23,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     var tableView: UITableView!
     var datePicker: UIDatePicker!
     var managedContext: NSManagedObjectContext!
+    let photoLibrary = ALAssetsLibrary()
 
 
     
@@ -86,12 +87,12 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func getListOfAlbums(){
         
-        let photoLibrary = ALAssetsLibrary()
+        
         photoLibrary.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
             usingBlock: {
                 (group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                 if group != nil {
-                    let albumName = group.valueForProperty(ALAssetsGroupPropertyName) as! String
+                    let albumName = group.valueForProperty(ALAssetsGroupPropertyName) as String
                     if !((albumName == "Snapchat") || (albumName == "Instagram") || (albumName == "Adobe Shape CC") || (albumName == "Seene") || (albumName == "💡 Inspiration") || (albumName == "🎥 To Watch") || albumName == "📖 To Read"){
                         self.albumNames.append(albumName)
                     }
@@ -141,15 +142,15 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             
             if pvc?.restorationIdentifier == "InboxViewController" {
                 println("avc")
-                let ivc = pvc as! InboxViewController
+                let ivc = pvc as InboxViewController
                 ivc.flashConfirm()
                 ivc.dismissTopCard()
             }
             else if pvc?.restorationIdentifier == "ViewController" {
                 println("camera presented")
-                let vc = pvc as! ViewController
-                let pageVc = vc.childViewControllers[0] as! UIPageViewController
-                let cc = pageVc.childViewControllers[0] as! CameraController
+                let vc = pvc as ViewController
+                let pageVc = vc.childViewControllers[0] as UIPageViewController
+                let cc = pageVc.childViewControllers[0] as CameraController
                 cc.flashConfirm()
                 cc.previewLayer?.connection.enabled = true
                 //TODO: Put this inside flashConfirm
@@ -171,7 +172,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func scheduleL8rWithDate(scheduledDate: NSDate){
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         managedContext = appDelegate.managedObjectContext!
         let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
         let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
@@ -184,7 +185,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             println("Coulnd't save \(error), \(error?.userInfo)")
         }
         
-        let vc = appDelegate.window!.rootViewController as! ViewController
+        let vc = appDelegate.window!.rootViewController as ViewController
         vc.scheduleLocalNotificationWithFireDate(scheduledDate)
         vc.updateInboxCount()
         

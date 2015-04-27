@@ -40,6 +40,7 @@
                         <viewControllerLayoutGuide type="bottom" id="GUl-NB-SKv"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="bu6-7y-lcf">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -118,6 +119,7 @@
                         <viewControllerLayoutGuide type="bottom" id="06P-jw-Nmn"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kKh-mm-yg8">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -129,7 +131,6 @@
         <!--Camera Controller-->
         <scene sceneID="XLo-ZG-T6Z">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yWa-gu-1gF" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="CameraController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="acj-Xp-eTU" customClass="CameraController" customModule="l8r" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="koM-K7-SwI"/>
@@ -141,6 +142,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yWa-gu-1gF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1929" y="634.5"/>
         </scene>

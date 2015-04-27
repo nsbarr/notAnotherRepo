@@ -3,7 +3,7 @@
 //  L8R
 //
 
-
+import Foundation
 import UIKit
 
 class PageItemController: UIViewController {
@@ -28,7 +28,7 @@ class PageItemController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
-        let pvc = self.parentViewController?.parentViewController as! ViewController
+        let pvc = self.parentViewController?.parentViewController as ViewController
      //   pvc.cameraButtonsAreHidden(true)
         
     }

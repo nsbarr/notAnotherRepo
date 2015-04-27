@@ -7,6 +7,9 @@
 import UIKit
 import AVFoundation
 import CoreData
+import Foundation
+import AssetsLibrary
+
 
 class CameraController: UIViewController, UITextViewDelegate {
     
@@ -49,6 +52,7 @@ class CameraController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         println("new branch")
         super.viewDidLoad()
+        self.determinePermissions()
         self.setUpCamera()
         self.addTextView()
         self.addLaterSnapButton()
@@ -71,9 +75,48 @@ class CameraController: UIViewController, UITextViewDelegate {
     }
     
     // MARK: - Set up the Camera
+    
+    func determinePermissions(){
+        let status = ALAssetsLibrary.authorizationStatus()
+        
+        switch (status) {
+        case ALAuthorizationStatus.Authorized:
+            println("authorized")
+            break
+            
+        case ALAuthorizationStatus.Denied:
+            println("denied")
+            break
+            
+        case ALAuthorizationStatus.NotDetermined:
+            println("no idea")
+            
+            let photoLibrary = ALAssetsLibrary()
+            photoLibrary.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
+                usingBlock: {
+                    (group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                    if group != nil {
+//                        group.enumerateAssetsUsingBlock({
+//                            (asset: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+//                            //  println(asset)
+//                        })
+                    }
+                },
+                failureBlock: {
+                    (myerror: NSError!) -> Void in
+                    println("error occurred: \(myerror.localizedDescription)")
+            })
+
+            break
+        default:
+            println("default")
+            break
+        }
+    }
+    
     func setUpCamera(){
         let availableCameraDevices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-        for device in availableCameraDevices as! [AVCaptureDevice] {
+        for device in availableCameraDevices as [AVCaptureDevice] {
             if device.position == .Back {
                 backCameraDevice = device
             }
@@ -128,7 +171,7 @@ class CameraController: UIViewController, UITextViewDelegate {
         textView.delegate = self
         
         let font = UIFont(name: "Arial-BoldMT", size: 42.0)!
-        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as NSMutableParagraphStyle
         textStyle.alignment = NSTextAlignment.Center
         let textColor = UIColor.whiteColor()
         
@@ -283,7 +326,7 @@ class CameraController: UIViewController, UITextViewDelegate {
         
         
         
-        let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+        let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
     //    avc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
         avc.image = self.image
 
@@ -372,12 +415,12 @@ class CameraController: UIViewController, UITextViewDelegate {
     }
     
     func bringUpSnapModalFromButton(sender: UIButton){
-        let pvc = self.parentViewController?.parentViewController as! ViewController
+        let pvc = self.parentViewController?.parentViewController as ViewController
         
         
         if sender.tag == 1234 {
             
-            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
             avc.image = self.image
             avc.viewToShow = "album"
             
@@ -387,7 +430,7 @@ class CameraController: UIViewController, UITextViewDelegate {
             
         else if sender.tag == 0 {
             
-            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
             avc.image = self.image
             avc.viewToShow = "snooze"
             
@@ -454,7 +497,7 @@ class CameraController: UIViewController, UITextViewDelegate {
 
     
     func inboxButtonPressed(sender:UIButton){
-        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as! InboxViewController
+        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as InboxViewController
         self.presentViewController(ivc, animated: false, completion: nil)
     }
     
@@ -463,7 +506,7 @@ class CameraController: UIViewController, UITextViewDelegate {
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if(text == "\n") {
             textView.resignFirstResponder()
-            let pvc = self.parentViewController?.parentViewController as! ViewController
+            let pvc = self.parentViewController?.parentViewController as ViewController
          //   pvc.toggleTriggerButtonVisibility(pvc.triggerToggleButton)
             return false
         }
@@ -471,7 +514,7 @@ class CameraController: UIViewController, UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
-        let pvc = self.parentViewController?.parentViewController as! ViewController
+        let pvc = self.parentViewController?.parentViewController as ViewController
     //    pvc.toggleTriggerButtonVisibility(textButton)
         
     }

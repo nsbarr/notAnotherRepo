@@ -27,7 +27,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         
         if l8rsBeforeCurrentDate.isEmpty {
         
-            appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             managedContext = appDelegate.managedObjectContext!
             
             let fetchRequest = NSFetchRequest(entityName: "L8R")
@@ -41,7 +41,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
             fetchRequest.sortDescriptors = fireDateSorts
             
             
-            let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
+            let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
             
             if let results = fetchedResults {
                 
@@ -61,7 +61,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
                     
                     //  println(l8r.valueForKey("fireDate"))
                     
-                    if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
+                    if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
                         l8rsBeforeCurrentDate.append(l8r)
                         println("appended!")
                         
@@ -202,7 +202,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func snapButtonPressed(sender: UIButton){
         
-        let mvc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+        let mvc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
         mvc.modalPresentationStyle = .OverCurrentContext
         
         
@@ -239,7 +239,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
                 println("Unresolved error \(error), \(error!.userInfo)")
                 abort()
             }
-            let vc = appDelegate.window!.rootViewController as! ViewController
+            let vc = appDelegate.window!.rootViewController as ViewController
             vc.updateInboxCount()
         }
 
@@ -261,7 +261,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         println(currentL8r)
         
         if currentL8r!.valueForKey("imageData") != nil {
-            let imageData = currentL8r!.valueForKey("imageData") as! NSData
+            let imageData = currentL8r!.valueForKey("imageData") as NSData
             let image = UIImage(data: imageData, scale: 0.0)!
             let ratio = self.view.frame.height/image.size.height
             
@@ -297,7 +297,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func showAlbumList(sender:UIButton){
         
-        let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+        let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
         
         if currentImage != nil {
             avc.image = currentImage!
@@ -341,7 +341,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         fetchRequest.sortDescriptors = fireDateSorts
         
         
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
         
         if let results = fetchedResults {
             
@@ -361,7 +361,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
                 
                 //  println(l8r.valueForKey("fireDate"))
                 
-                if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
+                if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
                     println("appended!")
                     
@@ -380,7 +380,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
 
     func setUpCoreData(){
-        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         managedContext = appDelegate.managedObjectContext!
     }
     

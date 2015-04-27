@@ -44,9 +44,6 @@
 		0180E6861AC9C0E400470487 /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		01BAC3A91AE5D9EA006ADA0F /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModalViewController.swift; path = ../ModalViewController.swift; sourceTree = "<group>"; };
-		01BAC3AD1AEDA8F3006ADA0F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
-		01BAC3AF1AEDA8FE006ADA0F /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseCrashReporting.framework; sourceTree = "<group>"; };
-		01BAC3B11AEDA905006ADA0F /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		01BDDE881A912C240015F601 /* PageItemController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageItemController.swift; sourceTree = "<group>"; };
 		01BDDE8A1A912D4A0015F601 /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		02F5BDE019CE1C4900EDFD47 /* l8r.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = l8r.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,20 +87,9 @@
 			path = library;
 			sourceTree = "<group>";
 		};
-		01BAC3B31AEDA92C006ADA0F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				01BAC3B11AEDA905006ADA0F /* Bolts.framework */,
-				01BAC3AF1AEDA8FE006ADA0F /* ParseCrashReporting.framework */,
-				01BAC3AD1AEDA8F3006ADA0F /* Parse.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		02F5BDD719CE1C4900EDFD47 = {
 			isa = PBXGroup;
 			children = (
-				01BAC3B31AEDA92C006ADA0F /* Frameworks */,
 				02F5BDE219CE1C4900EDFD47 /* CameraTutorial */,
 				02F5BDF819CE1C4900EDFD47 /* CameraTutorialTests */,
 				02F5BDE119CE1C4900EDFD47 /* Products */,
@@ -444,7 +430,7 @@
 				INFOPLIST_FILE = CameraTutorialTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CameraTutorial.app/CameraTutorial";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/l8r.app/l8r";
 			};
 			name = Debug;
 		};
@@ -459,7 +445,7 @@
 				INFOPLIST_FILE = CameraTutorialTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CameraTutorial.app/CameraTutorial";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/l8r.app/l8r";
 			};
 			name = Release;
 		};
