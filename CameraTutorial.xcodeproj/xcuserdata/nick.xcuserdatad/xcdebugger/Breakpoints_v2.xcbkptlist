@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/CameraController.swift"
-            timestampString = "452133482.555119"
+            timestampString = "452216322.803901"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "544"
-            endingLineNumber = "544"
+            startingLineNumber = "513"
+            endingLineNumber = "513"
             landmarkName = "textViewDidEndEditing(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CameraTutorial/CameraController.swift"
-            timestampString = "452133482.555119"
+            timestampString = "452216322.803901"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "484"
-            endingLineNumber = "484"
+            startingLineNumber = "471"
+            endingLineNumber = "471"
             landmarkName = "flashConfirm()"
             landmarkType = "5">
          </BreakpointContent>

@@ -13,7 +13,7 @@ import CoreData
 import QuartzCore
 
 
-class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
     
     //MARK: - variables
     
@@ -108,8 +108,8 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         })
         
         //TODO: Remove these. Whatever albums we want to keep should be at the top level
-        for item in ["TestingNewGuy"]{
-            albumNames.insert(item, atIndex: 0)
+        for item in ["➕New Album"]{
+            albumNames.append(item)
         }
         println(albumNames)
     }
@@ -223,12 +223,61 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
     }
     
+    func showCreateAlbumAlert(){
+        
+        let alert = UIAlertView(title: "Give the album a name", message: "", delegate: self, cancelButtonTitle: "Cancel", otherButtonTitles: "Ok")
+        alert.alertViewStyle = UIAlertViewStyle.PlainTextInput
+        alert.show()
+        
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter Name"
+//        message:@"  "
+//        delegate:self
+//        cancelButtonTitle:@"Cancel"
+//        otherButtonTitles:@"OK", nil];
+//        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+//        [alert show];
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex == 1 {
+            let albumName = alertView.textFieldAtIndex(0)?.text
+            let photoLibrary = ALAssetsLibrary()
+            var groupToAddTo: ALAssetsGroup = ALAssetsGroup()
+            
+            photoLibrary.addAssetsGroupAlbumWithName(albumName, resultBlock: {(group: ALAssetsGroup?) -> Void in
+                if group == nil {
+                    println("group is nil because it already exists")
+                }
+                else {
+                    println("We've just created group \(group)")
+                    
+                }
+                
+            }, failureBlock: {(theError: NSError?) -> Void in
+                    println(theError)
+            })
+            snoozeNames.append(albumName!)
+            tableView.reloadData()
+
+            
+        }
+        else {
+            println("button index: \(buttonIndex)")
+        }
+    }
+    
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         println(snoozeNames[indexPath.row])
         
+        if self.snoozeNames[indexPath.row] == "➕New Album"{
+            println("create new album")
+            self.showCreateAlbumAlert()
+        
+        }
+        
 
-        if viewToShow == "album" {
+        else if viewToShow == "album" {
         
             //TODO: Create Album if one doesn't exist already
             
