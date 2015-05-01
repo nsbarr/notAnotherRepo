@@ -76,14 +76,14 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             let categoriesForSettings = NSSet(objects: l8rReminderCategory)
             
             
-            let newNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: categoriesForSettings)
+            let newNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: categoriesForSettings as Set<NSObject>)
             
             UIApplication.sharedApplication().registerUserNotificationSettings(newNotificationSettings)
         }
     }
     
     func setUpCoreData(){
-        appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         managedContext = appDelegate.managedObjectContext!
     }
     
@@ -102,7 +102,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         fetchRequest.sortDescriptors = fireDateSorts
         
         
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
 
         if let results = fetchedResults {
             
@@ -122,7 +122,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
               //  println(l8r.valueForKey("fireDate"))
                 
-                if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
+                if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
                     
                     
@@ -167,7 +167,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     }
     
     func inboxButtonPressed(sender:UIButton){
-        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as InboxViewController
+        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as! InboxViewController
         self.presentViewController(ivc, animated: true, completion: nil)
     }
     
@@ -197,7 +197,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         //special case if the L8R being deleted is the photo we just took
         if self.pageViewController?.viewControllers[0].restorationIdentifier == "CameraController" {
             
-            let currentPage = self.pageViewController?.viewControllers[0] as CameraController
+            let currentPage = self.pageViewController?.viewControllers[0] as! CameraController
             currentPage.previewLayer?.connection.enabled = true
            // hideTriggerButtons(true)
         //    currentPage.textView.removeFromSuperview()
@@ -209,7 +209,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
             
         else {
             
-            let currentPage = self.pageViewController?.viewControllers[0] as PageItemController
+            let currentPage = self.pageViewController?.viewControllers[0] as! PageItemController
             indexOfCurrentPage = currentPage.itemIndex
             
             
@@ -232,7 +232,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         
         
         
-        for button in pageViewController!.view.subviews as [UIView] {
+        for button in pageViewController!.view.subviews as! [UIView] {
             if (button.isKindOfClass(MenuButton)){
                 if (sender.tag == 101){ // it's the textButton, so turn them off
                     button.hidden = true
@@ -261,7 +261,7 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func handleViewNotification(){
         println("foo")
         self.fetchL8rs()
-        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as InboxViewController
+        let ivc = self.storyboard!.instantiateViewControllerWithIdentifier("InboxViewController") as! InboxViewController
         self.presentViewController(ivc, animated: false, completion: nil)
     }
     
@@ -271,12 +271,12 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
     func createPageViewController() {
         
         //create PageViewController
-        let pageController = self.storyboard!.instantiateViewControllerWithIdentifier("PageController") as UIPageViewController
+        let pageController = self.storyboard!.instantiateViewControllerWithIdentifier("PageController") as! UIPageViewController
         pageController.delegate = self
         pageController.dataSource = self
         
         //create cameraController and set as first page
-        cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as CameraController
+        cameraController = self.storyboard!.instantiateViewControllerWithIdentifier("CameraController") as! CameraController
         let startingViewControllers: NSArray = [cameraController]
         
         pageController.addChildViewController(cameraController)
@@ -350,10 +350,10 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         }
         else {
             println("getting controller for index \(itemIndex)")
-            let pageItemController = self.storyboard!.instantiateViewControllerWithIdentifier("ItemController") as PageItemController
+            let pageItemController = self.storyboard!.instantiateViewControllerWithIdentifier("ItemController") as! PageItemController
             pageItemController.itemIndex = itemIndex
             let l8r = l8rsBeforeCurrentDate[itemIndex]
-            pageItemController.imageData = l8r.valueForKey("imageData") as NSData
+            pageItemController.imageData = l8r.valueForKey("imageData") as! NSData
             return pageItemController
         }
         

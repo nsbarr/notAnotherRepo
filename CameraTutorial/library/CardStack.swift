@@ -21,7 +21,6 @@ extension UIView {
         layer.shadowOffset = shadowOffset
         layer.shadowOpacity = shadowOpacity
         layer.shadowRadius = CGFloat(shadowRadius)
-        
         layer.cornerRadius = CGFloat(cornerRadius)
         
     }
@@ -131,16 +130,22 @@ public class CardStack : UIView {
     public var delegate: CardStackDelegate? = nil
     public var noMoreCardsView: UIView = {
         //default 'noMoreCards' View
-        let noMoreCards: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
-        noMoreCards.backgroundColor = UIColor.whiteColor()
-        noMoreCards.backgroundColor = UIColor.lightGrayColor()
+        let noMoreCards: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
+      //  noMoreCards.backgroundColor = UIColor.whiteColor()
+      //  noMoreCards.backgroundColor = UIColor.lightGrayColor()
 
         let label: UILabel = UILabel(frame: noMoreCards.frame)
         label.text = "No more cards!"
         label.textColor = UIColor.redColor()
         label.textAlignment = NSTextAlignment.Center
+        
+        let sparseView = UIImageView(frame: noMoreCards.frame)
+        sparseView.image = UIImage(named: "sparseImage")
+        noMoreCards.addSubview(sparseView)
+        
+        
 
-        noMoreCards.addSubview(label)
+       // noMoreCards.addSubview(label)
         
         return noMoreCards
         }() {

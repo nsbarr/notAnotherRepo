@@ -39,7 +39,7 @@ class ModalViewController: UIViewController{
         
         }
         else if subview == "album"{
-            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
+            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
             //    avc.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
             //avc.image = nil
             

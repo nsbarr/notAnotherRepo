@@ -18,6 +18,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     var currentImage: UIImage?
     var currentL8r: NSManagedObject?
+    var snapButton: UIButton!
     
     var l8rsBeforeCurrentDate = [NSManagedObject]()
 
@@ -27,7 +28,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         
         if l8rsBeforeCurrentDate.isEmpty {
         
-            appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             managedContext = appDelegate.managedObjectContext!
             
             let fetchRequest = NSFetchRequest(entityName: "L8R")
@@ -41,7 +42,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
             fetchRequest.sortDescriptors = fireDateSorts
             
             
-            let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+            let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
             
             if let results = fetchedResults {
                 
@@ -61,7 +62,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
                     
                     //  println(l8r.valueForKey("fireDate"))
                     
-                    if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
+                    if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
                         l8rsBeforeCurrentDate.append(l8r)
                         println("appended!")
                         
@@ -126,8 +127,8 @@ class InboxViewController: UIViewController, CardStackDelegate {
     }
     
     func addLaterSnapButton(){
-        var snapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
-        snapButton.center.x = view.center.x+(snapButton.frame.width/2+5)
+        snapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
+        snapButton.center.x = view.center.x
         snapButton.tag = 0
         let buttonImage = UIImage(named: "laterSnapButton")
         snapButton.setImage(buttonImage, forState: .Normal)
@@ -147,21 +148,23 @@ class InboxViewController: UIViewController, CardStackDelegate {
         listSnapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
         listSnapButton.hidden = false
         
-        cardStackView.addSubview(listSnapButton)
+    //    cardStackView.addSubview(listSnapButton)
     }
     
     
     func addDismissButton(){
-        var dismissButton = UIButton(frame: CGRect(x: 28, y: view.frame.height-130, width: 52, height: 52))
+        var dismissButton = UIButton(frame: CGRect(x: 28, y: view.frame.height-130, width: 60, height: 60))
         let buttonImage = UIImage(named: "dismissButton")
+        dismissButton.center.x = snapButton.center.x-100
         dismissButton.setImage(buttonImage, forState: .Normal)
         dismissButton.addTarget(self, action: Selector("dismissTopCard"), forControlEvents: .TouchUpInside)
         cardStackView.addSubview(dismissButton)
     }
     
     func addShareButton(){
-        var shareButton = UIButton(frame: CGRect(x: view.frame.width-80, y: view.frame.height-130, width: 52, height: 52))
+        var shareButton = UIButton(frame: CGRect(x: view.frame.width-80, y: view.frame.height-130, width: 60, height: 60))
         let buttonImage = UIImage(named: "shareButton")
+        shareButton.center.x = snapButton.center.x+100
         shareButton.setImage(buttonImage, forState: .Normal)
         shareButton.addTarget(self, action: Selector("openShareSheet:"), forControlEvents: .TouchUpInside)
         cardStackView.addSubview(shareButton)
@@ -202,28 +205,26 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func snapButtonPressed(sender: UIButton){
         
-        let mvc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
-        mvc.modalPresentationStyle = .OverCurrentContext
+        if self.currentImage != nil {
         
-        
-        if sender.tag == 1234{
-            mvc.image = self.currentImage!
-            mvc.viewToShow = "album"
+            let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            avc.modalPresentationStyle = .OverCurrentContext
+            avc.image = self.currentImage!
+            avc.viewToShow = "snooze"
+            let nc = UINavigationController(rootViewController: avc)
+            nc.navigationBar.hidden = true
+            nc.modalPresentationStyle = .OverCurrentContext
+            
+            presentViewController(nc, animated: true, completion: nil)
+            
         }
-        else if sender.tag == 0{
-            mvc.image = self.currentImage!
-            mvc.viewToShow = "snooze"
-        }
-        else {
-            println("don't recognize \(sender)")
-        }
-        
-        self.presentViewController(mvc, animated: true, completion: nil)
         
     }
-    
+
+
+
     //MARK: - Card delegate Methods
-    
+
     func cardRemoved(card: Card) {
         println("The card \(card.cardId!) was removed!")
         
@@ -239,7 +240,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
                 println("Unresolved error \(error), \(error!.userInfo)")
                 abort()
             }
-            let vc = appDelegate.window!.rootViewController as ViewController
+            let vc = appDelegate.window!.rootViewController as! ViewController
             vc.updateInboxCount()
         }
 
@@ -261,7 +262,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         println(currentL8r)
         
         if currentL8r!.valueForKey("imageData") != nil {
-            let imageData = currentL8r!.valueForKey("imageData") as NSData
+            let imageData = currentL8r!.valueForKey("imageData") as! NSData
             let image = UIImage(data: imageData, scale: 0.0)!
             let ratio = self.view.frame.height/image.size.height
             
@@ -297,7 +298,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func showAlbumList(sender:UIButton){
         
-        let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as AlbumViewController
+        let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
         
         if currentImage != nil {
             avc.image = currentImage!
@@ -311,16 +312,17 @@ class InboxViewController: UIViewController, CardStackDelegate {
     }
     
     func flashConfirm(){
-        let flashConfirm = UIImageView(frame: CGRect(x:0, y: 0, width: self.view.frame.width-200, height: self.view.frame.width-200))
+        let flashConfirm = UIImageView(frame: CGRect(x:0, y: 0, width: self.view.frame.width-100, height: self.view.frame.width-100))
         flashConfirm.center = self.view.center
-        flashConfirm.image = UIImage(named: "flashConfirm")
+        flashConfirm.image = UIImage(named: "altFlashConfirm")
         flashConfirm.contentMode = UIViewContentMode.ScaleAspectFit
         flashConfirm.alpha = 1
         self.view.addSubview(flashConfirm)
         
         
-        UIView.animateKeyframesWithDuration(0.5, delay: 0.2, options: nil, animations: { () -> Void in
+        UIView.animateKeyframesWithDuration(0.5, delay: 0.3, options: nil, animations: { () -> Void in
             flashConfirm.alpha = 0
+            //flashConfirm.frame = CGRectMake(self.view.frame.width,0,0,0)
             }, completion: nil)
         
     }
@@ -341,7 +343,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         fetchRequest.sortDescriptors = fireDateSorts
         
         
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
         
         if let results = fetchedResults {
             
@@ -361,7 +363,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
                 
                 //  println(l8r.valueForKey("fireDate"))
                 
-                if currentDate.compare(l8r.valueForKey("fireDate") as NSDate) == NSComparisonResult.OrderedDescending {
+                if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
                     l8rsBeforeCurrentDate.append(l8r)
                     println("appended!")
                     
@@ -380,7 +382,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
 
     func setUpCoreData(){
-        appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         managedContext = appDelegate.managedObjectContext!
     }
     
