@@ -13,19 +13,18 @@ import CoreData
 import QuartzCore
 
 
-class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
     
     //MARK: - variables
     
-    var albumNames = [String]()
+    var snoozeNames = [String]()
+    var albumNames:[String]!
     var image = UIImage()
     var viewToShow: String = "nil"
     var tableView: UITableView!
     var datePicker: UIDatePicker!
     var managedContext: NSManagedObjectContext!
-
-
-    
+    let photoLibrary = ALAssetsLibrary()
     
     //MARK:- Lifecycle
     
@@ -46,23 +45,22 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     func displayTheRightView(){
         
         if viewToShow == "album"{
-            self.getListOfAlbums()
 
             tableView = UITableView(frame: CGRectMake(0,60,self.view.frame.width,self.view.frame.height-240), style: UITableViewStyle.Plain)
-            self.tableView.delegate=self;
-            self.tableView.dataSource=self;
+            self.tableView.delegate=self
+            self.tableView.dataSource=self
             tableView.tableFooterView = UIView(frame: CGRectZero)
             tableView.separatorColor = UIColor.clearColor()
-            
-            self.view.addSubview(tableView)
-            //TODO: Actually set the frame of the vc to fit inside properly
             tableView.reloadData()
+            self.view.addSubview(tableView)
+            
         
         }
 
         
         else if viewToShow == "snooze"{
             self.getListOfSnoozeOptions()
+            self.getListOfAlbums()
             tableView = UITableView(frame: CGRectMake(0,60,self.view.frame.width,self.view.frame.height-230), style: UITableViewStyle.Plain)
             self.tableView.delegate=self;
             self.tableView.dataSource=self;
@@ -71,7 +69,6 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             self.view.addSubview(tableView)
             tableView.reloadData()
         }
-            
 
         else {
             println("error, don't recognize \(viewToShow)")
@@ -80,220 +77,45 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func getListOfSnoozeOptions(){
         
-        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "Now", "When I get home"]
+        snoozeNames = ["📅Pick Date", "🎂In a Year", "🌅Tomorrow", "⏰1 Hour", "⏳In a Minute", "Add to Album >"]
         
     }
     
     
     func getListOfAlbums(){
+        println("getting List of albums")
         
-        let photoLibrary = ALAssetsLibrary()
+        albumNames = [String]()
+        
         photoLibrary.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
             usingBlock: {
                 (group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                 if group != nil {
                     let albumName = group.valueForProperty(ALAssetsGroupPropertyName) as! String
-                    self.albumNames.append(albumName)
-                    group.enumerateAssetsUsingBlock({
-                        (asset: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-                        //  println(asset)
-                    })
+                    if !((albumName == "Snapchat") || (albumName == "Instagram") || (albumName == "Adobe Shape CC") || (albumName == "Seene")){
+                        self.albumNames.append(albumName)
+                    }
+//                    
+//                    group.enumerateAssetsUsingBlock({
+//                        (asset: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+//                        //  println(asset)
+//                    })
                 }
             },
             failureBlock: {
                 (myerror: NSError!) -> Void in
                 println("error occurred: \(myerror.localizedDescription)")
         })
+        
+        //TODO: Remove these. Whatever albums we want to keep should be at the top level
+        for item in ["➕New Album"]{
+            albumNames.append(item)
+        }
+        println(albumNames)
     }
     
-    
-    //MARK: - Delegate Methods
-    
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        self.tableView.backgroundView = nil
-        self.tableView.backgroundColor = UIColor.clearColor()
-        cell.backgroundView = nil
-        cell.backgroundColor = UIColor.clearColor()
-    }
     
 
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return albumNames.count
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell:UITableViewCell=UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "mycell")
-        
-        if viewToShow == "album" {
-        
-            cell.textLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
-            cell.textLabel?.textColor = UIColor(red: 0, green: 206/255, blue: 1, alpha: 1)
-            cell.textLabel!.text = albumNames[indexPath.row]
-            
-            cell.textLabel?.layer.shadowColor = UIColor.blackColor().CGColor
-            cell.textLabel?.layer.shadowOffset = CGSizeMake(0.0, 0.0)
-            
-            cell.textLabel!.layer.shadowRadius = 3.0
-            cell.textLabel!.layer.shadowOpacity = 0.5
-        }
-        
-        else if viewToShow == "snooze" {
-            cell.textLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
-            cell.textLabel?.textColor = UIColor(red: 252/255, green: 250/255, blue: 0, alpha: 1)
-            cell.textLabel!.text = albumNames[indexPath.row]
-            cell.textLabel?.textAlignment = NSTextAlignment.Right
-            cell.textLabel?.layer.shadowColor = UIColor.blackColor().CGColor
-            cell.textLabel?.layer.shadowOffset = CGSizeMake(0.0, 0.0)
-            
-            cell.textLabel!.layer.shadowRadius = 3.0
-            cell.textLabel!.layer.shadowOpacity = 0.5
-        }
-        
-        return cell
-        
-    }
-    
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        println(albumNames[indexPath.row])
-        
-        
-        if viewToShow == "album" {
-        
-            let photoLibrary = ALAssetsLibrary()
-            var groupToAddTo: ALAssetsGroup = ALAssetsGroup()
-            
-            photoLibrary.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
-                usingBlock: {
-                    (group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-                    
-                    if group != nil {
-                        if group.valueForProperty(ALAssetsGroupPropertyName).isEqualToString(self.albumNames[indexPath.row]){
-                            groupToAddTo = group
-                        }
-                    }
-                },
-                failureBlock: {
-                    (myerror: NSError!) -> Void in
-                    println("error occurred: \(myerror.localizedDescription)")
-            })
-            
-            photoLibrary.writeImageToSavedPhotosAlbum(self.image.CGImage, metadata: nil, completionBlock: {
-                (assetUrl: NSURL!, error: NSError!) -> Void in
-                if error == nil {
-                    println("saved image completed: \(assetUrl)")
-                    
-                    photoLibrary.assetForURL(assetUrl, resultBlock: { (asset: ALAsset!) -> Void in
-                        groupToAddTo.addAsset(asset)
-                        return
-                        }, failureBlock: {
-                            (myerror: NSError!) -> Void in
-                            println("error occurred: \(myerror.localizedDescription)")
-                    })
-                } else {
-                    println("saved image failed. \(error.localizedDescription) code \(error.code)")
-                }
-            } )
-            self.prepareToDismissVc()
-
-        }
-        
-        else if viewToShow == "snooze" {
-            
-            //        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "Now", "When I get home"]
-            
-            let snoozeOptionPicked = self.albumNames[indexPath.row]
-            println(snoozeOptionPicked)
-            
-            let currentTime = NSDate()
-            var theCalendar = NSCalendar.currentCalendar()
-            let timeComponent = NSDateComponents()
-            
-            if snoozeOptionPicked == "Pick Date" { // calendar
-                //open calendar
-                tableView.hidden = true
-                datePicker = UIDatePicker(frame: self.view.frame)
-                datePicker.center.y = self.view.center.y
-                self.view.addSubview(datePicker)
-                
-                let confirmButton = UIButton(frame: CGRectMake(0, 200, 116, 42))
-                confirmButton.center.x = self.view.center.x
-                confirmButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
-                confirmButton.tag = 777
-                confirmButton.addTarget(self, action: Selector("getDatePickerDate:"), forControlEvents: .TouchUpInside)
-                self.view.addSubview(confirmButton)
-            }
-            else {
-                
-                var scheduledDate: NSDate!
-            
-                if snoozeOptionPicked == "Tomorrow" { // tomorrow
-                    
-                    timeComponent.day = 1
-                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-                }
-                else if snoozeOptionPicked == "Next Week" { // next week
-                    timeComponent.day = 7
-                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-                }
-                    
-                else if snoozeOptionPicked == "Now" { // right now
-                    scheduledDate = NSDate()
-                }
-                    
-                else if snoozeOptionPicked == "1 Hour" { // in an hour
-                    timeComponent.hour = 1
-                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-                }
-                    
-                else if snoozeOptionPicked == "Next Month" { //in a month
-                    timeComponent.month = 1
-                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-                }
-                    
-                else if snoozeOptionPicked == "1 Year" { // in a year
-                    timeComponent.year = 1
-                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
-                }
-                //TODO: Handle when i get home
-
-                //Schedule L8R
-                self.scheduleL8rWithDate(scheduledDate)
-                self.prepareToDismissVc()
-            }
-        }
-    }
-    
-    
-    func scheduleL8rWithDate(scheduledDate: NSDate){
-        
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        managedContext = appDelegate.managedObjectContext!
-        let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
-        let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-        let imageData = UIImageJPEGRepresentation(self.image, 0)
-        l8r.setValue(imageData, forKey: "imageData")
-        l8r.setValue(scheduledDate, forKey: "fireDate")
-        
-        var error: NSError?
-        if !managedContext.save(&error) {
-            println("Coulnd't save \(error), \(error?.userInfo)")
-        }
-        
-        let vc = appDelegate.window!.rootViewController as! ViewController
-        vc.scheduleLocalNotificationWithFireDate(scheduledDate)
-        vc.fetchL8rs()
-
-        
-    }
-    
-    
-    func getDatePickerDate(sender: UIButton){
-        var scheduledDate = datePicker.date
-        //Schedule L8R
-        self.prepareToDismissVc()
-    }
     
     func prepareToDismissVc(){
         println("preparing to dismiss!")
@@ -305,6 +127,8 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 let ivc = pvc as! InboxViewController
                 ivc.flashConfirm()
                 ivc.dismissTopCard()
+                ivc.cardStackView.updateStack()
+                ivc.fetchL8rs()
             }
             else if pvc?.restorationIdentifier == "ViewController" {
                 println("camera presented")
@@ -325,10 +149,325 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
             
         })
+        
+    }
+    
+    //MARK: - L8R Management
+    
+    func scheduleL8rWithDate(scheduledDate: NSDate){
+        
+        dispatch_async(dispatch_get_main_queue(), {   ()->Void in
+            
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            self.managedContext = appDelegate.managedObjectContext!
+            
+            
+            let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: self.managedContext)
+//            let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: self.managedContext)
+//            
+//            
+//            
+//            
+//            let imageData = UIImageJPEGRepresentation(self.image, 0)
+//            l8r.setValue(imageData, forKey: "imageData")
+//            l8r.setValue(scheduledDate, forKey: "fireDate")
+            
+            // let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: self.managedContext)
+            // let imageData = UIImageJPEGRepresentation(self.image, 0)
+            // l8r.setValue(imageData, forKey: "imageData")
+            // l8r.setValue(scheduledDate, forKey: "fireDate")
+            
+            let l8rItem:L8R = NSEntityDescription.insertNewObjectForEntityForName("L8R", inManagedObjectContext: self.managedContext) as! L8R
+            let imageData = UIImageJPEGRepresentation(self.image, 0)
+            l8rItem.imageData = imageData
+            l8rItem.fireDate = scheduledDate
+            
+            var error: NSError?
+            if !self.managedContext.save(&error) {
+                println("Coulnd't save \(error), \(error?.userInfo)")
+            }
+            let vc = appDelegate.window!.rootViewController as! ViewController
+            vc.scheduleLocalNotificationWithFireDate(scheduledDate)
+            vc.updateInboxCount()
 
+        })
+        
+    }
+    
+    
+    func getDatePickerDate(sender: UIButton){
+        var scheduledDate = datePicker.date
+        self.scheduleL8rWithDate(scheduledDate)
+        //Schedule L8R
+        self.prepareToDismissVc()
     }
     
 
+    //MARK: - Delegate Methods
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        self.tableView.backgroundView = nil
+        self.tableView.backgroundColor = UIColor.clearColor()
+        
+        let bgView = UIView()
+        bgView.backgroundColor = UIColor.clearColor()
+        cell.selectedBackgroundView = bgView
+        cell.backgroundView = nil
+        cell.backgroundColor = UIColor.clearColor()
+        
+        //Blue for Album
+    }
+    
+
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return snoozeNames.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell:UITableViewCell=UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "mycell")
+        
+        
+        //cell.textLabel?.font = UIFont(name: "Arial-BoldMT", size: 24)
+        cell.textLabel?.font = UIFont(name: "Dosis-Bold", size: 24)
+        cell.textLabel?.textColor = UIColor.whiteColor()//(red: 0, green: 206/255, blue: 1, alpha: 1)
+        cell.textLabel!.text = snoozeNames[indexPath.row]
+        
+        cell.textLabel?.layer.shadowColor = UIColor.blackColor().CGColor
+        cell.textLabel?.layer.shadowOffset = CGSizeMake(2.0, 2.0)
+        
+        cell.textLabel!.layer.shadowRadius = 3.0
+        cell.textLabel!.layer.shadowOpacity = 1
+        
+        return cell
+        
+    }
+    
+    func showCreateAlbumAlert(){
+        
+        let alert = UIAlertView(title: "Give the album a name", message: "", delegate: self, cancelButtonTitle: "Cancel", otherButtonTitles: "Ok")
+        alert.alertViewStyle = UIAlertViewStyle.PlainTextInput
+        alert.show()
+        
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter Name"
+//        message:@"  "
+//        delegate:self
+//        cancelButtonTitle:@"Cancel"
+//        otherButtonTitles:@"OK", nil];
+//        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+//        [alert show];
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex == 1 {
+            let albumName = alertView.textFieldAtIndex(0)?.text
+            let photoLibrary = ALAssetsLibrary()
+            var groupToAddTo: ALAssetsGroup = ALAssetsGroup()
+            
+            photoLibrary.addAssetsGroupAlbumWithName(albumName, resultBlock: {(group: ALAssetsGroup?) -> Void in
+                if group == nil {
+                    println("group is nil because it already exists")
+                }
+                else {
+                    println("We've just created group \(group)")
+                    
+                }
+                
+            }, failureBlock: {(theError: NSError?) -> Void in
+                    println(theError)
+            })
+            snoozeNames.append(albumName!)
+            tableView.reloadData()
+
+            
+        }
+        else {
+            println("button index: \(buttonIndex)")
+        }
+    }
+    
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        println(snoozeNames[indexPath.row])
+        
+        if self.snoozeNames[indexPath.row] == "➕New Album"{
+            println("create new album")
+            self.showCreateAlbumAlert()
+        
+        }
+        
+
+        else if viewToShow == "album" {
+        
+            //TODO: Create Album if one doesn't exist already
+            
+            let photoLibrary = ALAssetsLibrary()
+            var groupToAddTo: ALAssetsGroup = ALAssetsGroup()
+            
+            photoLibrary.addAssetsGroupAlbumWithName(self.snoozeNames[indexPath.row], resultBlock: {(group: ALAssetsGroup?) -> Void in
+                    if group == nil {
+                        println("group is nil because it already exists. Just save it")
+                        //enumerate albums
+                        photoLibrary.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
+                            usingBlock: {
+                                (existingGroup: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                                
+                                if existingGroup != nil {
+                                    
+                                    if existingGroup.valueForProperty(ALAssetsGroupPropertyName).isEqualToString(self.snoozeNames[indexPath.row]){
+                                        println("Saving to existing group: \(existingGroup.valueForProperty(ALAssetsGroupPropertyName))")
+                                        photoLibrary.writeImageToSavedPhotosAlbum(self.image.CGImage, metadata: nil, completionBlock: {
+                                            (assetUrl: NSURL!, error: NSError!) -> Void in
+                                            
+                                            photoLibrary.assetForURL(assetUrl, resultBlock: { (asset: ALAsset!) -> Void in
+                                                existingGroup.addAsset(asset)
+                                                println("saved to \(existingGroup.valueForProperty(ALAssetsGroupPropertyName))")
+                                                return
+                                                }, failureBlock: {
+                                                    (myerror: NSError!) -> Void in
+                                                    println("error occurred: \(myerror.localizedDescription)")
+                                            })
+                                            })
+
+                                    return
+                                    }
+                                }
+                                else {
+                                    println("existing group is nil for some reason")
+                                }
+                
+                            },
+                            failureBlock: {
+                                (myerror: NSError!) -> Void in
+                                println("error occurred: \(myerror.localizedDescription)")
+                        })
+                    }
+                    else {
+                        println("We've just created group \(group)")
+                        photoLibrary.writeImageToSavedPhotosAlbum(self.image.CGImage, metadata: nil, completionBlock: {
+                            (assetUrl: NSURL!, error: NSError!) -> Void in
+                            
+                            photoLibrary.assetForURL(assetUrl, resultBlock: { (asset: ALAsset!) -> Void in
+                                group?.addAsset(asset)
+                                println("saved to \(group?.valueForProperty(ALAssetsGroupPropertyName))")
+                                return
+                                }, failureBlock: {
+                                    (myerror: NSError!) -> Void in
+                                    println("error occurred: \(myerror.localizedDescription)")
+                            })
+                        })
+
+
+                    }
+                
+                    }, failureBlock: {(theError: NSError?) -> Void in
+                        println(theError)
+                })
+            self.prepareToDismissVc()
+        }
+            
+                
+        else if (viewToShow == "snooze"){
+            
+            //        albumNames = ["Pick Date", "1 Year", "Next Month", "Next Week", "Tomorrow", "1 Hour", "In a Minute", "Add to Album >"]
+            
+            let snoozeOptionPicked = self.snoozeNames[indexPath.row]
+            println(snoozeOptionPicked)
+            
+            let currentTime = NSDate()
+            var theCalendar = NSCalendar.currentCalendar()
+            let timeComponent = NSDateComponents()
+            
+            if snoozeOptionPicked == "📅Pick Date" { // calendar
+                //open calendar
+                tableView.hidden = true
+                self.view = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
+                datePicker = UIDatePicker(frame: self.view.frame)
+                datePicker.center.y = self.view.center.y
+                self.view.addSubview(datePicker)
+                
+                let confirmButton = UIButton(frame: CGRectMake(0, 200, 100, 100))
+                confirmButton.center.x = self.view.center.x
+                confirmButton.center.y = datePicker.frame.maxY+60
+                confirmButton.setImage(UIImage(named: "pickDateButton"), forState: .Normal)
+                confirmButton.tag = 777
+                confirmButton.addTarget(self, action: Selector("getDatePickerDate:"), forControlEvents: .TouchUpInside)
+                self.view.addSubview(confirmButton)
+            }
+                
+            else if snoozeOptionPicked == "Add to Album >" {
+                println("trying to push to Album Names")
+                let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+                avc.image = self.image
+                avc.viewToShow = "album"
+                println(avc.image)
+                println(albumNames)
+               // avc.tableView = nil
+
+                avc.snoozeNames = albumNames
+                self.navigationController?.pushViewController(avc, animated: true)
+                //dumb thing we have to do bc of clearColor bg
+                UIView.animateWithDuration(0.2, delay: 0, options: UIViewAnimationOptions.CurveEaseOut,
+                    animations: { () -> Void in
+                        self.view.alpha = 0
+                        
+                    }, completion: { (done: Bool) -> Void in
+                        UIView.animateWithDuration(0.1, delay: 0.5, options: nil, animations: { () -> Void in
+                        self.view.alpha = 1
+                            }, completion: { (done: Bool) -> Void in
+                                println("animation complete")
+                        })
+                })
+
+                
+                
+            }
+
+            else {
+                
+                var scheduledDate: NSDate!
+            
+                if snoozeOptionPicked == "🌅Tomorrow" { // tomorrow
+                    
+                    timeComponent.day = 1
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+                }
+                else if snoozeOptionPicked == "Next Week" { // next week
+                    timeComponent.day = 7
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+                }
+                    
+                else if snoozeOptionPicked == "⏳In a Minute" { // In a Minute
+                   // scheduledDate = NSDate()
+                    timeComponent.second = 1
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+                }
+                    
+                else if snoozeOptionPicked == "⏰1 Hour" { // in an hour
+                    timeComponent.hour = 1
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+                }
+                    
+                else if snoozeOptionPicked == "Next Month" { //in a month
+                    timeComponent.month = 1
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+                }
+                    
+                else if snoozeOptionPicked == "🎂In a Year" { // in a year
+                    timeComponent.year = 1
+                    scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
+                }
+                
+
+                
+
+                //Schedule L8R
+                self.scheduleL8rWithDate(scheduledDate)
+                self.prepareToDismissVc()
+            }
+        }
+    }
 
     
     override func didReceiveMemoryWarning() {

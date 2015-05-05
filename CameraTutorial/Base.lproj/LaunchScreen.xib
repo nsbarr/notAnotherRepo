@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7518.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -10,42 +10,16 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launchImage" translatesAutoresizingMaskIntoConstraints="NO" id="AUm-Rb-cYv">
-                    <rect key="frame" x="80" y="54" width="320" height="171"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="171" id="irz-0I-FaZ"/>
-                    </constraints>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="altFlashConfirm" translatesAutoresizingMaskIntoConstraints="NO" id="AUm-Rb-cYv">
+                    <rect key="frame" x="52" y="74" width="259" height="250"/>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Life to the future" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZBV-j3-1Qv">
-                    <rect key="frame" x="102" y="233" width="276" height="46"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="46" id="bcS-fe-ivo"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" name="GillSans" family="Gill Sans" pointSize="36"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="AUm-Rb-cYv" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="CVA-L9-uxm">
-                    <variation key="heightClass=regular-widthClass=compact" constant="5"/>
-                </constraint>
-                <constraint firstItem="AUm-Rb-cYv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="54" id="EbF-Pb-CQE">
-                    <variation key="heightClass=regular-widthClass=compact" constant="140"/>
-                </constraint>
-                <constraint firstItem="ZBV-j3-1Qv" firstAttribute="centerX" secondItem="AUm-Rb-cYv" secondAttribute="centerX" id="Pne-Uw-hlp">
-                    <variation key="heightClass=regular-widthClass=compact" constant="-4.5"/>
-                </constraint>
-                <constraint firstItem="AUm-Rb-cYv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="80" id="b0y-4e-zVe">
-                    <variation key="heightClass=regular-widthClass=compact" constant="85"/>
-                </constraint>
-                <constraint firstItem="ZBV-j3-1Qv" firstAttribute="top" secondItem="AUm-Rb-cYv" secondAttribute="bottom" constant="8" symbolic="YES" id="eTo-Uh-iFd">
-                    <variation key="heightClass=regular-widthClass=compact" constant="-18"/>
-                </constraint>
-                <constraint firstItem="ZBV-j3-1Qv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="102" id="wgO-2t-DYn">
-                    <variation key="heightClass=regular-widthClass=compact" constant="37"/>
-                </constraint>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="4oD-QY-Gem"/>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="60" id="6BD-3n-gbV"/>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="66" id="GSU-gH-cn3"/>
+                <constraint firstItem="AUm-Rb-cYv" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="n4I-PO-MLV"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -53,6 +27,6 @@
         </view>
     </objects>
     <resources>
-        <image name="launchImage" width="1028" height="787"/>
+        <image name="altFlashConfirm" width="735" height="705"/>
     </resources>
 </document>

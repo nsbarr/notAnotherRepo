@@ -3,11 +3,11 @@
 //  L8R
 //
 
-
+import Foundation
 import UIKit
 import CoreData
-//import Parse
-//import ParseCrashReporting
+import Parse
+import ParseCrashReporting
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,8 +17,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-    //    ParseCrashReporting.enable()
-    //    Parse.setApplicationId("4b6lf3Pi0niPdz2NZTrHn7SPld8zbfghwhvzxHvE", clientKey: "PjQfUJBWh8gh67zAjjrq52pYAqnuNi4KFg4nnxB5")
+        ParseCrashReporting.enable()
+        Parse.setApplicationId("4b6lf3Pi0niPdz2NZTrHn7SPld8zbfghwhvzxHvE", clientKey: "PjQfUJBWh8gh67zAjjrq52pYAqnuNi4KFg4nnxB5")
+        
+//        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
+//        dispatch_after(delayTime, dispatch_get_main_queue()) {
+//            NSException.raise(NSGenericException, format: "Everything is ok, this is just a test crash.", arguments: getVaList([]))
+//        }
+        
         return true
     }
 
@@ -44,6 +50,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rvc = window?.rootViewController as! ViewController
         println(rvc)
         rvc.fetchL8rs()
+        let cc = rvc.childViewControllers[0].childViewControllers[0] as! CameraController
+        cc.previewLayer?.connection.enabled = true
         
         
     }
@@ -57,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //MARK: - Notification Center
     func application(application: UIApplication, handleActionWithIdentifier identifier: String?, forLocalNotification notification: UILocalNotification, completionHandler: () -> Void) {
         
-        println(identifier)
+        println("identifier: \(identifier)")
         
         if identifier == "view" {
             NSNotificationCenter.defaultCenter().postNotificationName("viewNotification", object: nil)

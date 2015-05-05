@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "_default": {
+      "link": "l8r"
+    },
+    "l8r": {
+      "applicationId": "4b6lf3Pi0niPdz2NZTrHn7SPld8zbfghwhvzxHvE",
+      "masterKey": "MAzkR1OQQjW53Wvr14MWfxfqd2m0s8bPnprmakNr"
+    }
+  }
+}
