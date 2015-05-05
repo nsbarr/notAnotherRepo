@@ -6,6 +6,8 @@ import Foundation
 import UIKit
 
 extension UIView {
+    
+    
     public func centerInSuperview() {
         if let superview = self.superview {
             let parentBounds = superview.bounds
@@ -92,7 +94,7 @@ class GestureView : UIView, UIGestureRecognizerDelegate {
 ///The cardId property is used to identify the card when the delegate gets
 ///a callback with the card information
 public class Card : UIImageView {
-    var cardId: Int? = nil
+    var cardId: String? = nil
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -213,10 +215,15 @@ public class CardStack : UIView {
         
     }
     
-    override public var bounds: CGRect {
-        didSet {
-            self.updateViewTreeBounds()
-        }
+//    override public var bounds: CGRect {
+//        didSet {
+//            self.updateViewTreeBounds()
+//        }
+//    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        self.updateViewTreeBounds()
     }
     
     private func updateViewTreeBounds() {
@@ -284,13 +291,11 @@ public class CardStack : UIView {
             let alphaValue = 0.25 + 0.75 - (0.75 * (verticalDistanceTraveled/swipeOutThreshold))
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 actionView.alpha = alphaValue
-                println(alphaValue)
-                println("setting alpha to alphaValue")
             })
         }
         else if (verticalDistanceTraveled <= minOpacityChangeDistance) {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                println("setting alpha to 1")
+           //     println("setting alpha to 1")
                 actionView.alpha = 1
             })
         }
@@ -335,11 +340,13 @@ public class CardStack : UIView {
     
     var indexOfTopCard = 0
     ///triggers a calculation/recalculation of cardstack internals after setting the delegate or after data has changes
+    
     public func updateStack() {
-        if let delegate = self.delegate {
         
+        if let delegate = self.delegate {
+            
             let cardCount:Int = delegate.cardCount
-           
+            println("updating stack with card count \(cardCount)")
             self.indexOfTopCard = 0
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -350,7 +357,7 @@ public class CardStack : UIView {
                 else {
                     self.topView.alpha = 0
                 }
-
+                
                 
                 if (cardCount > 1) {
                     self.setCardToView(1, view: self.hiddenView)
@@ -359,16 +366,56 @@ public class CardStack : UIView {
                 else {
                     self.hiddenView.alpha = 0
                 }
-                    
-
+                
+                
                 self.adjustVerticalForCardsLeft(cardCount)
             })
-
+            
         }
         else {
             fatalError("Delegate not set!")
         }
     }
+    
+    
+//    public func updateStack() {
+//        if let delegate = self.delegate {
+//        
+//            let cardCount:Int = delegate.cardCount
+//           
+//            self.indexOfTopCard = 0
+//            
+//            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                if (cardCount > 0) {
+//                    println("More than 0 cards")
+//                    if let newCard = self.setCardToView(0, view: self.topView) {
+//                        self.topCard = newCard
+//                    }
+//                    self.topView.alpha = 1
+//                }
+//                else {
+//                    println("0 cards")
+//                    self.topView.alpha = 0
+//                }
+//                
+////                
+////                if (cardCount > 1) {
+////                    self.setCardToView(1, view: self.hiddenView)
+////                    self.hiddenView.alpha = 1
+////                }
+////                else {
+////                    self.hiddenView.alpha = 0
+////                }
+////                    
+//
+//                self.adjustVerticalForCardsLeft(cardCount)
+//            })
+//
+//        }
+//        else {
+//            fatalError("Delegate not set!")
+//        }
+//    }
     
     func adjustVerticalForCardsLeft(cardsLeft: Int) {
         if (cardsLeft == 2) {
@@ -392,16 +439,25 @@ public class CardStack : UIView {
 
     }
     
-    func setCardToView(cardIndex: Int, view: UIView) {
+    func setCardToView(cardIndex: Int, view: UIView) -> Card! {
+        var returnCard:Card!
         if let delegate = self.delegate {
             println("setting card \(cardIndex)")
             assert(view.subviews.count == 0, "view for adding card has subviews!")
             let card = delegate.cardAtIndex(cardIndex, frame: view.frame)
             card.tag = self.cardTag
             view.addSubview(card)
-            view.clipsToBounds = true
-            //  card.centerInSuperview()
+            returnCard = card
+            if topCard == nil {
+                println("setting Top Card \(card) at index \(cardIndex)")
+                topCard = card
+            }
+            card.centerInSuperview()
+            returnCard.centerInSuperview()
+
         }
+
+        return returnCard
     }
     
     func swipeOutTopCardWithSpeed(speed: NSTimeInterval) {
@@ -429,6 +485,7 @@ public class CardStack : UIView {
                             if (wasAtLastCard) {
                                 //if we just removed the last card simply hide the topview and return it to center
                                 //the hiddenview should have been hidden in the previous step
+                                println("that was the last card!")
                                 self.topView.alpha = 0
                                 self.topView.centerInSuperview()
                             }
@@ -438,6 +495,7 @@ public class CardStack : UIView {
                                 self.hiddenView = actionView
                                 self.insertSubview(self.hiddenView, atIndex: 1)
                                 self.hiddenView.centerInSuperview()
+                                
 
                                 let hasNextCard = cardCount > (self.indexOfTopCard+1)
 
@@ -465,8 +523,21 @@ public class CardStack : UIView {
 
                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
                                 self.delegate?.cardRemoved(currentCard)
+                                
+                                self.topCard = nil
+                            
+                                if let newTopCard = newTopView.viewWithTag(self.cardTag) as? Card {
+                                    println("setting new topCard")
+                                    self.topCard = newTopCard
+                                }
+                                else {
+                                    println("no card to make new top card!")
+                                }
+                            
                                 return
                             })
+                            
+
                         }
 
                     })

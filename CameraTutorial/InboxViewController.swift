@@ -14,72 +14,36 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     //MARK: - Variables
     
-    @IBOutlet weak var cardStackView:CardStack!
+    @IBOutlet var cardStackView:CardStack!
     
-    var currentImage: UIImage?
-    var currentL8r: NSManagedObject?
     var snapButton: UIButton!
+    var l8rsById:[String:L8R]!
     
-    var l8rsBeforeCurrentDate = [NSManagedObject]()
-
-    let colors:[UIColor] = [UIColor.redColor(), UIColor.blueColor(), UIColor.greenColor(), UIColor.yellowColor(), UIColor.magentaColor(), UIColor.purpleColor(), UIColor.blackColor()]
     
-    var cardCount: Int {
-        
-        if l8rsBeforeCurrentDate.isEmpty {
-        
-            appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-            managedContext = appDelegate.managedObjectContext!
+    var currentL8R:L8R! {
+      //  println("Card Stack View:\(self.cardStackView)")
+      //  println("Top Card: \(self.cardStackView.topCard)")
+        if let topCard = self.cardStackView.topCard {
             
-            let fetchRequest = NSFetchRequest(entityName: "L8R")
-            var error: NSError?
-            
-            let fireDateSort = NSSortDescriptor(key: "fireDate", ascending: true)
-            let fireDateSorts = [fireDateSort]
-            
-            
-            
-            fetchRequest.sortDescriptors = fireDateSorts
-            
-            
-            let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
-            
-            if let results = fetchedResults {
+            if let cardId = topCard.cardId {
                 
-                
-                let currentDate = NSDate()
-                for l8r in results {
-                    
-                    //                //if you ever need to delete all of them, uncomment this and comment the if statement below
-                    //                managedContext.deleteObject(l8r)
-                    //
-                    //                var error: NSError?
-                    //
-                    //                if !managedContext.save(&error) {
-                    //                    println("Unresolved error \(error), \(error!.userInfo)")
-                    //                    abort()
-                    //                }
-                    
-                    //  println(l8r.valueForKey("fireDate"))
-                    
-                    if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
-                        l8rsBeforeCurrentDate.append(l8r)
-                        println("appended!")
-                        
-                        
-                    }
-                    
-                }
+                return l8rsById[cardId]!
             }
             else {
-                println("Could not fetch \(error), \(error!.userInfo)")
+                println("error, received topCard but no cardId")
             }
         }
+        else {
+            //possible error, topCard was nil
+            println("possible error, topCard was nil")
+        }
+        return nil
+    }
+    
+    var cardCount: Int {
+        println("Card Count:\(self.l8rsById.count)")
         
-        //  [UIApplication sharedApplication].applicationIconBadgeNumber = [[[userInfo objectForKey:@"aps"] objectForKey: @"badgecount"] intValue];
-
-        
-        return self.l8rsBeforeCurrentDate.count
+        return self.l8rsById.count
     }
     
     var inboxNumber: UILabel!
@@ -97,7 +61,6 @@ class InboxViewController: UIViewController, CardStackDelegate {
         self.cardStackView.updateStack()
         self.addInboxBadge()
         self.addLaterSnapButton()
-        self.addListSnapButton()
         self.addDismissButton()
         self.addShareButton()
     }
@@ -136,19 +99,6 @@ class InboxViewController: UIViewController, CardStackDelegate {
         snapButton.hidden = false
         
         cardStackView.addSubview(snapButton)
-        
-    }
-    
-    func addListSnapButton(){
-        var listSnapButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-130, width: 100, height: 100))
-        listSnapButton.center.x = view.center.x-(listSnapButton.frame.width/2+5)
-        listSnapButton.tag = 1234
-        let buttonImage = UIImage(named: "listSnapButton")
-        listSnapButton.setImage(buttonImage, forState: .Normal)
-        listSnapButton.addTarget(self, action: Selector("snapButtonPressed:"), forControlEvents: .TouchDown)
-        listSnapButton.hidden = false
-        
-    //    cardStackView.addSubview(listSnapButton)
     }
     
     
@@ -188,7 +138,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         let text = "Check out this L8R and create your own!"
         sharingItems.append(text)
         
-        if let image = currentImage {
+        if let image = UIImage(data: self.currentL8R.imageData, scale: 0.0) {
             sharingItems.append(image)
         }
         
@@ -205,11 +155,11 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     func snapButtonPressed(sender: UIButton){
         
-        if self.currentImage != nil {
+        if UIImage(data: self.currentL8R.imageData, scale: 0.0) != nil {
         
             let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
             avc.modalPresentationStyle = .OverCurrentContext
-            avc.image = self.currentImage!
+            avc.image = UIImage(data: self.currentL8R.imageData, scale: 0.0)!
             avc.viewToShow = "snooze"
             let nc = UINavigationController(rootViewController: avc)
             nc.navigationBar.hidden = true
@@ -217,6 +167,9 @@ class InboxViewController: UIViewController, CardStackDelegate {
             
             presentViewController(nc, animated: true, completion: nil)
             
+        }
+        else {
+            println("current image is nil")
         }
         
     }
@@ -228,71 +181,71 @@ class InboxViewController: UIViewController, CardStackDelegate {
     func cardRemoved(card: Card) {
         println("The card \(card.cardId!) was removed!")
         
-        //TODO: This is fucked
+        if let cardToRemove = self.currentL8R as L8R? {
+            
+            
+            dispatch_async(dispatch_get_main_queue(), {   ()->Void in
+                
+             //   println("Removing card\(self.l8rsById[card.cardId!])")
 
-        if card.cardId > -1 { //why?🔥
-        
-            managedContext.deleteObject(l8rsBeforeCurrentDate[card.cardId!]) //just guessin
             
-            var error: NSError?
-            
-            if !managedContext.save(&error) {
-                println("Unresolved error \(error), \(error!.userInfo)")
-                abort()
-            }
-            let vc = appDelegate.window!.rootViewController as! ViewController
-            vc.updateInboxCount()
+                self.managedContext.deleteObject(cardToRemove)
+                    
+                var error: NSError?
+                    
+                if !self.managedContext.save(&error) {
+                    println("Unresolved error \(error), \(error!.userInfo)")
+                    abort()
+                }
+                
+                self.l8rsById.removeValueForKey(card.cardId!)
+                self.fetchL8rs()
+//                self.cardStackView.updateStack()
+                
+            })
         }
+        else {
+            println("card to remove is nil! aieeee! \(card)")
+        }
+        
 
         
+//        let vc = appDelegate.window!.rootViewController as! ViewController
+//        vc.updateInboxCount()
         
     }
     
     func cardAtIndex(index: Int, frame: CGRect) -> Card {
-        
-        return createDemoCardView(index, textColor: UIColor.blackColor())
+        println("index of card: \(index)")
+        var l8rs:[L8R] = l8rsById.values.array
+        let uniqueId = l8rs[index].objectIDString
+        println("Index:\(index), uniqueId: \(uniqueId)")
+        return createDemoCardView(uniqueId)
     }
     
     
-    func createDemoCardView(cardId: Int, textColor: UIColor) -> Card {
-        println("creatingDemoCard\(cardId)")
-
+    func createDemoCardView(cardId: String) -> Card {
         
-        currentL8r = l8rsBeforeCurrentDate[cardId]
-        println(currentL8r)
+        var l8rs:[L8R] = l8rsById.values.array
+    //    l8rs.sort({ $0.fireDate > $1.fireDate })
+    //    println("L8R to display:\(l8rsById[cardId])")
+        //TODO: Sort l8r array
+    
+        let imageData = l8rsById[cardId]?.imageData
+        let image = UIImage(data: imageData!, scale: 0.0)!
+        let ratio = self.view.frame.height/image.size.height
         
-        if currentL8r!.valueForKey("imageData") != nil {
-            let imageData = currentL8r!.valueForKey("imageData") as! NSData
-            let image = UIImage(data: imageData, scale: 0.0)!
-            let ratio = self.view.frame.height/image.size.height
-            
-            let card: Card = Card(frame: CGRect(x: 0, y: 0, width: image.size.width*ratio, height:image.size.height*ratio))
-            card.backgroundColor = UIColor(red: 0, green: 0, blue: 240, alpha: 0)
-            card.cardId = cardId
-            card.center.x = view.center.x
-            currentImage = image
-            card.image = image
-            
-            card.clipsToBounds = true
-            card.contentMode = UIViewContentMode.ScaleAspectFit
-            
-            return card
-            
-        }
-        else {
-            let card: Card = Card(frame: CGRect(x: 0, y: 0, width: 0, height:0))
-            card.cardId = cardId
+        let card: Card = Card(frame: CGRect(x: 0, y: 0, width: image.size.width*ratio, height:image.size.height*ratio))
+        card.backgroundColor = UIColor(red: 0, green: 0, blue: 240, alpha: 0)
+        card.cardId = cardId
+        card.center.x = view.center.x
+        card.image = image
         
+        card.clipsToBounds = true
+        card.contentMode = UIViewContentMode.ScaleAspectFit
+        
+        return card
             
-            let label: UILabel = UILabel(frame: card.frame)
-            label.text = "Oops! I goofed 😔"
-            label.textColor = UIColor.redColor()
-            label.textAlignment = NSTextAlignment.Center
-            
-            card.addSubview(label)
-
-            return card
-        }
     }
     
     
@@ -300,15 +253,13 @@ class InboxViewController: UIViewController, CardStackDelegate {
         
         let avc = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
         
-        if currentImage != nil {
-            avc.image = currentImage!
-            avc.modalPresentationStyle = .OverCurrentContext
-            self.presentViewController(avc, animated: true, completion: {() -> Void in
+        
+        
+        avc.image = UIImage(data: self.currentL8R.imageData, scale: 0.0)!
+        avc.modalPresentationStyle = .OverCurrentContext
+        self.presentViewController(avc, animated: true, completion: {() -> Void in
                 
             })
-        }
-        else {println("no image to l8r")}
-        
     }
     
     func flashConfirm(){
@@ -335,42 +286,53 @@ class InboxViewController: UIViewController, CardStackDelegate {
         let fetchRequest = NSFetchRequest(entityName: "L8R")
         var error: NSError?
         
-        let fireDateSort = NSSortDescriptor(key: "fireDate", ascending: true)
-        let fireDateSorts = [fireDateSort]
-        
-        l8rsBeforeCurrentDate = []
-        
-        fetchRequest.sortDescriptors = fireDateSorts
+//        let fireDateSort = NSSortDescriptor(key: "fireDate", ascending: true)
+//        let fireDateSorts = [fireDateSort]
+//        
+//        fetchRequest.sortDescriptors = fireDateSorts
         
         
         let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
+        let currentDate = NSDate()
         
+        self.l8rsById = [String:L8R]()
+
         if let results = fetchedResults {
             
             
-            let currentDate = NSDate()
-            for l8r in results {
-                
-                //                //if you ever need to delete all of them, uncomment this and comment the if statement below
-                //                managedContext.deleteObject(l8r)
-                //
-                //                var error: NSError?
-                //
-                //                if !managedContext.save(&error) {
-                //                    println("Unresolved error \(error), \(error!.userInfo)")
-                //                    abort()
-                //                }
-                
-                //  println(l8r.valueForKey("fireDate"))
-                
-                if currentDate.compare(l8r.valueForKey("fireDate") as! NSDate) == NSComparisonResult.OrderedDescending {
-                    l8rsBeforeCurrentDate.append(l8r)
-                    println("appended!")
-                    
-                    
+            
+            for anItem in results {
+                if let l8rItem = anItem as? L8R {
+                    //TODO: Diego doesn't like this
+                    println("checking item at date  \(l8rItem.fireDate)")
+                    if currentDate.compare(l8rItem.fireDate) == NSComparisonResult.OrderedDescending {
+                        l8rsById[l8rItem.objectIDString] = l8rItem
+                    }
+                }
+                else {
+                    let cname = NSStringFromClass(anItem.dynamicType)
+                    NSLog("item is not a L8R! class name is \(cname)")
                 }
                 
             }
+
+//            let currentDate = NSDate()
+//            for l8rItem in results as! [L8R] {
+//                
+//                //                //if you ever need to delete all of them, uncomment this
+//                //
+//                //                var error: NSError?
+//                //
+//                //                if !managedContext.save(&error) {
+//                //                    println("Unresolved error \(error), \(error!.userInfo)")
+//                //                    abort()
+//                //                }
+//                
+//                if currentDate.compare(l8rItem.fireDate) == NSComparisonResult.OrderedDescending {
+//                    l8rsById[l8rItem.objectIDString] = l8rItem
+//                }
+//                
+//            }
         }
         else {
             println("Could not fetch \(error), \(error!.userInfo)")

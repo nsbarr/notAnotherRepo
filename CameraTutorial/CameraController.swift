@@ -63,14 +63,6 @@ class CameraController: UIViewController, UITextViewDelegate, UIImagePickerContr
         self.addImagePickerButton()
         self.addInboxBadge()
         
-
-        for family in UIFont.familyNames(){
-            println(family)
-            for fontName in UIFont.fontNamesForFamilyName(family as! String){
-                println(fontName)
-            }
-        }
-        
     }
     
     override func viewDidAppear(animated: Bool) {

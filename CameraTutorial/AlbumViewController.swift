@@ -127,6 +127,8 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 let ivc = pvc as! InboxViewController
                 ivc.flashConfirm()
                 ivc.dismissTopCard()
+                ivc.cardStackView.updateStack()
+                ivc.fetchL8rs()
             }
             else if pvc?.restorationIdentifier == "ViewController" {
                 println("camera presented")
@@ -154,22 +156,41 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func scheduleL8rWithDate(scheduledDate: NSDate){
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        managedContext = appDelegate.managedObjectContext!
-        let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: managedContext)
-        let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-        let imageData = UIImageJPEGRepresentation(self.image, 0)
-        l8r.setValue(imageData, forKey: "imageData")
-        l8r.setValue(scheduledDate, forKey: "fireDate")
-        
-        var error: NSError?
-        if !managedContext.save(&error) {
-            println("Coulnd't save \(error), \(error?.userInfo)")
-        }
-        
-        let vc = appDelegate.window!.rootViewController as! ViewController
-        vc.scheduleLocalNotificationWithFireDate(scheduledDate)
-        vc.updateInboxCount()
+        dispatch_async(dispatch_get_main_queue(), {   ()->Void in
+            
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            self.managedContext = appDelegate.managedObjectContext!
+            
+            
+            let entity = NSEntityDescription.entityForName("L8R", inManagedObjectContext: self.managedContext)
+//            let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: self.managedContext)
+//            
+//            
+//            
+//            
+//            let imageData = UIImageJPEGRepresentation(self.image, 0)
+//            l8r.setValue(imageData, forKey: "imageData")
+//            l8r.setValue(scheduledDate, forKey: "fireDate")
+            
+            // let l8r = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: self.managedContext)
+            // let imageData = UIImageJPEGRepresentation(self.image, 0)
+            // l8r.setValue(imageData, forKey: "imageData")
+            // l8r.setValue(scheduledDate, forKey: "fireDate")
+            
+            let l8rItem:L8R = NSEntityDescription.insertNewObjectForEntityForName("L8R", inManagedObjectContext: self.managedContext) as! L8R
+            let imageData = UIImageJPEGRepresentation(self.image, 0)
+            l8rItem.imageData = imageData
+            l8rItem.fireDate = scheduledDate
+            
+            var error: NSError?
+            if !self.managedContext.save(&error) {
+                println("Coulnd't save \(error), \(error?.userInfo)")
+            }
+            let vc = appDelegate.window!.rootViewController as! ViewController
+            vc.scheduleLocalNotificationWithFireDate(scheduledDate)
+            vc.updateInboxCount()
+
+        })
         
     }
     
@@ -419,7 +440,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     
                 else if snoozeOptionPicked == "⏳In a Minute" { // In a Minute
                    // scheduledDate = NSDate()
-                    timeComponent.minute = 1
+                    timeComponent.second = 1
                     scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
                 }
                     

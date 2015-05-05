@@ -8,15 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0104DE8A1AB76F8F00E4F220 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0104DE891AB76F8F00E4F220 /* MenuButton.swift */; };
-		0104DE8B1AB76F8F00E4F220 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0104DE891AB76F8F00E4F220 /* MenuButton.swift */; };
 		0104DE8D1AB7704200E4F220 /* AboutDialogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0104DE8C1AB7704200E4F220 /* AboutDialogue.swift */; };
-		0104DE8E1AB7704200E4F220 /* AboutDialogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0104DE8C1AB7704200E4F220 /* AboutDialogue.swift */; };
+		011D5BC01AF7D8DE000FAFF7 /* L8R.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011D5BBF1AF7D8DE000FAFF7 /* L8R.swift */; };
 		0127DDF91AEEBF8D00535159 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DDF71AEEBF8D00535159 /* Bolts.framework */; };
 		0127DDFA1AEEBF8D00535159 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DDF81AEEBF8D00535159 /* ParseCrashReporting.framework */; };
 		0127DDFC1AEEBF9600535159 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DDFB1AEEBF9600535159 /* Parse.framework */; };
-		0127DDFF1AEEBFC500535159 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DDFE1AEEBFC500535159 /* AudioToolbox.framework */; };
-		0127DE011AEEBFCC00535159 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DE001AEEBFCC00535159 /* CFNetwork.framework */; };
-		0127DE031AEEBFD300535159 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DE021AEEBFD300535159 /* CoreGraphics.framework */; };
 		01523DCC1A8FC23500FCDC0F /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01523DCA1A8FC23500FCDC0F /* Model.xcdatamodeld */; };
 		0180E6851AC9C08D00470487 /* CardStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0180E6841AC9C08D00470487 /* CardStack.swift */; };
 		0180E6871AC9C0E400470487 /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0180E6861AC9C0E400470487 /* InboxViewController.swift */; };
@@ -24,15 +20,6 @@
 		01BAC3AC1AE80E0B006ADA0F /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BAC3AB1AE80E0B006ADA0F /* ModalViewController.swift */; };
 		01BDDE891A912C240015F601 /* PageItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE881A912C240015F601 /* PageItemController.swift */; };
 		01BDDE8B1A912D4A0015F601 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDDE8A1A912D4A0015F601 /* CameraController.swift */; };
-		01DE2CC81AEEC9DD00B89E50 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CC71AEEC9DD00B89E50 /* CoreLocation.framework */; };
-		01DE2CCA1AEEC9E300B89E50 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CC91AEEC9E300B89E50 /* MobileCoreServices.framework */; };
-		01DE2CCC1AEEC9E800B89E50 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CCB1AEEC9E800B89E50 /* QuartzCore.framework */; };
-		01DE2CCE1AEEC9EF00B89E50 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CCD1AEEC9EF00B89E50 /* Security.framework */; };
-		01DE2CD01AEEC9F500B89E50 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CCF1AEEC9F500B89E50 /* StoreKit.framework */; };
-		01DE2CD21AEEC9FD00B89E50 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CD11AEEC9FD00B89E50 /* SystemConfiguration.framework */; };
-		01DE2CD41AEECA0700B89E50 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CD31AEECA0700B89E50 /* libstdc++.6.dylib */; };
-		01DE2CD61AEECA1000B89E50 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CD51AEECA1000B89E50 /* libz.dylib */; };
-		01DE2CD81AEECA1C00B89E50 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DE2CD71AEECA1C00B89E50 /* libsqlite3.dylib */; };
 		01DE2CD91AEECAFE00B89E50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DDFE1AEEBFC500535159 /* AudioToolbox.framework */; };
 		01DE2CDA1AEECB0300B89E50 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DE001AEEBFCC00535159 /* CFNetwork.framework */; };
 		01DE2CDB1AEECB0700B89E50 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0127DE021AEEBFD300535159 /* CoreGraphics.framework */; };
@@ -56,22 +43,12 @@
 		02F5BDEB19CE1C4900EDFD47 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02F5BDE919CE1C4900EDFD47 /* Main.storyboard */; };
 		02F5BDED19CE1C4900EDFD47 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02F5BDEC19CE1C4900EDFD47 /* Images.xcassets */; };
 		02F5BDF019CE1C4900EDFD47 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02F5BDEE19CE1C4900EDFD47 /* LaunchScreen.xib */; };
-		02F5BDFC19CE1C4900EDFD47 /* CameraTutorialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F5BDFB19CE1C4900EDFD47 /* CameraTutorialTests.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		02F5BDF619CE1C4900EDFD47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 02F5BDD819CE1C4900EDFD47 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 02F5BDDF19CE1C4900EDFD47;
-			remoteInfo = CameraTutorial;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0104DE891AB76F8F00E4F220 /* MenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 		0104DE8C1AB7704200E4F220 /* AboutDialogue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutDialogue.swift; sourceTree = "<group>"; };
+		011D5BBF1AF7D8DE000FAFF7 /* L8R.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L8R.swift; sourceTree = "<group>"; };
 		0127DDF71AEEBF8D00535159 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		0127DDF81AEEBF8D00535159 /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseCrashReporting.framework; sourceTree = "<group>"; };
 		0127DDFB1AEEBF9600535159 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
@@ -107,7 +84,6 @@
 		02F5BDEA19CE1C4900EDFD47 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		02F5BDEC19CE1C4900EDFD47 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		02F5BDEF19CE1C4900EDFD47 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		02F5BDF519CE1C4900EDFD47 /* CameraTutorialTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CameraTutorialTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F5BDFA19CE1C4900EDFD47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02F5BDFB19CE1C4900EDFD47 /* CameraTutorialTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraTutorialTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -132,25 +108,6 @@
 				0127DDF91AEEBF8D00535159 /* Bolts.framework in Frameworks */,
 				0127DDFC1AEEBF9600535159 /* Parse.framework in Frameworks */,
 				0127DDFA1AEEBF8D00535159 /* ParseCrashReporting.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		02F5BDF219CE1C4900EDFD47 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				01DE2CD81AEECA1C00B89E50 /* libsqlite3.dylib in Frameworks */,
-				01DE2CD61AEECA1000B89E50 /* libz.dylib in Frameworks */,
-				01DE2CD41AEECA0700B89E50 /* libstdc++.6.dylib in Frameworks */,
-				01DE2CD21AEEC9FD00B89E50 /* SystemConfiguration.framework in Frameworks */,
-				01DE2CD01AEEC9F500B89E50 /* StoreKit.framework in Frameworks */,
-				01DE2CCE1AEEC9EF00B89E50 /* Security.framework in Frameworks */,
-				01DE2CCC1AEEC9E800B89E50 /* QuartzCore.framework in Frameworks */,
-				01DE2CCA1AEEC9E300B89E50 /* MobileCoreServices.framework in Frameworks */,
-				01DE2CC81AEEC9DD00B89E50 /* CoreLocation.framework in Frameworks */,
-				0127DE031AEEBFD300535159 /* CoreGraphics.framework in Frameworks */,
-				0127DE011AEEBFCC00535159 /* CFNetwork.framework in Frameworks */,
-				0127DDFF1AEEBFC500535159 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,6 +163,7 @@
 		02F5BDD719CE1C4900EDFD47 = {
 			isa = PBXGroup;
 			children = (
+				011D5BBF1AF7D8DE000FAFF7 /* L8R.swift */,
 				0127DDFD1AEEBFB200535159 /* Frameworks */,
 				02F5BDE219CE1C4900EDFD47 /* CameraTutorial */,
 				02F5BDF819CE1C4900EDFD47 /* CameraTutorialTests */,
@@ -217,7 +175,6 @@
 			isa = PBXGroup;
 			children = (
 				02F5BDE019CE1C4900EDFD47 /* l8r.app */,
-				02F5BDF519CE1C4900EDFD47 /* CameraTutorialTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -288,24 +245,6 @@
 			productReference = 02F5BDE019CE1C4900EDFD47 /* l8r.app */;
 			productType = "com.apple.product-type.application";
 		};
-		02F5BDF419CE1C4900EDFD47 /* CameraTutorialTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 02F5BE0219CE1C4900EDFD47 /* Build configuration list for PBXNativeTarget "CameraTutorialTests" */;
-			buildPhases = (
-				02F5BDF119CE1C4900EDFD47 /* Sources */,
-				02F5BDF219CE1C4900EDFD47 /* Frameworks */,
-				02F5BDF319CE1C4900EDFD47 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				02F5BDF719CE1C4900EDFD47 /* PBXTargetDependency */,
-			);
-			name = CameraTutorialTests;
-			productName = CameraTutorialTests;
-			productReference = 02F5BDF519CE1C4900EDFD47 /* CameraTutorialTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -318,11 +257,6 @@
 					02F5BDDF19CE1C4900EDFD47 = {
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = 3RA98GNA2A;
-					};
-					02F5BDF419CE1C4900EDFD47 = {
-						CreatedOnToolsVersion = 6.1;
-						DevelopmentTeam = 3RA98GNA2A;
-						TestTargetID = 02F5BDDF19CE1C4900EDFD47;
 					};
 				};
 			};
@@ -340,7 +274,6 @@
 			projectRoot = "";
 			targets = (
 				02F5BDDF19CE1C4900EDFD47 /* CameraTutorial */,
-				02F5BDF419CE1C4900EDFD47 /* CameraTutorialTests */,
 			);
 		};
 /* End PBXProject section */
@@ -358,13 +291,6 @@
 				01DE2CEF1AF2781500B89E50 /* Dosis-Bold.ttf in Resources */,
 				01DE2CF01AF2781700B89E50 /* Dosis-ExtraBold.ttf in Resources */,
 				02F5BDED19CE1C4900EDFD47 /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		02F5BDF319CE1C4900EDFD47 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,31 +327,14 @@
 				01DE2CE71AF03C5000B89E50 /* LaterNavigationController.swift in Sources */,
 				0104DE8A1AB76F8F00E4F220 /* MenuButton.swift in Sources */,
 				01BAC3AA1AE5D9EA006ADA0F /* AlbumViewController.swift in Sources */,
+				011D5BC01AF7D8DE000FAFF7 /* L8R.swift in Sources */,
 				01523DCC1A8FC23500FCDC0F /* Model.xcdatamodeld in Sources */,
 				01BDDE891A912C240015F601 /* PageItemController.swift in Sources */,
 				01BDDE8B1A912D4A0015F601 /* CameraController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		02F5BDF119CE1C4900EDFD47 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0104DE8B1AB76F8F00E4F220 /* MenuButton.swift in Sources */,
-				02F5BDFC19CE1C4900EDFD47 /* CameraTutorialTests.swift in Sources */,
-				0104DE8E1AB7704200E4F220 /* AboutDialogue.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		02F5BDF719CE1C4900EDFD47 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 02F5BDDF19CE1C4900EDFD47 /* CameraTutorial */;
-			targetProxy = 02F5BDF619CE1C4900EDFD47 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		02F5BDE919CE1C4900EDFD47 /* Main.storyboard */ = {
@@ -557,40 +466,6 @@
 			};
 			name = Release;
 		};
-		02F5BE0319CE1C4900EDFD47 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = CameraTutorialTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/l8r.app/l8r";
-			};
-			name = Debug;
-		};
-		02F5BE0419CE1C4900EDFD47 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = CameraTutorialTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/l8r.app/l8r";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -608,15 +483,6 @@
 			buildConfigurations = (
 				02F5BE0019CE1C4900EDFD47 /* Debug */,
 				02F5BE0119CE1C4900EDFD47 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		02F5BE0219CE1C4900EDFD47 /* Build configuration list for PBXNativeTarget "CameraTutorialTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				02F5BE0319CE1C4900EDFD47 /* Debug */,
-				02F5BE0419CE1C4900EDFD47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
