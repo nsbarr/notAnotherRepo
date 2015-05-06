@@ -129,6 +129,8 @@ public class CardStack : UIView {
     
     let cardTag = 72
     
+    var originalCardCount:Int = -1
+    
     public var delegate: CardStackDelegate? = nil
     public var noMoreCardsView: UIView = {
         //default 'noMoreCards' View
@@ -215,11 +217,11 @@ public class CardStack : UIView {
         
     }
     
-//    override public var bounds: CGRect {
-//        didSet {
-//            self.updateViewTreeBounds()
-//        }
-//    }
+    override public var bounds: CGRect {
+        didSet {
+            self.updateViewTreeBounds()
+        }
+    }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
@@ -345,12 +347,12 @@ public class CardStack : UIView {
         
         if let delegate = self.delegate {
             
-            let cardCount:Int = delegate.cardCount
-            println("updating stack with card count \(cardCount)")
+            self.originalCardCount = delegate.cardCount
+            println("updating stack with card count \(self.originalCardCount)")
             self.indexOfTopCard = 0
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                if (cardCount > 0) {
+                if (self.originalCardCount > 0) {
                     self.setCardToView(0, view: self.topView)
                     self.topView.alpha = 1
                 }
@@ -359,7 +361,7 @@ public class CardStack : UIView {
                 }
                 
                 
-                if (cardCount > 1) {
+                if (self.originalCardCount > 1) {
                     self.setCardToView(1, view: self.hiddenView)
                     self.hiddenView.alpha = 1
                 }
@@ -368,7 +370,7 @@ public class CardStack : UIView {
                 }
                 
                 
-                self.adjustVerticalForCardsLeft(cardCount)
+                self.adjustVerticalForCardsLeft(self.originalCardCount)
             })
             
         }
@@ -439,25 +441,21 @@ public class CardStack : UIView {
 
     }
     
-    func setCardToView(cardIndex: Int, view: UIView) -> Card! {
-        var returnCard:Card!
+    func setCardToView(cardIndex: Int, view: UIView) {
         if let delegate = self.delegate {
             println("setting card \(cardIndex)")
             assert(view.subviews.count == 0, "view for adding card has subviews!")
             let card = delegate.cardAtIndex(cardIndex, frame: view.frame)
             card.tag = self.cardTag
+            card.layer.cornerRadius = CGFloat(8)
             view.addSubview(card)
-            returnCard = card
+            card.centerInSuperview()
             if topCard == nil {
                 println("setting Top Card \(card) at index \(cardIndex)")
                 topCard = card
             }
-            card.centerInSuperview()
-            returnCard.centerInSuperview()
 
         }
-
-        return returnCard
     }
     
     func swipeOutTopCardWithSpeed(speed: NSTimeInterval) {
@@ -476,11 +474,18 @@ public class CardStack : UIView {
                      dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         if let currentCard = actionView.viewWithTag(self.cardTag) as? Card {
                             currentCard.removeFromSuperview()
-                            let cardCount = self.delegate!.cardCount
-
+                            let cardCount = self.originalCardCount
+                            
+                            println("Old index of top card \(self.indexOfTopCard)")
+                            
                             let wasAtLastCard = cardCount == self.indexOfTopCard+1
+                            println("Was at last card?\(wasAtLastCard)")
+                            println("Card Count: \(cardCount)")
 
                             self.indexOfTopCard++
+                            
+                            println("New index of top card \(self.indexOfTopCard)")
+
 
                             if (wasAtLastCard) {
                                 //if we just removed the last card simply hide the topview and return it to center
@@ -513,6 +518,7 @@ public class CardStack : UIView {
                                     animations: { () -> Void in
                                         let cardsLeft = cardCount - self.indexOfTopCard
                                         println("cards left = \(cardsLeft)")
+                                        println("Card count: \(cardCount)")
                                         self.adjustVerticalForCardsLeft(cardsLeft)
                                         
                                     }, completion: { (done: Bool) -> Void in

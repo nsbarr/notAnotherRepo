@@ -14,7 +14,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
     
     //MARK: - Variables
     
-    @IBOutlet var cardStackView:CardStack!
+    @IBOutlet weak var cardStackView:CardStack!
     
     var snapButton: UIButton!
     var l8rsById:[String:L8R]!
@@ -57,6 +57,10 @@ class InboxViewController: UIViewController, CardStackDelegate {
         super.viewDidLoad()
         self.setUpCoreData()
         self.fetchL8rs()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(false)
         self.cardStackView.delegate = self
         self.cardStackView.updateStack()
         self.addInboxBadge()
@@ -65,6 +69,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         self.addShareButton()
     }
     
+    //TODO: App crashes if you cancel from the share sheet, because of UpdateStack
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
@@ -171,9 +176,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         else {
             println("current image is nil")
         }
-        
     }
-
 
 
     //MARK: - Card delegate Methods
@@ -215,38 +218,74 @@ class InboxViewController: UIViewController, CardStackDelegate {
         
     }
     
+    
     func cardAtIndex(index: Int, frame: CGRect) -> Card {
-        println("index of card: \(index)")
-        var l8rs:[L8R] = l8rsById.values.array
-        let uniqueId = l8rs[index].objectIDString
-        println("Index:\(index), uniqueId: \(uniqueId)")
-        return createDemoCardView(uniqueId)
-    }
-    
-    
-    func createDemoCardView(cardId: String) -> Card {
+        var l8rs:[L8R] = []
+        l8rs = l8rsById.values.array
+        println("Array Count: \(l8rs.count)")
+
+
+        var dateDescriptor = NSSortDescriptor(key: "fireDateSort", ascending: true)
         
-        var l8rs:[L8R] = l8rsById.values.array
-    //    l8rs.sort({ $0.fireDate > $1.fireDate })
-    //    println("L8R to display:\(l8rsById[cardId])")
-        //TODO: Sort l8r array
-    
-        let imageData = l8rsById[cardId]?.imageData
+        l8rs.sort { $0.fireDate.compare($1.fireDate) == NSComparisonResult.OrderedAscending }
+        var uniqueId = "help"
+        //var uniqueId = l8rs[l8rs.count-1].objectIDString
+  //      var uniqueId = l8rs[index].objectIDString
+        //count - 1 is largest element
+        if index > 1 {
+            println("Next item in array:\(index)")
+            uniqueId = l8rs[2].objectIDString
+        }
+        else {
+            println("Seeding with first l8rs")
+            uniqueId = l8rs[index].objectIDString
+        }
+
+        
+//        var l8rs:[L8R] = l8rsById.values.array
+        //    l8rs.sort({ $0.fireDate > $1.fireDate })
+        //    println("L8R to display:\(l8rsById[cardId])")
+        
+        let imageData = l8rsById[uniqueId]?.imageData
         let image = UIImage(data: imageData!, scale: 0.0)!
-        let ratio = self.view.frame.height/image.size.height
+        let ratio = frame.height/image.size.height
         
-        let card: Card = Card(frame: CGRect(x: 0, y: 0, width: image.size.width*ratio, height:image.size.height*ratio))
+        let card: Card = Card(frame: frame)
         card.backgroundColor = UIColor(red: 0, green: 0, blue: 240, alpha: 0)
-        card.cardId = cardId
+        card.cardId = uniqueId
         card.center.x = view.center.x
         card.image = image
         
         card.clipsToBounds = true
-        card.contentMode = UIViewContentMode.ScaleAspectFit
+        card.contentMode = UIViewContentMode.ScaleAspectFill
         
         return card
-            
+    //    return createDemoCardView(uniqueId)
     }
+    
+    
+//    func createDemoCardView(cardId: String) -> Card {
+//        
+//        var l8rs:[L8R] = l8rsById.values.array
+//    //    l8rs.sort({ $0.fireDate > $1.fireDate })
+//    //    println("L8R to display:\(l8rsById[cardId])")
+//
+//        let imageData = l8rsById[cardId]?.imageData
+//        let image = UIImage(data: imageData!, scale: 0.0)!
+//        let ratio = self.view.frame.height/image.size.height
+//        
+//        let card: Card = Card(frame: CGRect(x: 0, y: 0, width: image.size.width*ratio, height:image.size.height*ratio))
+//        card.backgroundColor = UIColor(red: 0, green: 0, blue: 240, alpha: 0)
+//        card.cardId = cardId
+//        card.center.x = view.center.x
+//        card.image = image
+//        
+//        card.clipsToBounds = true
+//        card.contentMode = UIViewContentMode.ScaleAspectFit
+//        
+//        return card
+//            
+//    }
     
     
     func showAlbumList(sender:UIButton){

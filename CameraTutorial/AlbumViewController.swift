@@ -36,6 +36,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     override func viewDidLoad() {
+        //TODO: Don't show battery etc
         super.viewDidLoad()
         view.backgroundColor = UIColor.clearColor()
         view.frame = self.presentingViewController!.view.frame
@@ -107,7 +108,6 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 println("error occurred: \(myerror.localizedDescription)")
         })
         
-        //TODO: Remove these. Whatever albums we want to keep should be at the top level
         for item in ["➕New Album"]{
             albumNames.append(item)
         }
@@ -127,7 +127,7 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 let ivc = pvc as! InboxViewController
                 ivc.flashConfirm()
                 ivc.dismissTopCard()
-                ivc.cardStackView.updateStack()
+             //   ivc.cardStackView.updateStack()
                 ivc.fetchL8rs()
             }
             else if pvc?.restorationIdentifier == "ViewController" {
@@ -299,8 +299,6 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
 
         else if viewToShow == "album" {
-        
-            //TODO: Create Album if one doesn't exist already
             
             let photoLibrary = ALAssetsLibrary()
             var groupToAddTo: ALAssetsGroup = ALAssetsGroup()
@@ -440,7 +438,8 @@ class AlbumViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     
                 else if snoozeOptionPicked == "⏳In a Minute" { // In a Minute
                    // scheduledDate = NSDate()
-                    timeComponent.second = 1
+                    //TODO: Make this right
+                    timeComponent.minute = 1
                     scheduledDate = theCalendar.dateByAddingComponents(timeComponent, toDate: currentTime, options: NSCalendarOptions(0))
                 }
                     

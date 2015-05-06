@@ -363,12 +363,18 @@ class CameraController: UIViewController, UITextViewDelegate, UIImagePickerContr
                         self.textView.frame.origin.x = self.textView.frame.origin.x + (imageView.frame.width-self.view.frame.width)/2
                         imageView.contentMode = UIViewContentMode.ScaleToFill
                         imageView.addSubview(self.textView)
+                        println("Text View Text is \(self.textView.text)")
+//                        
+//                        let textRange: UITextRange = self.textView.selectedRange
+//                        println(self.textView.firstRectForRange(textRange)
+//                        self.image = self.draw(self.textView.text, onImage: theImage, atPosition: CGPointZero, withFont:UIFont(name: "Dosis-Bold", size: 42.0)!, ofColor: UIColor.whiteColor())
                         
                         UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, imageView.opaque, 0.0)
                         imageView.layer.renderInContext(UIGraphicsGetCurrentContext())
                         let snapshotImage = UIGraphicsGetImageFromCurrentImageContext()
                         UIGraphicsEndImageContext()
                         self.image = snapshotImage
+                        
                         //TODO: we shouldn't have to wait for the snapshot to bring up the modal
                         self.bringUpSnapModalFromButton(sender)
                     }
@@ -379,6 +385,32 @@ class CameraController: UIViewController, UITextViewDelegate, UIImagePickerContr
                 }
             }
         }
+    }
+    
+    func draw(text:String, onImage image:UIImage, atPosition position:CGPoint, withFont font:UIFont, ofColor tColor:UIColor! = nil) -> UIImage! {
+        
+        let textColor = tColor ?? UIColor.whiteColor()
+        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+        textStyle.alignment = NSTextAlignment.Left
+        
+        let textAttributes = [
+            NSFontAttributeName: font,
+            NSForegroundColorAttributeName: textColor,
+            NSParagraphStyleAttributeName: textStyle
+        ]
+        let attributedText:NSAttributedString = NSAttributedString(string: text, attributes:textAttributes)
+        
+        
+        UIGraphicsBeginImageContext(image.size)
+        
+        image.drawInRect(CGRectMake(0,0,image.size.width,image.size.height))
+        attributedText.drawAtPoint(position)
+        
+        let resultImage = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        
+        return resultImage
     }
     
     func bringUpSnapModalFromButton(sender: UIButton){
