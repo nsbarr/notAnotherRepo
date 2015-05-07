@@ -353,7 +353,8 @@ class CameraController: UIViewController, UITextViewDelegate, UIImagePickerContr
                         //let imageView = UIImageView(frame: CGRectMake(0, 0, theImage.size.width*self.view.frame.height/theImage.size.height, self.view.frame.height))
                         
                         let imageView = UIImageView(frame: CGRectMake(0, 0, theImage.size.width*self.view.frame.height/theImage.size.height, self.view.frame.height))
-                        
+                       
+                    //    let imageView = UIImageView(frame: self.view.frame)
                         if !self.currentDeviceIsBack {
                             imageView.image = UIImage(CGImage: theImage.CGImage, scale: theImage.scale, orientation: UIImageOrientation.LeftMirrored)
                         }
@@ -364,13 +365,15 @@ class CameraController: UIViewController, UITextViewDelegate, UIImagePickerContr
                         imageView.contentMode = UIViewContentMode.ScaleToFill
                         imageView.addSubview(self.textView)
                         println("Text View Text is \(self.textView.text)")
-//                        
+//
 //                        let textRange: UITextRange = self.textView.selectedRange
 //                        println(self.textView.firstRectForRange(textRange)
 //                        self.image = self.draw(self.textView.text, onImage: theImage, atPosition: CGPointZero, withFont:UIFont(name: "Dosis-Bold", size: 42.0)!, ofColor: UIColor.whiteColor())
                         
                         UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, imageView.opaque, 0.0)
-                        imageView.layer.renderInContext(UIGraphicsGetCurrentContext())
+                    //    UIGraphicsBeginImageContext(imageView.bounds.size) // really bad quality
+                       // imageView.layer.renderInContext(UIGraphicsGetCurrentContext()) // slower
+                       imageView.drawViewHierarchyInRect(imageView.bounds, afterScreenUpdates: true)
                         let snapshotImage = UIGraphicsGetImageFromCurrentImageContext()
                         UIGraphicsEndImageContext()
                         self.image = snapshotImage

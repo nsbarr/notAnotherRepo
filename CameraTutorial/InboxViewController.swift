@@ -57,6 +57,9 @@ class InboxViewController: UIViewController, CardStackDelegate {
         super.viewDidLoad()
         self.setUpCoreData()
         self.fetchL8rs()
+        self.addLaterSnapButton()
+        self.addDismissButton()
+        self.addShareButton()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -64,9 +67,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         self.cardStackView.delegate = self
         self.cardStackView.updateStack()
         self.addInboxBadge()
-        self.addLaterSnapButton()
-        self.addDismissButton()
-        self.addShareButton()
+ 
     }
     
     //TODO: App crashes if you cancel from the share sheet, because of UpdateStack
@@ -250,6 +251,7 @@ class InboxViewController: UIViewController, CardStackDelegate {
         let image = UIImage(data: imageData!, scale: 0.0)!
         let ratio = frame.height/image.size.height
         
+        println("frame passed in: \(frame)")
         let card: Card = Card(frame: frame)
         card.backgroundColor = UIColor(red: 0, green: 0, blue: 240, alpha: 0)
         card.cardId = uniqueId
